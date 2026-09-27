@@ -1,0 +1,30 @@
+собрать войс
+ .\.venv\scripts\python.exe voice.py build\vo build\voice.wav --engine edge
+start-process .\build\voice.wav
+
+
+
+
+powershell -executionpolicy bypass -file .\build.ps1
+
+
+
+
+
+рендер
+Set-Location "$env:USERPROFILE\Videos\wow-video"
+$env:PYTHONUTF8 = "1"
+
+node render.mjs --out build/frames-single --fps 60 --workers 1
+
+.\.venv\Scripts\python.exe audio.py build/frames-single/sfx.json build/mix.wav
+
+$duration = node -p "require('./build/frames-single/timeline.json').dur"
+
+
+ffmpeg -v error -y -framerate 60 -i "build/frames-single/f_%05d.jpg" -i "build/mix.wav" -t "$duration" -c:v libx264 -preset slow -crf 17 -pix_fmt yuv420p -c:a aac -b:a 256k -movflags +faststart "result-no-voice.mp4"
+
+
+
+
+

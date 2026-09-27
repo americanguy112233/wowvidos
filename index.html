@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>WoW Forever — бан за ник</title>
+<style>
+@font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
+@font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
+@font-face { font-family: Pix; src: url(assets/fonts/PressStart2P-Regular.ttf); }
+@font-face { font-family: Mono; src: url(assets/fonts/JetBrainsMono-VF.ttf); font-weight: 100 800; }
+:root {
+  --ink: #1d1233; --muted: #7b6e93; --red: #ef3a5d; --green: #14b26a; --mint: #4fe3b2;
+  --amber: #f5a524; --orange: #e07a52; --tg: #2aa3ef; --card: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #3e0c5c; }
+body { font-family: Man, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+#view { position: absolute; inset: 0; overflow: hidden; }
+
+/* ---------- фон: градиент, звезда, сетка, дуга, виньетка ---------- */
+#bg { position: absolute; inset: 0; background: radial-gradient(120% 75% at 50% 45%, #6c23ab 0%, #561486 45%, #3d0b5b 100%); }
+#star { position: absolute; left: 50%; top: 50%; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; opacity: .55; filter: blur(3px); }
+#grid { position: absolute; left: 0; top: -200px; width: 1080px; height: 2400px;
+  background-image: linear-gradient(rgba(206,160,255,.30) 2px, transparent 2px), linear-gradient(90deg, rgba(206,160,255,.30) 2px, transparent 2px);
+  background-size: 108px 108px; background-position: -1px -1px; }
+#arc { position: absolute; left: 50%; top: 50%; width: 1700px; height: 1700px; margin: -850px 0 0 -850px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.10); }
+#floor { position: absolute; left: -200px; right: -200px; bottom: 0; height: 330px; opacity: .45;
+  background: repeating-linear-gradient(90deg, transparent 0 128px, rgba(206,160,255,.35) 128px 131px);
+  transform: perspective(500px) rotateX(58deg); transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(transparent, #000 70%); }
+#vig { position: absolute; inset: 0; background: radial-gradient(130% 90% at 50% 45%, transparent 55%, rgba(20,0,35,.55) 100%); pointer-events: none; }
+#fade { position: absolute; inset: 0; background: #12031d; opacity: 0; }
+
+/* ---------- мир: секции друг под другом, камера едет вниз ---------- */
+#world { position: absolute; left: 0; top: 0; width: 1080px; }
+.sec { position: absolute; left: 0; width: 1080px; height: 1920px; }
+.row { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; }
+.conn { position: absolute; left: 537px; width: 6px; }
+.conn svg { position: absolute; left: -40px; top: 0; overflow: visible; }
+
+/* заголовок: белая рамка + объёмный текст */
+.hdr { border: 6px solid #fff; padding: 22px 46px 30px; box-shadow: 0 0 0 2px rgba(255,255,255,.08), 0 14px 40px rgba(20,0,40,.35); background: rgba(40,5,70,.18); }
+.t3d { position: relative; font: 900 118px/1 Unb; letter-spacing: -2px; color: transparent; white-space: nowrap; }
+.t3d::before, .t3d::after { content: attr(data-text); position: absolute; left: 0; top: 0; }
+.t3d::before { color: var(--ex); text-shadow: 0 2px var(--ex), 0 4px var(--ex), 0 6px var(--ex), 0 8px var(--ex), 0 10px var(--ex), 0 12px var(--ex), 0 22px 26px rgba(15,0,30,.45); }
+.t3d::after { background: linear-gradient(180deg, var(--c1) 20%, var(--c2) 95%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.t3d.orange { --c1: #ffc39a; --c2: #e0703f; --ex: #7a2b12; }
+.t3d.green  { --c1: #8ef7c8; --c2: #22c985; --ex: #0b5a3a; }
+.t3d.yellow { --c1: #ffe36a; --c2: #f5a31a; --ex: #7c4506; }
+.t3d.pink   { --c1: #ffb0c4; --c2: #f0406e; --ex: #7a1030; }
+.t3d.white  { --c1: #ffffff; --c2: #d9c8ff; --ex: #4a1d7a; }
+.t3d.sm { font-size: 96px; }
+
+/* карточки */
+.card { background: var(--card); border-radius: 30px; box-shadow: 0 18px 0 rgba(30,0,60,.18), 0 26px 50px rgba(20,0,40,.35); }
+.lbl { font: 800 40px/1 Unb; letter-spacing: 1px; text-align: center; }
+.chip { background: #fff; border-radius: 999px; padding: 18px 34px; font: 800 34px/1 Man; box-shadow: 0 10px 30px rgba(20,0,40,.3); white-space: nowrap; }
+.chip b { font-weight: 800; color: var(--green); }
+.pill { border-radius: 999px; padding: 20px 40px 22px; font: 800 42px/1 Unb; color: #fff; background: var(--green); box-shadow: 0 8px 0 #0a7445, 0 18px 40px rgba(0,40,20,.35); white-space: nowrap; }
+.pill.tg { background: var(--tg); box-shadow: 0 8px 0 #1573b0, 0 18px 40px rgba(0,30,60,.35); }
+.note { font: 600 27px/1.3 Man; color: rgba(255,255,255,.66); text-align: center; }
+.stk { position: relative; }
+.stk svg { display: block; }
+
+.badge { position: absolute; font: 900 28px/1 Unb; padding: 12px 20px; border-radius: 999px; white-space: nowrap; }
+/* скриншоты из игры */
+.shot { position: relative; border-radius: 26px; overflow: hidden; border: 6px solid #fff; background: #000;
+  box-shadow: 0 18px 0 rgba(30,0,60,.22), 0 30px 60px rgba(15,0,30,.5); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot .src { position: absolute; left: 14px; bottom: 12px; font: 800 22px/1 Man; color: #fff; background: rgba(0,0,0,.55); padding: 8px 12px; border-radius: 10px; }
+
+/* печать «БАН» / «ОТКЛОНЕНО»: внешний блок задаёт наклон, внутренний анимируется */
+.stampw { position: absolute; transform: rotate(-12deg); pointer-events: none; }
+.stamp { font: 900 130px/1 Unb; letter-spacing: 2px; color: var(--red); border: 12px solid var(--red); border-radius: 22px; padding: 14px 34px 22px;
+  background: rgba(255,255,255,.92); box-shadow: 0 16px 40px rgba(60,0,20,.45); white-space: nowrap; }
+.stamp.sm { font-size: 76px; border-width: 9px; padding: 12px 26px 16px; }
+
+/* поле ввода в стиле экрана выбора персонажа */
+.fld { height: 104px; border-radius: 14px; background: linear-gradient(180deg, #17110c, #2a1f16); border: 4px solid #b8923e;
+  box-shadow: inset 0 4px 12px rgba(0,0,0,.6); display: flex; align-items: center; padding: 0 26px; font: 800 52px/1 Man; color: #f3d27a; white-space: nowrap; overflow: hidden; }
+.fld .ph { color: #7d6a4c; font-weight: 600; font-size: 36px; }
+.fld .caret { display: inline-block; width: 5px; height: 52px; background: #f3d27a; margin-left: 6px; }
+.fld.bad { border-color: var(--red); box-shadow: inset 0 4px 12px rgba(0,0,0,.6), 0 0 0 6px rgba(239,58,93,.45); }
+.cz { display: inline-block; height: 44px; border-radius: 8px; background: #0b0710; margin-right: 12px; vertical-align: middle; }
+
+/* сцена 1: карточка ника */
+.fld.nick { position: relative; font-size: 46px; gap: 16px; }
+.fld.nick .nkw { position: relative; }
+.fld.nick.bad .nk { color: #ff8da3; }
+.fld.nick .strike { position: absolute; left: -8px; right: -8px; top: 52%; height: 7px; margin-top: -3px; border-radius: 4px; background: var(--red); transform-origin: 0 50%; transform: scaleX(0); }
+/* стикеры-картинки всегда обрезаны кругом: никаких полупрозрачных краёв вокруг */
+.stk img { border-radius: 50%; clip-path: circle(49.5% at 50% 50%); background: #fff; }
+.np { width: 920px; height: 250px; display: flex; align-items: center; padding: 0 36px 0 10px; gap: 16px; }
+.np .stk { width: 210px; height: 210px; flex: none; }
+.np .col { flex: 1; }
+.np .lbl { text-align: left; font-size: 30px; color: var(--muted); margin-bottom: 18px; }
+.down svg { display: block; }
+
+/* сцена 2: два исхода */
+.out { width: 940px; padding: 28px 30px 30px; }
+.out .top { display: flex; align-items: center; gap: 20px; margin-bottom: 22px; }
+.out .ttl { font: 900 50px/1 Unb; letter-spacing: -1px; }
+.out .tag { margin-left: auto; font: 900 28px/1 Unb; padding: 12px 22px; border-radius: 999px; color: #fff; }
+.out .shot { border-width: 0; border-radius: 18px; box-shadow: none; }
+.num1 { width: 64px; height: 64px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font: 900 34px/1 Unb; color: #fff; }
+
+/* сцена 3: два поля имени */
+.wd { width: 960px; padding: 34px 36px 40px; border-radius: 24px; background: linear-gradient(180deg, rgba(40,32,26,.96), rgba(24,18,14,.96));
+  border: 5px solid #8a6a2e; box-shadow: 0 0 0 3px #2b1d0c, 0 26px 60px rgba(15,0,30,.55); position: relative; }
+.wd .wt { font: 700 38px/1.25 Man; color: #ffd100; text-align: center; margin-bottom: 28px; text-shadow: 0 2px 0 #000; }
+.wd .two { display: flex; gap: 24px; }
+.wd .fld { flex: 1; }
+.wd .badge { top: -30px; right: 34px; background: var(--red); color: #fff; box-shadow: 0 6px 0 #9c1c38; }
+.plus { font: 900 60px/1 Unb; color: #ffd100; align-self: center; }
+
+/* сцена 4: тикет */
+.tk { width: 900px; height: 470px; padding: 36px 40px; position: relative; }
+.tk .th { display: flex; align-items: center; gap: 18px; font: 800 30px/1 Man; color: var(--muted); }
+.tk .th i { width: 18px; height: 18px; border-radius: 50%; background: var(--amber); display: block; }
+.tk .tt { font: 900 50px/1.15 Unb; margin: 26px 0 26px; letter-spacing: -1px; }
+.tk .ln { height: 22px; border-radius: 11px; background: #efe9f8; margin-bottom: 18px; }
+.tk .stk { position: absolute; right: 22px; top: 22px; width: 140px; height: 140px; }
+
+/* сцена 5: список */
+.li { width: 860px; height: 128px; display: flex; align-items: center; padding: 0 30px; gap: 26px; }
+.ico { width: 84px; height: 84px; border-radius: 22px; flex: none; display: flex; align-items: center; justify-content: center; }
+.li .t { font: 800 40px/1 Unb; }
+.li .s { font: 700 26px/1 Man; color: var(--muted); margin-top: 10px; }
+.li .ok { margin-left: auto; width: 54px; height: 54px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; }
+
+/* сцена 6: QR */
+.cam { font: 58px/1 Pix; color: #fff; text-shadow: 0 6px 0 #2a0a45, 0 0 30px rgba(255,255,255,.25); letter-spacing: 2px; white-space: nowrap; }
+.qrcard { width: 680px; height: 680px; border-radius: 34px; background: #f4f4f7; padding: 44px; position: relative;
+  box-shadow: 0 16px 0 #cfcfe0, 0 30px 70px rgba(15,0,30,.5); }
+.qrcard svg { width: 592px; height: 592px; display: block; }
+.qrlogo { position: absolute; left: 50%; top: 50%; width: 164px; height: 164px; margin: -82px 0 0 -82px; border-radius: 50%; background: #fff; border: 7px solid #3a6ff0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.qrlogo .stk { width: 160px; height: 160px; }
+
+/* ================= стиль Warcraft ================= */
+@font-face { font-family: WowH; src: url(assets/fonts/AlegreyaSC-Black.ttf); font-weight: 900; }
+@font-face { font-family: WowH; src: url(assets/fonts/AlegreyaSC-ExtraBold.ttf); font-weight: 800; }
+:root { --gold: #d6b25a; --gold2: #8a6424; --wowy: #ffd100; --cream: #f3e4c0; --brown: #1a1009; }
+html, body { background: #0b0705; }
+#bg { background: #0b0705; }
+#star, #arc, #grid, #floor { display: none; }
+.bgi { position: absolute; inset: -80px; background-size: cover; background-position: center; will-change: transform, opacity; }
+#vig { background: radial-gradient(120% 80% at 50% 42%, rgba(0,0,0,0) 35%, rgba(5,2,0,.78) 100%); }
+#embers { position: absolute; inset: 0; pointer-events: none; }
+.logo { width: 420px; height: auto; filter: drop-shadow(0 12px 30px rgba(0,0,0,.7)); }
+
+/* заголовок: тёмная плита с золотой оправой и «камнями» по бокам */
+.hdr { border: 5px solid var(--gold); border-radius: 12px; padding: 18px 50px 26px;
+  background: linear-gradient(180deg, rgba(46,30,14,.95), rgba(20,12,6,.95));
+  box-shadow: inset 0 0 0 3px #3a2410, inset 0 0 0 6px rgba(214,178,90,.35), 0 16px 44px rgba(0,0,0,.7); position: relative; }
+.hdr::before, .hdr::after { content: ''; position: absolute; top: 50%; width: 30px; height: 30px; margin-top: -15px; transform: rotate(45deg);
+  background: linear-gradient(135deg, #ffe9a8, #b8862c); border: 4px solid #3a2410; box-shadow: 0 4px 10px rgba(0,0,0,.6); }
+.hdr::before { left: -19px; } .hdr::after { right: -19px; }
+.t3d { font-family: WowH; font-weight: 900; letter-spacing: 1px; }
+.t3d.sm { font-size: 104px; }
+.t3d.orange, .t3d.yellow, .t3d.white, .t3d.green { --c1: #fff4c2; --c2: #e0a634; --ex: #4a2a06; }
+.t3d.pink { --c1: #ffd0b8; --c2: #e8332a; --ex: #3e0703; }
+
+/* панели как в игровом интерфейсе */
+.card { background: linear-gradient(180deg, #2c1d10, #140c06); border: 4px solid var(--gold); border-radius: 18px; color: var(--cream);
+  box-shadow: inset 0 0 0 2px #3a2410, inset 0 0 40px rgba(0,0,0,.55), 0 18px 44px rgba(0,0,0,.6); }
+.lbl, .np .lbl { color: var(--gold); font-family: WowH; font-weight: 800; letter-spacing: 2px; }
+.chip { background: rgba(18,11,5,.88); border: 3px solid var(--gold); color: var(--wowy); box-shadow: 0 10px 28px rgba(0,0,0,.55); }
+.chip b { color: #fff !important; }
+.pill, .pill.tg { font-family: WowH; font-weight: 900; letter-spacing: 1px; color: var(--wowy) !important;
+  background: linear-gradient(180deg, #d42222, #7c0b0b) !important; border: 3px solid var(--gold);
+  box-shadow: inset 0 2px 0 rgba(255,200,150,.35), 0 7px 0 #360404, 0 18px 40px rgba(0,0,0,.55) !important; text-shadow: 0 2px 0 #3a0000; }
+.note { color: rgba(243,228,192,.78); }
+.badge { background: linear-gradient(180deg, #d42222, #7c0b0b) !important; color: var(--wowy) !important; border: 2px solid var(--gold); box-shadow: 0 5px 0 #360404 !important; font-family: WowH; }
+.shot { border: 5px solid var(--gold); border-radius: 18px; box-shadow: inset 0 0 0 2px #3a2410, 0 18px 50px rgba(0,0,0,.7); }
+.stk img { clip-path: circle(50% at 50% 50%); filter: drop-shadow(0 10px 18px rgba(0,0,0,.6)); }
+
+/* сцены */
+.out .ttl { font-family: WowH; font-size: 56px; color: var(--wowy); }
+.out .tag { font-family: WowH; border: 2px solid rgba(255,230,160,.6); }
+.num1 { font-family: WowH; border: 3px solid var(--gold); }
+.tk .th { color: #b89a6a; }
+.tk .tt { font-family: WowH; color: var(--wowy); font-size: 54px; }
+.tk .ln { background: rgba(214,178,90,.16); }
+.li .t { font-family: WowH; font-size: 44px; color: var(--wowy); }
+.li .s { color: #b89a6a; }
+.ico { background: rgba(214,178,90,.12) !important; border: 2px solid rgba(214,178,90,.5); }
+.ok { border: 2px solid rgba(255,230,160,.7); }
+.cam { font-family: WowH; font-weight: 900; font-size: 84px; color: var(--wowy); text-shadow: 0 5px 0 #3a2106, 0 0 30px rgba(255,200,80,.35); letter-spacing: 3px; }
+.qrcard { background: linear-gradient(180deg, #f6ead0, #e8d6aa); border: 6px solid var(--gold); box-shadow: inset 0 0 0 3px #7a5a24, 0 16px 0 #3a2410, 0 30px 70px rgba(0,0,0,.6); }
+.qrlogo { border-color: var(--gold); background: #1a1009; }
+</style>
+</head>
+<body>
+<div id="view">
+  <div id="bg"></div>
+  <div class="bgi" id="bgA" style="background-image:url(assets/news/bg_portal.jpg)"></div>
+  <div class="bgi" id="bgB" style="background-image:url(assets/news/bg_forest.jpg);opacity:0"></div>
+  <canvas id="embers" width="1080" height="1920"></canvas>
+  <svg id="star" viewBox="-100 -100 200 200"><path id="starp" fill="#3f0b63"/></svg>
+  <div id="arc"></div>
+  <div id="grid"></div>
+  <div id="floor"></div>
+
+  <div id="world">
+    <!-- 1. Хук: ник → бан -->
+    <section class="sec" id="s1">
+      <div class="row" style="top:30px"><img class="logo" id="lg1" src="assets/news/logo.png" alt="World of Warcraft: Forever"></div>
+      <div class="row" style="top:290px"><div class="hdr" id="h1"><div class="t3d pink sm" data-text="БАН ЗА НИК">БАН ЗА НИК</div></div></div>
+      <div class="row" style="top:500px"><div class="chip" id="k1">World of Warcraft: Forever · <b style="color:#6b3fb0">бета</b></div></div>
+      <div class="row" style="top:610px"><div class="card np" id="c1">
+        <div class="stk" data-anim="sticker_06_surprised_paladin.png"></div>
+        <div class="col"><div class="lbl">ИМЯ ПЕРСОНАЖА</div>
+          <div class="fld nick" id="fld1"><span class="nkw"><span class="nk" id="nk1">Analin</span> <span class="nk" id="nk2">Galereed</span><i class="strike" id="sk1"></i></span></div></div>
+      </div></div>
+      <div class="row" style="top:880px"><div class="down" id="a1"><svg width="120" height="80" viewBox="0 0 120 80"><path d="M14 16l46 46 46-46" stroke="#d6b25a" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      <div class="row" style="top:990px"><div class="shot" id="sh1" style="width:940px"><img src="assets/news/ban.png" alt="">
+        <div class="stampw" style="right:24px; bottom:26px"><div class="stamp" id="st1" style="font-size:96px;border-width:10px">БАН</div></div></div></div>
+      <div class="row" style="top:1380px"><div class="note" id="f1">так бан выглядит на экране входа в бету</div></div>
+    </section>
+
+    <!-- 2. Два исхода -->
+    <section class="sec" id="s2">
+      <div class="row" style="top:230px"><div class="hdr" id="h2"><div class="t3d yellow sm" data-text="ДВА ИСХОДА">ДВА ИСХОДА</div></div></div>
+      <div class="row" style="top:500px"><div class="chip" id="k2">что будет за неприличный ник</div></div>
+      <div class="row" style="top:610px"><div class="card out" id="r2a">
+        <div class="top"><div class="num1" style="background:var(--amber)">1</div><div class="ttl">Смена имени</div><div class="tag" id="tg2a" style="background:var(--amber)">МЯГКО</div></div>
+        <div class="shot"><img src="assets/news/rename.png" alt=""></div></div></div>
+      <div class="row" style="top:1085px"><div class="card out" id="r2b">
+        <div class="top"><div class="num1" style="background:var(--red)">2</div><div class="ttl">Бан беты</div><div class="tag" id="tg2b" style="background:var(--red)">ЖЁСТКО</div></div>
+        <div class="shot"><img src="assets/news/ban.png" alt=""></div></div></div>
+    </section>
+
+    <!-- 3. Двойные имена -->
+    <section class="sec" id="s3">
+      <div class="row" style="top:230px"><div class="hdr" id="h3"><div class="t3d orange sm" data-text="ДВА ИМЕНИ">ДВА ИМЕНИ</div></div></div>
+      <div class="row" style="top:500px"><div class="chip" id="k3">в Forever имя можно собрать из двух частей</div></div>
+      <div class="row" style="top:630px"><div class="wd" id="wd3">
+        <div class="wt">Введите новое имя</div>
+        <div class="two">
+          <div class="fld" id="fa3"><span id="t3a"></span><span class="ph" id="p3a">Главное имя</span><span class="caret" id="ca3"></span></div>
+          <div class="plus">+</div>
+          <div class="fld" id="fb3"><span id="t3b"></span><span class="ph" id="p3b">Второе имя</span><span class="caret" id="cb3" style="opacity:0"></span></div>
+        </div>
+        <div class="badge" id="bd3">НАРУШЕНИЕ</div>
+      </div></div>
+      <div class="row" style="top:960px"><div class="stk" id="duck3" data-anim="sticker_05_winking_orc.png" style="width:280px;height:280px"></div></div>
+      <div class="row" style="top:1270px"><div class="pill" id="p3" style="font-size:40px;background:var(--red);box-shadow:0 8px 0 #9c1c38,0 18px 40px rgba(60,0,20,.35)">«раскрыли о себе слишком много»</div></div>
+      <div class="row" style="top:1390px"><div class="note" id="f3">формулировка из заявления разработчиков</div></div>
+    </section>
+
+    <!-- 4. Без апелляций -->
+    <section class="sec" id="s4">
+      <div class="row" style="top:230px"><div class="hdr" id="h4"><div class="t3d pink sm" data-text="БЕЗ ШАНСОВ">БЕЗ ШАНСОВ</div></div></div>
+      <div class="row" style="top:500px"><div class="chip" id="k4">решала сама команда WoW · <b>всё перепроверено</b></div></div>
+      <div class="row" style="top:640px"><div class="card tk" id="tk4">
+        <div class="th"><i></i>Обращение в поддержку</div>
+        <div class="tt">Апелляция:<br>верните доступ к бете</div>
+        <div class="ln" style="width:560px"></div><div class="ln" style="width:480px"></div><div class="ln" style="width:520px"></div>
+        <div class="stk" data-anim="sticker_03_laughing_dwarf.png"></div>
+        <div class="stampw" style="left:150px; top:300px"><div class="stamp sm" id="st4">ОТКЛОНЕНО</div></div>
+      </div></div>
+      <div class="row" style="top:1180px"><div class="note" id="f4" style="font-size:32px;color:#fff;opacity:.85;max-width:880px">«Служба поддержки не может и не будет<br>рассматривать никакие апелляции»</div></div>
+    </section>
+
+    <!-- 5. Автофильтр -->
+    <section class="sec" id="s5">
+      <div class="row" style="top:230px"><div class="hdr" id="h5"><div class="t3d white sm" style="font-size:86px" data-text="АВТОФИЛЬТР">АВТОФИЛЬТР</div></div></div>
+      <div class="row" style="top:470px"><div class="stk" id="party" data-anim="sticker_01_happy_orc.png" style="width:400px;height:400px"></div></div>
+      <div class="row" style="top:920px"><div class="card li" id="l5a">
+        <div class="ico" style="background:#fff2d6"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="21" stroke="#f5a524" stroke-width="6" fill="none"/><path d="M28 16v13l8 6" stroke="#f5a524" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="t">Скоро включат</div><div class="s">автопроверка имён</div></div>
+        <div class="ok" style="background:var(--amber)"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 6v11" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="15" cy="24" r="3" fill="#fff"/></svg></div></div></div>
+      <div class="row" style="top:1068px"><div class="card li" id="l5b">
+        <div class="ico" style="background:#fde3e9"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="24" cy="24" r="14" stroke="#ef3a5d" stroke-width="6" fill="none"/><path d="M34 34l12 12" stroke="#ef3a5d" stroke-width="7" stroke-linecap="round"/></svg></div>
+        <div><div class="t">Не «тестируй» его</div><div class="s">можно вылететь из беты</div></div>
+        <div class="ok" style="background:var(--red)"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M8 8l14 14M22 8L8 22" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg></div></div></div>
+      <div class="row" style="top:1216px"><div class="card li" id="l5c">
+        <div class="ico" style="background:#dcf7ea"><svg width="56" height="56" viewBox="0 0 56 56"><rect x="8" y="16" width="40" height="26" rx="6" stroke="#14b26a" stroke-width="6" fill="none"/><path d="M17 29h22" stroke="#14b26a" stroke-width="6" stroke-linecap="round"/></svg></div>
+        <div><div class="t">Нормальный ник</div><div class="s">уважительный и по правилам</div></div>
+        <div class="ok" style="background:var(--green)"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M6 15l6 6 12-13" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+    </section>
+
+    <!-- 6. QR -->
+    <section class="sec" id="s6">
+      <div class="row" style="top:20px"><img class="logo" id="lg6" src="assets/news/logo.png" alt="" style="width:360px"></div>
+      <div class="row" style="top:250px"><div class="cam" id="h6">НАВОДИ КАМЕРУ</div></div>
+      <div class="row" style="top:380px"><div class="qrcard" id="qr"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
+      <div class="row" style="top:1128px"><div class="pill tg" id="p6">@goldfarm_xbot</div></div>
+      <div class="row" style="top:1236px"><div class="note" id="f6">телеграм-бот</div></div>
+    </section>
+  </div>
+
+  <div id="vig"></div>
+  <div id="fade"></div>
+</div>
+<svg width="0" height="0" style="position:absolute"><filter id="mb" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="mbg" stdDeviation="0 0"/></filter></svg>
+
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script src="node_modules/lottie-web/build/player/lottie_svg.min.js"></script>
+<script src="assets/qr.js"></script>
+<script src="assets/timeline.js"></script>
+<script src="scene.js"></script>
+</body>
+</html>

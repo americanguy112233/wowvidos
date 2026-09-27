@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>WoW Forever — кем играет бета</title>
+<title>WoW Forever — команды для графики</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -190,49 +190,61 @@ html, body { background: #0b0705; }
 .qrcard { background: linear-gradient(180deg, #f6ead0, #e8d6aa); border: 6px solid var(--gold); box-shadow: inset 0 0 0 3px #7a5a24, 0 16px 0 #3a2410, 0 30px 70px rgba(0,0,0,.6); }
 .qrlogo { border-color: var(--gold); background: #1a1009; }
 
-/* ================= рилс «кем играет бета» ================= */
-/* сцена 1: хук */
-.big9 { font-size: 250px !important; letter-spacing: -2px; }
-.hsub { font: 900 58px/1.1 WowH; color: var(--cream); text-align: center; text-shadow: 0 4px 0 #2a1605, 0 0 24px rgba(0,0,0,.8); }
-.ask { font-size: 58px !important; padding: 22px 46px 26px !important; }
-#flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, #fff6d8, #ffd27a 45%, rgba(255,180,60,0) 80%); opacity: 0; pointer-events: none; mix-blend-mode: screen; }
 
-/* графики: строки-полоски */
-.bars { width: 940px; display: flex; flex-direction: column; gap: 12px; }
-.br { height: 86px; display: flex; align-items: center; gap: 18px; padding: 0 22px; position: relative;
-  background: linear-gradient(180deg, rgba(44,29,16,.92), rgba(20,12,6,.92)); border: 3px solid rgba(214,178,90,.65); border-radius: 14px; }
-.br .nm { width: 210px; flex: none; font: 800 38px/1 WowH; color: var(--cream); }
-.br .tr { flex: 1; height: 38px; border-radius: 8px; background: rgba(255,255,255,.07); overflow: hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.6); }
-.br .fl { height: 100%; width: 0; border-radius: 8px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.25), inset 0 3px 0 rgba(255,255,255,.35); }
-.br .vl { width: 200px; flex: none; text-align: right; font: 900 40px/1 WowH; color: var(--wowy); white-space: nowrap; }
-.br .vl small { font: 700 26px/1 Man; color: #cdb88a; margin-left: 6px; }
-.br.big { height: 150px; }
-.br.big .nm { width: 300px; font-size: 44px; }
-.br.big .tr { height: 56px; }
-.br.big .vl { width: 230px; font-size: 50px; }
-.tagw { position: absolute; top: -22px; right: 26px; font: 900 26px/1 WowH; padding: 10px 18px; border-radius: 999px; color: var(--wowy);
-  background: linear-gradient(180deg, #d42222, #7c0b0b); border: 2px solid var(--gold); box-shadow: 0 5px 0 #360404; white-space: nowrap; }
-.tagw.gold { background: linear-gradient(180deg, #ffe08a, #c08a1e); color: #2a1605; box-shadow: 0 5px 0 #5a3508; }
-.tagw.blue { background: linear-gradient(180deg, #5ec8ff, #1f6fb0); color: #fff; box-shadow: 0 5px 0 #0c3558; }
-.hot { box-shadow: 0 0 0 4px var(--wowy), 0 0 40px rgba(255,209,0,.45) !important; }
-.cold { box-shadow: 0 0 0 4px #e8332a, 0 0 40px rgba(232,51,42,.45) !important; }
+/* ================= рилс «команды для графики» ================= */
+#flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 35%, #fff8e0, #ffd27a 45%, rgba(255,180,60,0) 80%); opacity: 0; pointer-events: none; mix-blend-mode: screen; }
+#speed { position: absolute; inset: 0; pointer-events: none; }
+.fpsn { font-size: 330px !important; letter-spacing: -6px; }
+.fpsl { font: 900 90px/1 WowH; color: var(--cream); letter-spacing: 8px; text-shadow: 0 5px 0 #2a1605, 0 0 30px rgba(0,0,0,.8); }
+.x35 { font: 900 150px/1 WowH; color: #fff; padding: 10px 40px 20px; border-radius: 22px; transform: rotate(-8deg);
+  background: linear-gradient(180deg, #3ee07a, #0f8a3e); border: 6px solid var(--gold); box-shadow: 0 10px 0 #06401c, 0 20px 50px rgba(0,0,0,.6); text-shadow: 0 5px 0 #06401c; }
+.layer { position: absolute; inset: 0; }
 
-/* связки */
-.combo { width: 940px; height: 230px; display: flex; align-items: center; gap: 26px; padding: 0 34px; position: relative; }
-.combo .rk { width: 96px; height: 96px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font: 900 50px/1 WowH; color: #2a1605; background: linear-gradient(180deg, #ffe08a, #c08a1e); border: 4px solid #3a2410; }
-.combo .ct { flex: 1; }
-.combo .cn { font: 900 50px/1.05 WowH; color: var(--wowy); }
-.combo .cs { font: 700 28px/1.2 Man; color: #cdb88a; margin-top: 10px; }
-.combo .cv { font: 900 96px/1 WowH; color: var(--cream); text-shadow: 0 4px 0 #2a1605; }
-.combo .stk { width: 170px; height: 170px; flex: none; }
+/* сравнение: панели скриншота */
+.panels { display: flex; gap: 12px; }
+.pn { position: relative; width: 322px; height: 438px; border-radius: 16px; overflow: hidden; border: 4px solid var(--gold); background: #000; box-shadow: 0 16px 40px rgba(0,0,0,.6); }
+.pn img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fpsb { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); font: 900 50px/1 WowH; padding: 10px 18px 14px; border-radius: 12px; white-space: nowrap;
+  color: #fff; border: 3px solid rgba(255,255,255,.7); box-shadow: 0 6px 0 rgba(0,0,0,.5); }
+.fpsb small { font-size: 26px; margin-left: 4px; }
+.r { background: linear-gradient(180deg, #e8332a, #8a0f0a); } .y { background: linear-gradient(180deg, #f0a92a, #9a5a06); } .g { background: linear-gradient(180deg, #3ee07a, #0f8a3e); }
+.pn .lab { position: absolute; left: 0; right: 0; top: 0; padding: 10px; text-align: center; font: 700 22px/1.2 Man; color: #fff; background: linear-gradient(180deg, rgba(0,0,0,.75), transparent); }
 
-/* нюанс */
-.pct { font-size: 230px !important; }
-.fact { width: 920px; padding: 30px 36px; display: flex; align-items: center; gap: 26px; }
-.fact .fi { width: 90px; height: 90px; flex: none; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(214,178,90,.14); border: 2px solid rgba(214,178,90,.55); }
-.fact .ft { font: 800 38px/1.25 WowH; color: var(--cream); }
-.fact .ft b { color: var(--wowy); }
+/* консоль */
+.term { width: 960px; border-radius: 18px; overflow: hidden; border: 4px solid var(--gold); background: #0b0d0a; box-shadow: 0 18px 44px rgba(0,0,0,.65); }
+.term .bar { height: 44px; background: linear-gradient(180deg, #3a2410, #20140a); display: flex; align-items: center; gap: 10px; padding: 0 18px; font: 800 22px/1 WowH; color: var(--gold); }
+.term .bar i { width: 14px; height: 14px; border-radius: 50%; display: block; }
+.term .ln { font: 700 36px/1.5 Mono; color: #b9ff9e; padding: 0 26px; white-space: pre; min-height: 54px; }
+.term .ln:first-of-type { padding-top: 14px; } .term .ln:last-child { padding-bottom: 16px; }
+.term .ln .k { color: #ffd100; }
+.term .caret { display: inline-block; width: 18px; height: 38px; background: #b9ff9e; vertical-align: -6px; margin-left: 2px; }
+
+/* до/после */
+.wipe { position: relative; width: 960px; height: 980px; border-radius: 20px; overflow: hidden; border: 5px solid var(--gold); box-shadow: 0 18px 50px rgba(0,0,0,.7); }
+.wipe img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wipe #wAft { clip-path: inset(0 0 0 100%); }
+.wipe .line { position: absolute; top: 0; bottom: 0; width: 8px; margin-left: -4px; background: var(--gold); box-shadow: 0 0 24px rgba(255,209,0,.8); left: 100%; }
+.wipe .knob { position: absolute; top: 50%; width: 80px; height: 80px; margin: -40px 0 0 -40px; border-radius: 50%; background: linear-gradient(180deg, #ffe08a, #c08a1e); border: 5px solid #3a2410; left: 100%;
+  display: flex; align-items: center; justify-content: center; font: 900 34px/1 WowH; color: #3a2410; }
+.wipe .tg { position: absolute; top: 20px; }
+
+/* быстрые команды */
+.cmd { width: 960px; min-height: 150px; padding: 20px 28px; display: flex; align-items: center; gap: 24px; }
+.cmd .no { width: 76px; height: 76px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 900 42px/1 WowH; color: #2a1605; background: linear-gradient(180deg, #ffe08a, #c08a1e); border: 3px solid #3a2410; }
+.cmd .cc { font: 700 30px/1.25 Mono; color: #b9ff9e; }
+.cmd .cd { font: 800 36px/1.2 WowH; color: var(--cream); margin-top: 8px; }
+.cmd .cd b { color: var(--wowy); }
+
+/* предупреждения */
+.warn { width: 960px; padding: 26px 30px; display: flex; align-items: center; gap: 26px; }
+.warn .wi { width: 96px; height: 96px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: rgba(232,51,42,.16); border: 3px solid #e8332a; }
+.warn .wt { font: 800 40px/1.25 WowH; color: var(--cream); }
+.warn .wt b { color: var(--wowy); } .warn .wt code { font: 700 34px/1 Mono; color: #b9ff9e; }
+.stripes { position: absolute; left: 0; right: 0; height: 34px; background: repeating-linear-gradient(-45deg, #ffd100 0 34px, #1a1009 34px 68px); opacity: .9; }
+
+/* финал-воронка */
+.funnel { font: 900 60px/1.1 WowH !important; text-align: center; white-space: normal !important; width: 960px; }
+.funnel b { color: #ff5a4a; }
 
 /* субтитры: безопасная зона — выше кнопок соцсетей (снизу ~320px) и левее иконок справа (~140px) */
 #subs { position: absolute; left: 60px; width: 840px; top: 1405px; height: 190px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
@@ -246,74 +258,93 @@ html, body { background: #0b0705; }
 <body>
 <div id="view">
   <div id="bg"></div>
-  <div class="bgi" id="bgA" style="background-image:url(assets/news/bg_portal.jpg)"></div>
-  <div class="bgi" id="bgB" style="background-image:url(assets/news/bg_forest.jpg);opacity:0"></div>
+  <div class="bgi" id="bgA" style="background-image:url(assets/news/bg_path.jpg)"></div>
+  <div class="bgi" id="bgB" style="background-image:url(assets/news/bg_teldrassil.jpg);opacity:0"></div>
   <canvas id="embers" width="1080" height="1920"></canvas>
+  <canvas id="speed" width="1080" height="1920"></canvas>
   <svg id="star" viewBox="-100 -100 200 200"><path id="starp" fill="#3f0b63"/></svg>
   <div id="arc"></div>
   <div id="grid"></div>
   <div id="floor"></div>
 
   <div id="world">
-    <!-- 1. Хук: 9150 персонажей (кадр 0 уже полный — для ленты и для петли) -->
+    <!-- 1. Хук: 32 → 112 FPS, внутри сцены склейка ко второму кадру -->
     <section class="sec" id="s1">
-      <div class="row" style="top:40px"><img class="logo" id="lg1" src="assets/news/logo.png" alt="World of Warcraft: Forever" style="width:380px"></div>
-      <div class="row" style="top:300px"><div class="t3d yellow big9" id="n1" data-text="9150">9150</div></div>
-      <div class="row" style="top:590px"><div class="hsub" id="t1">персонажей за неделю бэты</div></div>
-      <div class="row" style="top:700px"><div class="stk" id="st1" data-anim="sticker_06_surprised_paladin.png" style="width:330px;height:330px"></div></div>
-      <div class="row" style="top:1080px"><div class="chip" id="k1">Альянс · PvE-сервер · данные аддона</div></div>
-      <div class="row" style="top:1190px"><div class="pill ask" id="p1">КЕМ ИГРАЕТ БЭТА?</div></div>
+      <div class="layer" id="s1a">
+        <div class="row" style="top:30px"><img class="logo" id="lg1" src="assets/news/logo.png" alt="World of Warcraft: Forever" style="width:330px"></div>
+        <div class="row" style="top:250px"><div class="t3d pink fpsn" id="n1" data-text="32">32</div></div>
+        <div class="row" style="top:600px"><div class="fpsl" id="l1">КАДРОВ В СЕКУНДУ</div></div>
+        <div class="row" style="top:770px"><div class="t3d yellow" id="q1" data-text="→ 112?" style="font-size:170px">→ 112?</div></div>
+        <div class="row" style="top:760px"><div class="x35" id="x1" style="opacity:0">×3,5</div></div>
+        <div class="row" style="top:1030px"><div class="chip" id="k1">одна команда в консоли · WoW Forever</div></div>
+        <div class="row" style="top:1140px"><div class="pill ask" id="p1">ОДНОЙ КОМАНДОЙ!</div></div>
+      </div>
+      <div class="layer" id="s1b" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" id="h1b"><div class="t3d yellow sm" data-text="32 → 112 FPS">32 → 112 FPS</div></div></div>
+        <div class="row" style="top:400px"><div class="panels">
+          <div class="pn" id="pa"><img src="assets/news/gfx_drs0.jpg" alt=""><div class="lab">выключено</div><div class="fpsb r">32<small>FPS</small></div></div>
+          <div class="pn" id="pb"><img src="assets/news/gfx_drs1.jpg" alt=""><div class="lab">мин. 1</div><div class="fpsb y">78<small>FPS</small></div></div>
+          <div class="pn" id="pc"><img src="assets/news/gfx_drs2.jpg" alt=""><div class="lab">мин. 0.5</div><div class="fpsb g">112<small>FPS</small></div></div>
+        </div></div>
+        <div class="row" style="top:900px"><div class="chip" id="k1b">Render Scale 200% · цель 120 FPS</div></div>
+      </div>
     </section>
 
-    <!-- 2. Классы -->
+    <!-- 2. Главная команда -->
     <section class="sec" id="s2">
-      <div class="row" style="top:170px"><div class="hdr" id="h2"><div class="t3d yellow sm" data-text="КЛАССЫ">КЛАССЫ</div></div></div>
-      <div class="row" style="top:370px"><div class="bars" id="cls"></div></div>
+      <div class="row" style="top:150px"><div class="hdr" id="h2"><div class="t3d yellow sm" data-text="КОМАНДА №1">КОМАНДА №1</div></div></div>
+      <div class="row" style="top:350px"><div class="term" id="tm2"><div class="bar"><i style="background:#e8332a"></i><i style="background:#f0a92a"></i><i style="background:#3ee07a"></i>&nbsp;чат WoW</div>
+        <div class="ln" id="t2a"></div><div class="ln" id="t2b"></div></div></div>
+      <div class="row" style="top:630px"><div class="panels" style="gap:20px">
+        <div class="pn" id="p2a" style="width:470px;height:640px"><img src="assets/news/gfx_drs0.jpg" alt=""><div class="lab">было</div><div class="fpsb r">32<small>FPS</small></div></div>
+        <div class="pn" id="p2b" style="width:470px;height:640px"><img src="assets/news/gfx_drs2.jpg" alt=""><div class="lab">стало</div><div class="fpsb g" id="f2b">112<small>FPS</small></div></div>
+      </div></div>
+      <div class="row" style="top:1295px"><div class="chip" id="k2">⚠ нужен лимит FPS в настройках графики</div></div>
     </section>
 
-    <!-- 3. Расы -->
+    <!-- 3. Освещение: шторка до/после -->
     <section class="sec" id="s3">
-      <div class="row" style="top:170px"><div class="hdr" id="h3"><div class="t3d yellow sm" data-text="РАСЫ">РАСЫ</div></div></div>
-      <div class="row" style="top:390px"><div class="bars" id="rcs" style="gap:22px"></div></div>
-      <div class="row" style="top:1270px"><div class="chip" id="k3">небеснорожденные — новая раса Forever</div></div>
+      <div class="row" style="top:150px"><div class="hdr" id="h3"><div class="t3d yellow sm" data-text="ОСВЕЩЕНИЕ">ОСВЕЩЕНИЕ</div></div></div>
+      <div class="row" style="top:340px"><div class="wipe" id="wp">
+        <img id="wBef" src="assets/news/gfx_light_low.jpg" alt=""><img id="wAft" src="assets/news/gfx_light_fair.jpg" alt="">
+        <div class="line" id="wLine"></div><div class="knob" id="wKnob">⇆</div>
+        <div class="tg tagw" style="left:20px;right:auto;top:20px">LOW · 82 FPS</div>
+        <div class="tg tagw gold" id="wTag" style="right:20px;top:20px">FAIR · 70 FPS</div>
+      </div></div>
     </section>
 
-    <!-- 4. Связки раса + класс -->
+    <!-- 4. Ещё 4 команды — быстрые карточки -->
     <section class="sec" id="s4">
-      <div class="row" style="top:170px"><div class="hdr" id="h4"><div class="t3d yellow sm" data-text="СВЯЗКИ">СВЯЗКИ</div></div></div>
-      <div class="row" style="top:400px"><div class="card combo" id="c4a">
-        <div class="rk">1</div>
-        <div class="ct"><div class="cn">Человек-паладин</div><div class="cs">самая популярная связка</div></div>
-        <div class="cv" id="v4a">0</div><div class="tagw gold">ТОП-1</div></div></div>
-      <div class="row" style="top:670px"><div class="card combo" id="c4b">
-        <div class="rk" style="background:linear-gradient(180deg,#5ec8ff,#1f6fb0);color:#fff">⚡</div>
-        <div class="ct"><div class="cn">Дворф-шаман</div><div class="cs">больше половины всех дворфов</div></div>
-        <div class="cv" id="v4b">0</div><div class="tagw blue">НОВИНКА FOREVER</div></div></div>
-      <div class="row" style="top:940px"><div class="card combo" id="c4c">
-        <div class="stk" data-anim="sticker_03_laughing_dwarf.png"></div>
-        <div class="ct"><div class="cn">Дворф-разбойник</div><div class="cs">реже всех</div></div>
-        <div class="cv" id="v4c" style="color:#ff6a5a">0</div><div class="tagw">РЕДКОСТЬ</div></div></div>
+      <div class="row" style="top:150px"><div class="hdr" id="h4"><div class="t3d yellow sm" data-text="ЕЩЁ 4 КОМАНДЫ">ЕЩЁ 4 КОМАНДЫ</div></div></div>
+      <div class="row" style="top:350px"><div class="card cmd" id="c4a"><div class="no">1</div><div><div class="cc" id="cc4a" data-cmd="/console horizonstart 4000"></div><div class="cd">туман уходит <b>дальше</b></div></div></div></div>
+      <div class="row" style="top:580px"><div class="card cmd" id="c4b"><div class="no">2</div><div><div class="cc" id="cc4b" data-cmd="/console shadowNumCascades 4"></div><div class="cd">тени мягче · <b>87 → 86 FPS</b></div></div></div></div>
+      <div class="row" style="top:810px"><div class="card cmd" id="c4c"><div class="no">3</div><div><div class="cc" id="cc4c" data-cmd="/console ResampleAlwaysSharpen 1"></div><div class="cd">картинка <b>резче</b></div></div></div></div>
+      <div class="row" style="top:1040px"><div class="card cmd" id="c4d"><div class="no">4</div><div><div class="cc" id="cc4d" data-cmd="/console groundEffectDensity 256"></div><div class="cd">трава <b>гуще</b></div></div></div></div>
     </section>
 
-    <!-- 5. Нюанс -->
+    <!-- 5. Важно -->
     <section class="sec" id="s5">
-      <div class="row" style="top:170px"><div class="hdr" id="h5"><div class="t3d pink sm" data-text="НО ЕСТЬ НЮАНС">НО ЕСТЬ НЮАНС</div></div></div>
-      <div class="row" style="top:390px"><div class="t3d yellow pct" id="n5" data-text="70%">70%</div></div>
-      <div class="row" style="top:680px"><div class="card fact" id="f5a">
-        <div class="fi"><svg width="54" height="54" viewBox="0 0 54 54"><path d="M8 22L27 9l19 13v4H8z" fill="#d6b25a"/><rect x="12" y="28" width="6" height="14" fill="#d6b25a"/><rect x="24" y="28" width="6" height="14" fill="#d6b25a"/><rect x="36" y="28" width="6" height="14" fill="#d6b25a"/><rect x="7" y="43" width="40" height="5" fill="#d6b25a"/></svg></div>
-        <div class="ft">данных — у <b>банка и аукциона</b><br>в Штормграде и Стальгорне</div></div></div>
-      <div class="row" style="top:920px"><div class="card fact" id="f5b">
-        <div class="fi"><svg width="54" height="54" viewBox="0 0 54 54"><path d="M4 27s9-14 23-14 23 14 23 14-9 14-23 14S4 27 4 27z" fill="none" stroke="#d6b25a" stroke-width="5"/><circle cx="27" cy="27" r="7" fill="#d6b25a"/><path d="M8 46L46 8" stroke="#e8332a" stroke-width="6" stroke-linecap="round"/></svg></div>
-        <div class="ft"><b>разбойников и друидов</b> в скрытности<br>аддон просто не видит</div></div></div>
-      <div class="row" style="top:1130px"><div class="stk" id="st5" data-anim="sticker_04_undead_drink.png" style="width:240px;height:240px"></div></div>
+      <div class="stripes" style="top:110px"></div>
+      <div class="row" style="top:190px"><div class="hdr" id="h5"><div class="t3d pink sm" data-text="ВАЖНО!">ВАЖНО!</div></div></div>
+      <div class="row" style="top:420px"><div class="card warn" id="w5a">
+        <div class="wi"><svg width="56" height="56" viewBox="0 0 56 56"><path d="M8 6h32l8 8v36H8z" fill="none" stroke="#ffd100" stroke-width="5" stroke-linejoin="round"/><rect x="16" y="6" width="20" height="14" fill="#ffd100"/><rect x="15" y="32" width="26" height="14" rx="2" fill="none" stroke="#ffd100" stroke-width="4"/></svg></div>
+        <div class="wt">сохрани копию <code>Config.wtf</code></div></div></div>
+      <div class="row" style="top:640px"><div class="card warn" id="w5b">
+        <div class="wi"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="20" fill="none" stroke="#ffd100" stroke-width="5"/><path d="M28 8a20 20 0 0 1 0 40z" fill="#ffd100"/></svg></div>
+        <div class="wt">тени — на <b>«Минимальное»</b>,<br>иначе новое освещение пропадает</div></div></div>
+      <div class="row" style="top:880px"><div class="card warn" id="w5c">
+        <div class="wi"><svg width="56" height="56" viewBox="0 0 56 56"><path d="M46 28a18 18 0 1 1-6-13.4" fill="none" stroke="#ffd100" stroke-width="5" stroke-linecap="round"/><path d="M42 6v11H31" fill="none" stroke="#ffd100" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="wt">часть настроек <b>сбрасывается</b><br>при смене графики и в рейде</div></div></div>
+      <div class="stripes" style="top:1150px"></div>
     </section>
 
-    <!-- 6. Вопрос + QR -->
+    <!-- 6. Воронка в бота -->
     <section class="sec" id="s6">
-      <div class="row" style="top:150px"><div class="cam" id="h6" style="font-size:78px">А ТЫ КЕМ ИГРАЕШЬ?</div></div>
-      <div class="row" style="top:290px"><div class="qrcard" id="qr"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
-      <div class="row" style="top:1040px"><div class="pill tg" id="p6">@goldfarm_xbot</div></div>
-      <div class="row" style="top:1150px"><div class="note" id="f6" style="font-size:32px">пиши свой класс в комментах</div></div>
+      <div class="row" style="top:30px"><img class="logo" id="lg6" src="assets/news/logo.png" alt="" style="width:280px"></div>
+      <div class="row" style="top:215px"><div class="cam funnel" id="h6">ХОЧЕШЬ УЗНАТЬ <b>ЗАПРЕТНЫЕ</b> МЕТОДЫ ФАРМА?</div></div>
+      <div class="row" style="top:400px"><div class="qrcard" id="qr"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
+      <div class="row" style="top:1130px"><div class="pill tg" id="p6">@goldfarm_xbot</div></div>
+      <div class="row" style="top:1245px"><div class="note" id="f6" style="font-size:36px;color:var(--wowy)">пройди тест в tg</div></div>
     </section>
   </div>
 

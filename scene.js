@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [4, 4.5, 4.5, 5, 5, 3.5];
+const MIN = [2.9, 6.5, 4, 5.5, 5, 4.5];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -11,23 +11,8 @@ const sfx = (t, type, o = {}) => SFX.push({ t: +t.toFixed(3), type, ...o });
 const mk = (i, k, def) => SC[i].marks?.[k] ?? SC[i].start + def;   // метка из озвучки или запасное время
 
 const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
-const P = { cam: 0, mb: 0, fade: 0, flash: 0, pct: 70 };
-// данные из графиков игрока (9150 уникальных персонажей Альянса, неделя бэты Forever)
-const CLASSES = [['Паладин', 1349, 14.7, '#F58CBA'], ['Охотник', 1324, 14.5, '#ABD473'], ['Маг', 1238, 13.5, '#3FC7EB'],
-  ['Воин', 1128, 12.3, '#C79C6E'], ['Жрец', 977, 10.7, '#FFFFFF'], ['Шаман', 963, 10.5, '#0070DE'],
-  ['Друид', 859, 9.4, '#FF7D0A'], ['Чернокнижник', 751, 8.2, '#8787ED'], ['Разбойник', 561, 6.1, '#FFF569']];
-const RACES = [['Люди', 2878, 31.5, '#e3bd5e'], ['Дворфы', 1845, 20.2, '#b8733c'], ['Небесно­рожденные', 1768, 19.3, '#5ec8ff'],
-  ['Гномы', 1653, 18.1, '#e98bd0'], ['Ночные эльфы', 1006, 11.0, '#9b7bff']];
-const COMBOS = [1018, 963, 22];
-const CV = CLASSES.map(() => ({ v: 0 })), RV = RACES.map(() => ({ v: 0 })), KV = COMBOS.map(() => ({ v: 0 }));
-const buildBars = (id, data, big) => {
-  $(id).innerHTML = data.map(([n, , , c], k) => `<div class="br${big ? ' big' : ''}" id="${id}${k}">
-    <div class="nm"${n.length > 10 ? ' style="font-size:' + (big ? 34 : 27) + 'px"' : ''}>${n}</div>
-    <div class="tr"><div class="fl" id="${id}f${k}" style="background:linear-gradient(90deg, ${c}cc, ${c})"></div></div>
-    <div class="vl" id="${id}v${k}">0</div></div>`).join('');
-};
-buildBars('cls', CLASSES, false); buildBars('rcs', RACES, true);
-const addTag = (row, text, cls = '') => { const d = document.createElement('div'); d.className = 'tagw ' + cls; d.textContent = text; $(row).appendChild(d); return d; };
+const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, fps: 32, t2a: 0, t2b: 0, w: 100, c4a: 0, c4b: 0, c4c: 0, c4d: 0 };
+const T2A = '/console DynamicRenderScale 1', T2B = '/console DynamicRenderScaleMin 0.5';
 
 document.querySelectorAll('.sec').forEach((s, i) => (s.style.top = i * H + 'px'));
 
@@ -81,122 +66,144 @@ const glow = (el, t) => tl.fromTo(el, { boxShadow: '0 0 0 0px rgba(79,227,178,0)
   { boxShadow: '0 0 0 7px rgba(79,227,178,1), 0 18px 0 rgba(30,0,60,.18), 0 26px 60px rgba(40,230,160,.45)', duration: .35 }, t);
 const ticks = (t0, d, n, f0 = 1, f1 = 1.6) => { for (let k = 0; k < n; k++) sfx(t0 + d * k / n, 'tick', { f: f0 + (f1 - f0) * k / n, g: .7 }); };
 
-// камера: переход в сцену i занимает [start-0.5, start+0.2]
+// камера: быстрый переход (0.5 с) со вспышкой и линиями скорости
 for (let i = 1; i < SC.length; i++) {
-  const t = SC[i].start - .5;
-  tl.fromTo(P, { cam: (i - 1) * H }, { cam: i * H, duration: .7, ease: 'power3.inOut', immediateRender: false }, t);
-  tl.fromTo(P, { mb: 0 }, { mb: 28, duration: .35, ease: 'power2.in', immediateRender: false }, t);
-  tl.to(P, { mb: 0, duration: .35, ease: 'power2.out' }, t + .35);
+  const t = SC[i].start - .4;
+  tl.fromTo(P, { cam: (i - 1) * H }, { cam: i * H, duration: .5, ease: 'power4.inOut', immediateRender: false }, t);
+  tl.fromTo(P, { mb: 0 }, { mb: 34, duration: .25, ease: 'power2.in', immediateRender: false }, t);
+  tl.to(P, { mb: 0, duration: .25, ease: 'power2.out' }, t + .25);
+  tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .05);
+  tl.fromTo(P, { flash: .55 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .45);
   const c = CONN[i - 1];
-  tl.fromTo(c.el, { height: 0, opacity: 0 }, { height: c.len, opacity: 1, duration: .55, ease: 'power2.inOut', immediateRender: false }, t + .05);
-  sfx(t, 'whoosh', { d: .62 });
+  tl.fromTo(c.el, { height: 0, opacity: 0 }, { height: c.len, opacity: 1, duration: .45, ease: 'power2.inOut', immediateRender: false }, t + .05);
+  sfx(t, 'whoosh', { d: .5 }); sfx(t + .45, 'thump', { g: .55 });
 }
 const hdr = (i, el) => { pop(el, SC[i].start + .02, { s: .7, d: .5 }); sfx(SC[i].start + .02, 'thump', { g: .8 }); };
 
 const glowC = (el, t, rgb) => tl.fromTo(el, { boxShadow: `0 0 0 0px rgba(${rgb},0), 0 0 0 rgba(${rgb},0)` },
-  { boxShadow: `0 0 0 5px rgba(${rgb},1), 0 0 44px rgba(${rgb},.5)`, duration: .3, immediateRender: false }, t);
-const grow = (fill, obj, val, max, t, d = .7) => {
-  tl.fromTo(fill, { width: '0%' }, { width: (val / max * 100).toFixed(1) + '%', duration: d, ease: 'power3.out', immediateRender: false }, t);
-  tl.fromTo(obj, { v: 0 }, { v: val, duration: d, ease: 'power3.out', immediateRender: false }, t);
-};
+  { boxShadow: `0 0 0 6px rgba(${rgb},1), 0 0 50px rgba(${rgb},.55)`, duration: .3, immediateRender: false }, t);
 const hide = (el) => tl.set(el, { opacity: 0 }, 0);
+const flashAt = (t, v = .8, d = .35) => tl.fromTo(P, { flash: v }, { flash: 0, duration: d, ease: 'power2.out', immediateRender: false }, t);
+const speedAt = (t, d = .6) => tl.fromTo(P, { spd: 1 }, { spd: 0, duration: d, ease: 'power2.out', immediateRender: false }, t);
+const slamIn = (el, t, s0 = 2.6) => tl.fromTo(el, { scale: s0, opacity: 0 }, { scale: 1, opacity: 1, duration: .24, ease: 'power3.in', immediateRender: false }, t);
+const typeOut = (key, t, d, n) => {   // печать команды + щелчки клавиш
+  tl.fromTo(P, { [key]: 0 }, { [key]: 1, duration: d, ease: 'none', immediateRender: false }, t);
+  for (let k = 0; k < n; k += 3) sfx(t + d * k / n, 'tick', { f: 1.3 + (k % 7) * .05, g: .45 });
+};
 
-// ================================================================ 1. хук: кадр 0 уже полный, удар в первые 0.05 с
+// ================================================================ 1. хук: три удара за 3 секунды
 {
-  const a = mk(0, 'a', 1.7), b = mk(0, 'b', 3.0), h = .04;
-  tl.fromTo(P, { flash: .95 }, { flash: 0, duration: .45, ease: 'power2.out', immediateRender: false }, h);
-  tl.fromTo('#n1', { scale: 1.45 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, h);
-  tl.fromTo('#st1', { scale: .6, rotation: -14 }, { scale: 1, rotation: 0, duration: .6, ease: 'back.out(2.6)', immediateRender: false }, h + .05);
-  shake('#s1', h); sfx(h, 'impact', { g: .9 }); sfx(h, 'thump'); sfx(h + .1, 'sparkle');
-  pulse('#n1', Math.max(h + .7, a - .05), 1.12); sfx(Math.max(h + .7, a - .05), 'coin');
-  pulse('#p1', Math.max(h + 1.2, b - .05), 1.12); sfx(Math.max(h + 1.2, b - .05), 'pop', { f: 1.2 });
+  const h = .04, CUT = 1.75;
+  hide('#x1'); hide('#s1b');
+  flashAt(h, .95, .45); speedAt(h, .8);
+  tl.fromTo('#n1', { scale: 1.55 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, h);
+  pulse('#q1', .5, 1.12); pulse('#q1', .8, 1.12);
+  tl.fromTo('#l1', { scale: 1.3, opacity: .3 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(2)', immediateRender: false }, h + .05);
+  shake('#s1a', h); sfx(h, 'impact', { g: .9 }); sfx(h, 'thump');
+  // счётчик 32 → 112 с разгоном
+  tl.fromTo(P, { fps: 32 }, { fps: 112, duration: .8, ease: 'power2.in', immediateRender: false }, .25);
+  ticks(.25, .8, 14, 1, 2.2);
+  pulse('#n1', 1.05, 1.18); flashAt(1.05, .6, .3); speedAt(1.05, .5); sfx(1.05, 'success');
+  // печать ×3,5
+  tl.to('#q1', { opacity: 0, scale: .6, duration: .12, immediateRender: false }, 1.0);
+  slamIn('#x1', 1.12); shake('#s1a', 1.36); sfx(1.34, 'impact', { g: .7 }); sfx(1.36, 'bonk', { g: .5 });
+  pulse('#p1', 1.45, 1.14);
+  // склейка ко второму кадру: сравнение трёх скриншотов
+  tl.set('#s1a', { opacity: 0 }, CUT); tl.set('#s1b', { opacity: 1 }, CUT);
+  flashAt(CUT, 1, .35); speedAt(CUT, .6); sfx(CUT - .08, 'whoosh', { d: .3 }); sfx(CUT, 'impact', { g: .5 });
+  pop('#h1b', CUT, { s: 1.6, o: 0, d: .4, ease: 'back.out(2.2)' });
+  [['#pa', -1], ['#pb', 0], ['#pc', 1]].forEach(([id, dx], k) => {
+    pop(id, CUT + .08 + k * .1, { y: 260, x: dx * 80, r: dx * 8, s: .7, d: .45, ease: 'back.out(1.6)' });
+    sfx(CUT + .08 + k * .1, 'pop', { f: 1 + k * .15 });
+  });
+  glowC('#pc', CUT + .55, '62,224,122'); pulse('#pc', CUT + .55, 1.06); sfx(CUT + .55, 'ding');
+  pop('#k1b', CUT + .5, { s: .7 });
+  tl.fromTo('#s1b .panels', { scale: 1 }, { scale: 1.06, duration: 1.4, ease: 'none', immediateRender: false }, CUT + .5);
 }
 
-// ================================================================ 2. классы
+// ================================================================ 2. команда №1
 {
-  const s = SC[1].start, a = mk(1, 'a', .9), b = mk(1, 'b', 3.0);
+  const s = SC[1].start, a = mk(1, 'a', .5), b = mk(1, 'b', 2.8), c = mk(1, 'c', 4.8);
   hdr(1, '#h2');
-  const max = CLASSES[0][1];
-  CLASSES.forEach((c, k) => {
-    const t = s + .2 + k * .06;
-    pop('#cls' + k, t, { x: -120, s: .95, d: .4, ease: 'back.out(1.4)' });
-    grow('#clsf' + k, CV[k], c[1], max, t + .12, .75);
-    if (k % 2 === 0) sfx(t, 'tick', { f: 1 + k * .08, g: .6 });
-  });
-  const top = addTag('cls0', 'ТОП-1', 'gold'), last = addTag('cls8', 'ПОСЛЕДНИЙ');
-  hide(top); hide(last);
-  const a0 = Math.max(s + .9, a - .05);
-  pop(top, a0, { s: .3, d: .35 }); glowC('#cls0', a0, '255,209,0'); pulse('#cls0', a0, 1.04); sfx(a0, 'success');
-  const b0 = Math.max(a0 + .8, b - .05);
-  pop(last, b0, { s: .3, d: .35 }); glowC('#cls8', b0, '232,51,42'); shake('#cls8', b0); sfx(b0, 'bonk');
+  pop('#tm2', s + .12, { y: 80, s: .9, d: .4 }); sfx(s + .12, 'pop');
+  const ta = Math.max(s + .3, a - .15), da = .9;
+  typeOut('t2a', ta, da, T2A.length);
+  typeOut('t2b', ta + da + .15, .9, T2B.length);
+  hide('#p2a'); hide('#p2b'); hide('#k2');
+  const b0 = Math.max(ta + da + 1.1, b - .25);
+  pop('#p2a', b0, { x: -220, r: -8, s: .8, d: .45, ease: 'back.out(1.6)' }); sfx(b0, 'pop');
+  pop('#p2b', b0 + .15, { x: 220, r: 8, s: .8, d: .45, ease: 'back.out(1.6)' }); sfx(b0 + .15, 'pop', { f: 1.2 });
+  glowC('#p2b', b0 + .6, '62,224,122'); pulse('#f2b', b0 + .6, 1.25); flashAt(b0 + .6, .4, .3); sfx(b0 + .6, 'success');
+  const c0 = Math.max(b0 + 1.1, c - .1);
+  pop('#k2', c0, { s: .6 }); shake('#k2', c0 + .3); sfx(c0, 'bonk', { g: .7 });
 }
 
-// ================================================================ 3. расы
+// ================================================================ 3. освещение: шторка до/после
 {
-  const s = SC[2].start, a = mk(2, 'a', .9), b = mk(2, 'b', 2.8);
+  const s = SC[2].start, a = mk(2, 'a', .6), b = mk(2, 'b', 2.2);
   hdr(2, '#h3');
-  const max = RACES[0][1];
-  RACES.forEach((r, k) => {
-    const t = s + .2 + k * .08;
-    pop('#rcs' + k, t, { x: 120, s: .95, d: .4, ease: 'back.out(1.4)' });
-    grow('#rcsf' + k, RV[k], r[1], max, t + .12, .8);
-    sfx(t, 'tick', { f: 1 + k * .1, g: .6 });
-  });
-  const third = addTag('rcs0', 'ПОЧТИ ТРЕТЬ', 'gold'), fresh = addTag('rcs2', 'НОВАЯ РАСА', 'blue');
-  hide(third); hide(fresh); hide('#k3');
-  const a0 = Math.max(s + .9, a - .05);
-  pop(third, a0, { s: .3, d: .35 }); glowC('#rcs0', a0, '255,209,0'); pulse('#rcs0', a0, 1.04); sfx(a0, 'success');
-  const b0 = Math.max(a0 + .8, b - .05);
-  pop(fresh, b0, { s: .3, d: .35 }); glowC('#rcs2', b0, '94,200,255'); pulse('#rcs2', b0, 1.04); sfx(b0, 'blip', { f: 1.3 });
-  pop('#k3', b0 + .3, { s: .8 }); sfx(b0 + .3, 'pop');
+  pop('#wp', s + .12, { s: .85, d: .45 }); sfx(s + .12, 'pop');
+  hide('#wTag');
+  const a0 = Math.max(s + .5, a - .1);
+  shake('#wp', a0); sfx(a0, 'bonk', { g: .6 });
+  const b0 = Math.max(a0 + .6, b - .3);
+  tl.fromTo(P, { w: 100 }, { w: 42, duration: .9, ease: 'power3.inOut', immediateRender: false }, b0);
+  sfx(b0, 'zip', { d: .8 }); speedAt(b0 + .1, .5);
+  pop('#wTag', b0 + .7, { s: .3, d: .35 }); flashAt(b0 + .8, .35, .3); sfx(b0 + .8, 'sparkle');
+  tl.fromTo('#wp', { scale: 1 }, { scale: 1.04, duration: 1.2, ease: 'none', immediateRender: false }, b0 + .9);
 }
 
-// ================================================================ 4. связки
+// ================================================================ 4. ещё 4 команды — пулемётом
 {
-  const s = SC[3].start, a = mk(3, 'a', .7), b = mk(3, 'b', 2.4), c = mk(3, 'c', 3.9);
+  const s = SC[3].start;
   hdr(3, '#h4');
   let prev = s + .15;
-  [['#c4a', a, '255,209,0', 'success'], ['#c4b', b, '94,200,255', 'sparkle'], ['#c4c', c, '232,51,42', 'bonk']].forEach(([id, m, rgb, snd], k) => {
-    const t = Math.max(prev + .5, m - .15); prev = t;
+  ['a', 'b', 'c', 'd'].forEach((k, n) => {
+    const t = Math.max(prev + .55, mk(3, k, .5 + n * 1.1) - .15); prev = t;
+    const id = '#c4' + k;
     hide(id);
-    pop(id, t, { x: k % 2 ? 160 : -160, s: .9, d: .45, ease: 'back.out(1.5)' }); sfx(t, 'pop', { f: 1 + k * .15 });
-    tl.fromTo(KV[k], { v: 0 }, { v: COMBOS[k], duration: .7, ease: 'power3.out', immediateRender: false }, t + .1);
-    ticks(t + .1, .6, 6, 1.1, 1.6);
-    glowC(id, t + .8, rgb); sfx(t + .8, snd);
-    if (k === 2) shake(id, t + .8);
+    pop(id, t, { x: n % 2 ? -260 : 260, r: n % 2 ? -6 : 6, s: .85, d: .38, ease: 'back.out(1.7)' });
+    sfx(t, 'swoosh', { f: 1 + n * .1 }); speedAt(t, .35);
+    typeOut('c4' + k, t + .15, .45, 26);
+    glowC(id, t + .6, '255,209,0'); sfx(t + .6, 'check', { g: .8 });
   });
 }
 
-// ================================================================ 5. нюанс
+// ================================================================ 5. важно
 {
-  const s = SC[4].start, a = mk(4, 'a', .9), b = mk(4, 'b', 3.2);
-  hdr(4, '#h5');
-  pop('#n5', s + .2, { s: 1.6, o: 0, d: .5, ease: 'back.out(2.4)' }); shake('#s5', s + .3); sfx(s + .25, 'impact', { g: .6 });
-  tl.fromTo(P, { pct: 0 }, { pct: 70, duration: .6, ease: 'power3.out', immediateRender: false }, s + .2);
-  hide('#f5a'); hide('#f5b'); hide('#st5');
-  const a0 = Math.max(s + .7, a - .1);
-  pop('#f5a', a0, { x: -140, s: .9, d: .45 }); sfx(a0, 'pop');
-  const b0 = Math.max(a0 + .9, b - .1);
-  pop('#f5b', b0, { x: 140, s: .9, d: .45 }); sfx(b0, 'pop', { f: 1.2 });
-  pop('#st5', b0 + .3, { s: .3, d: .5, ease: 'back.out(2.2)' }); sfx(b0 + .3, 'blip');
+  const s = SC[4].start, a = mk(4, 'a', .5), b = mk(4, 'b', 2.4);
+  tl.fromTo('#s5 .stripes', { x: -1100 }, { x: 0, duration: .45, ease: 'power3.out', immediateRender: false, stagger: .08 }, s + .02);
+  pop('#h5', s + .05, { s: 1.8, o: 0, d: .4, ease: 'back.out(2.4)' }); shake('#s5', s + .3); sfx(s + .05, 'impact', { g: .7 });
+  hide('#w5a'); hide('#w5b'); hide('#w5c');
+  const a0 = Math.max(s + .45, a - .1);
+  pop('#w5a', a0, { x: -240, s: .9, d: .4, ease: 'back.out(1.6)' }); sfx(a0, 'blip');
+  const b0 = Math.max(a0 + .7, b - .15);
+  pop('#w5b', b0, { x: 240, s: .9, d: .4, ease: 'back.out(1.6)' }); glowC('#w5b', b0 + .4, '232,51,42'); shake('#w5b', b0 + .45); sfx(b0 + .4, 'bonk');
+  pop('#w5c', b0 + .9, { x: -240, s: .9, d: .4, ease: 'back.out(1.6)' }); sfx(b0 + .9, 'blip', { f: .8 });
 }
 
-// ================================================================ 6. вопрос + QR, в конце — перелёт к первому кадру (петля)
+// ================================================================ 6. воронка в бота + перелёт к первому кадру (петля)
 {
-  const s = SC[5].start, a = mk(5, 'a', 1.8);
-  pop('#h6', s + .02, { s: .7 }); sfx(s + .02, 'thump', { g: .8 });
-  pop('#qr', s + .15, { s: .75, d: .55 }); sfx(s + .15, 'pop', { f: .9 });
+  const s = SC[5].start, a = mk(5, 'a', 2.2);
+  pop('#lg6', s, { s: .7, d: .45 });
+  pop('#h6', s + .05, { s: 1.5, o: 0, d: .45, ease: 'back.out(2)' }); sfx(s + .05, 'thump', { g: .8 });
+  pop('#qr', s + .2, { s: .75, d: .5 }); sfx(s + .2, 'pop', { f: .9 });
   tl.fromTo('#qrsvg .qm', { opacity: 0, scale: .2, transformOrigin: '50% 50%' },
-    { opacity: 1, scale: 1, duration: .3, ease: 'back.out(2)', stagger: { each: 0, from: 'center', amount: .5 } }, s + .25);
-  tl.fromTo('#qrsvg .qf', { opacity: 0 }, { opacity: 1, duration: .25 }, s + .3);
-  ticks(s + .25, .5, 6, 1.2, 1.9);
-  pop('#qrlogo', s + .65, { s: .2, d: .5, ease: 'back.out(2.5)' }); sfx(s + .65, 'pop', { f: 1.3 });
-  pop('#p6', s + .8, { s: .6 }); sfx(s + .8, 'blip', { f: 1.2 });
-  fadeUp('#f6', s + 1.0);
-  pulse('#p6', Math.max(s + 1.2, a), 1.12); sfx(Math.max(s + 1.2, a), 'ding', { f: 1.2 });
+    { opacity: 1, scale: 1, duration: .3, ease: 'back.out(2)', stagger: { each: 0, from: 'center', amount: .5 } }, s + .3);
+  tl.fromTo('#qrsvg .qf', { opacity: 0 }, { opacity: 1, duration: .25 }, s + .35);
+  ticks(s + .3, .5, 6, 1.2, 1.9);
+  pop('#qrlogo', s + .7, { s: .2, d: .5, ease: 'back.out(2.5)' }); sfx(s + .7, 'pop', { f: 1.3 });
+  pop('#p6', s + .85, { s: .6 }); sfx(s + .85, 'blip', { f: 1.2 });
+  fadeUp('#f6', s + 1.05);
+  const a0 = Math.max(s + 1.3, a);
+  pulse('#p6', a0, 1.14); pulse('#qr', a0 + .1, 1.04); sfx(a0, 'ding', { f: 1.2 });
   const L0 = DUR - LOOP;
   tl.fromTo(P, { cam: 5 * H }, { cam: 0, duration: LOOP, ease: 'power3.in', immediateRender: false }, L0);
   tl.fromTo(P, { mb: 0 }, { mb: 60, duration: LOOP * .8, ease: 'power2.in', immediateRender: false }, L0);
+  speedAt(L0, LOOP);
+  // возвращаем первый кадр в исходное состояние — приземление совпадёт с кадром 0
+  tl.set('#s1a', { opacity: 1 }, L0); tl.set('#s1b', { opacity: 0 }, L0); tl.set('#x1', { opacity: 0 }, L0); tl.set('#q1', { opacity: 1, scale: 1 }, L0);
+  tl.set(P, { fps: 32 }, L0);
   tl.set(P, { mb: 0 }, DUR);
   sfx(L0, 'whoosh', { d: LOOP + .1 });
 }
@@ -234,7 +241,7 @@ async function loadStickers() {
 }
 
 // ---------------------------------------------------------------- фон: скриншоты игры + искры
-const BG_FOREST = [0, 1, 1, 0, 1, 0];          // 0 — Тёмный портал, 1 — лес (по сценам)
+const BG_FOREST = [0, 0, 1, 1, 0, 1];          // 0 — тропа (bgA), 1 — Тельдрассил (bgB)
 const EMB = [...Array(70)].map((_, k) => {     // детерминированные искры (одинаковые при каждом рендере)
   const r = n => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
   return { x: r(1) * 1080, sp: 40 + r(2) * 90, sz: 1.5 + r(3) * 3.5, ph: r(4) * 1920, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
@@ -249,6 +256,22 @@ function drawEmbers(t) {
     g.addColorStop(0, `rgba(255,214,120,${e.a})`); g.addColorStop(1, 'rgba(255,140,40,0)');
     emb.fillStyle = g; emb.beginPath(); emb.arc(x, y, e.sz * 3, 0, 7); emb.fill();
   }
+}
+
+// ---------------------------------------------------------------- линии скорости (детерминированные)
+const spc = document.getElementById('speed').getContext('2d');
+const SPL = [...Array(90)].map((_, k) => { const r = n => { const x = Math.sin(k * 91.7 + n * 47.3) * 43758.5453; return x - Math.floor(x); };
+  return { a: r(1) * Math.PI * 2, w: 2 + r(2) * 6, r0: 420 + r(3) * 260, len: 300 + r(4) * 700, sp: r(5) }; });
+function drawSpeed(t) {
+  spc.clearRect(0, 0, 1080, 1920);
+  if (P.spd < .02) return;
+  spc.save(); spc.translate(540, 820);
+  for (const l of SPL) {
+    const o = ((t * 3 + l.sp) % 1) * 200, r0 = l.r0 + o, r1 = r0 + l.len;
+    spc.strokeStyle = `rgba(255,236,190,${(P.spd * .55).toFixed(3)})`; spc.lineWidth = l.w;
+    spc.beginPath(); spc.moveTo(Math.cos(l.a) * r0, Math.sin(l.a) * r0); spc.lineTo(Math.cos(l.a) * r1, Math.sin(l.a) * r1); spc.stroke();
+  }
+  spc.restore();
 }
 
 // ---------------------------------------------------------------- субтитры: по 1–3 слова, текущее слово золотое
@@ -313,11 +336,24 @@ function apply(t) {
   $('bgA').style.transform = kb; $('bgB').style.transform = kb;
   drawEmbers(t);
   $('flash').style.opacity = P.flash.toFixed(3);
-  // числа на графиках
-  CLASSES.forEach((c, k) => ($('clsv' + k).innerHTML = `${Math.round(CV[k].v)}<small>${(CV[k].v / c[1] * c[2]).toFixed(1).replace('.', ',')}%</small>`));
-  RACES.forEach((r, k) => ($('rcsv' + k).innerHTML = `${Math.round(RV[k].v)}<small>${(RV[k].v / r[1] * r[2]).toFixed(1).replace('.', ',')}%</small>`));
-  ['v4a', 'v4b', 'v4c'].forEach((id, k) => ($(id).textContent = Math.round(KV[k].v)));
-  const pc = Math.round(P.pct) + '%'; if ($('n5').textContent !== pc) { $('n5').textContent = pc; $('n5').dataset.text = pc; }
+  // счётчик FPS: красный → зелёный
+  const fv = Math.round(P.fps) + '';
+  if ($('n1').textContent !== fv) { $('n1').textContent = fv; $('n1').dataset.text = fv; }
+  const green = P.fps >= 100, n1s = $('n1').style;
+  n1s.setProperty('--c1', green ? '#c8ffd8' : '#ffd0b8'); n1s.setProperty('--c2', green ? '#1fd060' : '#e8332a'); n1s.setProperty('--ex', green ? '#063a18' : '#3e0703');
+  // печать команд
+  const typed = (el, txt, p) => {
+    const n = Math.round(p * txt.length), cmd = txt.slice(0, n).replace(/^(\/console)/, '<span class="k">$1</span>');
+    el.innerHTML = cmd + (p > 0 && p < 1 || (p >= 1 && Math.floor(t * 3) % 2 === 0 && el.dataset.last === '1') ? '<span class="caret"></span>' : '');
+  };
+  $('t2a').dataset.last = P.t2b > 0 ? '0' : '1'; $('t2b').dataset.last = '1';
+  typed($('t2a'), T2A, P.t2a); typed($('t2b'), T2B, P.t2b);
+  ['a', 'b', 'c', 'd'].forEach(k => { const el = $('cc4' + k); el.dataset.last = '0'; typed(el, el.dataset.cmd, P['c4' + k]); });
+  // шторка до/после
+  $('wAft').style.clipPath = `inset(0 0 0 ${P.w.toFixed(2)}%)`;
+  $('wLine').style.left = P.w.toFixed(2) + '%'; $('wKnob').style.left = P.w.toFixed(2) + '%';
+  $('wLine').style.opacity = $('wKnob').style.opacity = P.w > 99.5 ? 0 : 1;
+  drawSpeed(t);
   subs(t);
   // картинки-стикеры слегка покачиваются
   IMGS.forEach((im, k) => (im.style.transform = `rotate(${(4 * Math.sin(t * 2.4 + k * 1.7)).toFixed(2)}deg) scale(${(1 + .03 * Math.sin(t * 3.1 + k)).toFixed(3)})`));

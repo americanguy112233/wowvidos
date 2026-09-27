@@ -123,12 +123,11 @@ def tts_edge(i, text, prev, nxt):
     # кэш: уже озвученная реплика с тем же текстом/голосом/темпом берётся с диска, без запроса к Microsoft
     cdir = os.path.join(HERE, 'voice_cache'); os.makedirs(cdir, exist_ok=True)
     key = hashlib.sha1(f'{text}|{EDGE_VOICE.lower()}|raw'.encode('utf-8')).hexdigest()[:16]
-    cmp3, cjs = os.path.join(cdir, key + '.mp3'), os.path.join(cdir, key + '.json')
-    if os.path.exists(cmp3) and os.path.exists(cjs) and os.path.getsize(cmp3) > 1000:
+    cwav, cjs = os.path.join(cdir, key + '.wav'), os.path.join(cdir, key + '.json')
+    if os.path.exists(cwav) and os.path.exists(cjs) and os.path.getsize(cwav) > 1000:
         print(f'  реплика {i + 1}: из кэша')
-        words = [tuple(w) for w in json.load(open(cjs, encoding='utf-8'))]
-        return edge_finish(i, text, open(cmp3, 'rb').read(), words)
-    if i == 0 or not getattr(tts_edge, 'checked', False):   # имя голоса без учёта регистра: ru-ru-dmitryneural → ru-RU-DmitryNeural
+        return edge_finish(i, text, cwav, [tuple(w) for w in json.load(open(cjs, encoding='utf-8'))])
+    if not getattr(tts_edge, 'checked', False):   # имя голоса без учёта регистра: ru-ru-dmitryneural → ru-RU-DmitryNeural
         try:
             names = [x['ShortName'] for x in asyncio.run(edge_tts.list_voices())]
             fix = {n.lower(): n for n in names}
@@ -137,54 +136,74 @@ def tts_edge(i, text, prev, nxt):
         except Exception as e:
             print('Не получил список голосов:', e)
         tts_edge.checked = True
-    words = []
-    def simple(s):   # запасной вариант текста: без тире и символов, которые иногда ломают синтез
-        s = s.replace('—', ',').replace('–', ',').replace('%', ' процентов').replace('Топ-1', 'Топ один')
-        return re.sub(r'\s+,', ',', s)
-    async def run(kw, txt):
+
+    async def run(txt, words):
         try:
-            c = edge_tts.Communicate(txt, EDGE_VOICE, boundary='WordBoundary', **kw)
+            c = edge_tts.Communicate(txt, EDGE_VOICE, boundary='WordBoundary')
         except TypeError:                      # старые версии edge-tts: слова приходят и так
-            c = edge_tts.Communicate(txt, EDGE_VOICE, **kw)
+            c = edge_tts.Communicate(txt, EDGE_VOICE)
         audio = bytearray()
         async for ch in c.stream():
             if ch['type'] == 'audio': audio += ch['data']
             elif ch['type'] == 'WordBoundary': words.append((ch['offset'] / 1e7, ch['text']))
         return bytes(audio)
-    data, err = None, ''
+
+    err = ['']
+    def synth(txt, waits, label):
+        """Один запрос к Microsoft с повторами. Темп не передаём — сервер часто отвергает такие запросы."""
+        for n, w in enumerate(waits):
+            if w:
+                print(f'  {label}: сервер не отдал звук, жду {w} с ({n + 1}/{len(waits)})…')
+                time.sleep(w)
+            words = []
+            try:
+                data = asyncio.run(run(txt, words))
+                if data: return data, words
+            except Exception as e:
+                err[0] = f'{type(e).__name__}: {e}'
+        return None
+
+    def decode(data, k):
+        p = os.path.join(a.work, f'cue{i}_part{k}.mp3'); open(p, 'wb').write(data)
+        return to_wav48(p, os.path.join(a.work, f'cue{i}_part{k}.wav'))
+
     if getattr(tts_edge, 'asked', False): time.sleep(1.5)   # пауза между репликами — реже упираемся в лимит сервера
     tts_edge.asked = True
-    # темп в запросе не передаём: сервер Microsoft часто отвергает такие запросы; ускоряем локально (EDGE_RATE → atempo)
-    plans = [{}] * 8
-    waits = [0, 3, 6, 10, 15, 20, 30, 45]
-    texts_try = [text, text, simple(text), text, simple(text), simple(text), text, simple(text)]
-    for n, (kw, w, txt) in enumerate(zip(plans, waits, texts_try)):
-        if w:
-            print(f'  реплика {i + 1}: сервер не отдал звук, жду {w} с и пробую ещё раз ({n + 1}/{len(plans)})…')
-            time.sleep(w)
-        words.clear()
-        try:
-            data = asyncio.run(run(kw, txt))
-            if data: break
-        except Exception as e:
-            err = f'{type(e).__name__}: {e}'
-    if not data:
-        raise SystemExit(f'edge-tts не вернул звук ({EDGE_VOICE}): {err}\n'
-                         'Похоже, Microsoft временно ограничил запросы. Подожди 10–15 минут и запусти снова:\n'
-                         'уже готовые реплики возьмутся из кэша (папка voice_cache) и повторно не запрашиваются.\n'
-                         'Если не помогает и через час — запусти .\\.venv\\scripts\\python.exe edge_test.py и пришли вывод.')
-    open(cmp3, 'wb').write(data); json.dump(words, open(cjs, 'w', encoding='utf-8'), ensure_ascii=False)
-    print(f'  реплика {i + 1}: готово')
-    return edge_finish(i, text, data, words)
+    parts = [(text, synth(text, [0, 3], f'реплика {i + 1}'))]
+    if not parts[0][1]:
+        # длинные реплики сервер режет чаще — озвучиваем по предложениям, а если и так не идёт — по кускам до запятой/тире
+        pieces = [p for p in re.split(r'(?<=[.!?…])\s+', text) if p.strip()]
+        parts = []
+        for k, p in enumerate(pieces):
+            r = synth(p, [0, 3, 6, 10, 15, 25], f'реплика {i + 1}, фраза {k + 1}/{len(pieces)}')
+            if r: parts.append((p, r)); continue
+            for q in [q for q in re.split(r'(?<=[,—:])\s+', p) if q.strip()]:
+                r = synth(q, [0, 5, 10, 20, 30], f'реплика {i + 1}, кусок «{q[:24]}…»')
+                if not r:
+                    raise SystemExit(f'edge-tts не вернул звук ({EDGE_VOICE}): {err[0]}\n'
+                                     'Похоже, Microsoft временно ограничил запросы. Подожди 10–15 минут и запусти снова:\n'
+                                     'готовые реплики возьмутся из кэша (папка voice_cache) и повторно не запрашиваются.')
+                parts.append((q, r))
+    # склейка кусков: паузы 0.08 с, время слов сдвигается на длину предыдущих кусков
+    xs, words, off, gap = [], [], 0.0, np.zeros(int(.08 * SR))
+    for k, (_, (data, ws)) in enumerate(parts):
+        x = decode(data, k)
+        if xs: xs.append(gap); off += len(gap) / SR
+        words += [(off + t, w) for t, w in ws]
+        xs.append(x); off += len(x) / SR
+    raw = np.concatenate(xs)
+    wavfile.write(cwav, SR, (np.clip(raw, -1, 1) * 32767).astype(np.int16))
+    json.dump(words, open(cjs, 'w', encoding='utf-8'), ensure_ascii=False)
+    print(f'  реплика {i + 1}: готово' + (f' (по частям: {len(parts)})' if len(parts) > 1 else ''))
+    return edge_finish(i, text, cwav, words)
 
 def edge_tempo():
     m = re.fullmatch(r'\s*([+-]?\d+(?:\.\d+)?)\s*%\s*', EDGE_RATE or '')
     return max(.5, min(2.0, 1 + float(m.group(1)) / 100)) if m else 1.0
 
-def edge_finish(i, text, data, words):
+def edge_finish(i, text, raw_wav, words):
     tempo = edge_tempo()
-    mp3 = os.path.join(a.work, f'cue{i}.mp3'); open(mp3, 'wb').write(data)
-    x = to_wav48(mp3, os.path.join(a.work, f'cue{i}.wav'), tempo)
+    x = to_wav48(raw_wav, os.path.join(a.work, f'cue{i}.wav'), tempo)
     words = [(t / tempo, w) for t, w in words]
     # позиции слов в тексте → время метки = начало первого слова, стоящего на месте метки или после неё
     pos, spans = 0, []

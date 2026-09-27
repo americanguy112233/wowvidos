@@ -1,7 +1,7 @@
 ﻿# Полная сборка на Windows: голос -> кадры -> звук -> mp4
 #   powershell -ExecutionPolicy Bypass -File .\build.ps1
-#   параметры: -Engine edge|piper|rec|elevenlabs   -Out имя.mp4   -Music 0|1
-param([string]$Engine = 'edge', [string]$Out = 'wow-forever-ban.mp4', [string]$Music = '0')
+#   параметры: -Engine silero|edge|piper|rec|elevenlabs   -Out имя.mp4   -Music 0|1
+param([string]$Engine = 'silero', [string]$Out = 'wow-forever-ban.mp4', [string]$Music = '0')
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 $PY = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'

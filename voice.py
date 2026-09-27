@@ -1,5 +1,8 @@
 """Закадровый голос → voice.wav + assets/timeline.js (тайминг сцен под длину реплик).
-   python voice.py <workdir> <out.wav> [--engine auto|edge|piper|elevenlabs|rec|say]
+   python voice.py <workdir> <out.wav> [--engine auto|silero|edge|piper|elevenlabs|rec|say]
+
+Silero (бесплатно, локально, без лимитов): pip install torch --index-url https://download.pytorch.org/whl/cpu и pip install omegaconf
+  SILERO_SPEAKER — голос: eugene, aidar (муж.), baya, kseniya, xenia (жен.); SILERO_TEMPO — скорость (1.12)
 
 edge-tts (бесплатно, без ключа, нейроголоса Microsoft): pip install edge-tts
   EDGE_VOICE — голос: ru-RU-DmitryNeural (муж., по умолчанию) или ru-RU-SvetlanaNeural (жен.)
@@ -238,6 +241,72 @@ def edge_finish(i, text, raw_wav, words):
         return spans[-1][1] if spans else None
     return x, (at if spans else None)
 
+# ---------------------------------------------------------------- Silero: локальная русская нейросеть, бесплатно и без лимитов
+SILERO_SPEAKER = os.environ.get('SILERO_SPEAKER', 'eugene')      # aidar, eugene (муж.), baya, kseniya, xenia (жен.)
+SILERO_TEMPO = float(os.environ.get('SILERO_TEMPO', '1.12'))    # ускорение речи без изменения высоты голоса
+
+_U = 'ноль один два три четыре пять шесть семь восемь девять'.split()
+_UF = ['ноль', 'одна', 'две'] + _U[3:]
+_T = 'десять одиннадцать двенадцать тринадцать четырнадцать пятнадцать шестнадцать семнадцать восемнадцать девятнадцать'.split()
+_D = ',,двадцать тридцать сорок пятьдесят шестьдесят семьдесят восемьдесят девяносто'.split(',')
+_D = ['', '', 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто']
+_H = ['', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот']
+def _tri(n, fem=False):
+    u = _UF if fem else _U
+    w = [_H[n // 100]] if n >= 100 else []
+    r = n % 100
+    if 10 <= r < 20: w.append(_T[r - 10])
+    else:
+        if r >= 20: w.append(_D[r // 10])
+        if r % 10 or (not w and r == 0 and n == 0): w.append(u[r % 10])
+    return [x for x in w if x]
+def ru_number(n):
+    """Целое число словами: 9150 → девять тысяч сто пятьдесят (Silero сам цифры не читает)."""
+    if n == 0: return 'ноль'
+    out = []
+    if n >= 1000:
+        th = n // 1000
+        if th > 1: out += _tri(th, fem=True)
+        l2, l1 = th % 100, th % 10
+        out.append('тысяч' if 10 <= l2 < 20 or l1 == 0 or l1 >= 5 else 'тысяча' if l1 == 1 else 'тысячи')
+    if n % 1000: out += _tri(n % 1000)
+    return ' '.join(out)
+def speakable(text):
+    """Текст для Silero: цифры и проценты словами, «Топ-1» → «топ один»."""
+    t = re.sub(r'(\d+)\s*%', lambda m: ru_number(int(m.group(1))) + ' процентов', text)
+    t = re.sub(r'-(\d+)', lambda m: ' ' + ru_number(int(m.group(1))), t)
+    t = re.sub(r'\d+', lambda m: ru_number(int(m.group(0))), t)
+    return t
+
+_silero = {}
+def tts_silero(i, text, prev, nxt):
+    try:
+        import torch
+    except ImportError:
+        raise SystemExit('Нет PyTorch. Установи один раз:\n'
+                         '  .\\.venv\\scripts\\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cpu\n'
+                         '  .\\.venv\\scripts\\python.exe -m pip install omegaconf')
+    if 'model' not in _silero:
+        print('  загружаю модель Silero (первый раз скачивается ~100 МБ)…')
+        torch.set_num_threads(max(1, (os.cpu_count() or 4) - 1))
+        last = None
+        for ver in ('v5_ru', 'v4_ru'):
+            try:
+                _silero['model'], _ = torch.hub.load(repo_or_dir='snakers4/silero-models', model='silero_tts',
+                                                     language='ru', speaker=ver, trust_repo=True)
+                _silero['ver'] = ver; break
+            except Exception as e:
+                last = e
+        if 'model' not in _silero:
+            raise SystemExit(f'Не удалось загрузить Silero: {last}')
+        print(f'  модель {_silero["ver"]}, голос {SILERO_SPEAKER}')
+    say = speakable(text)
+    audio = _silero['model'].apply_tts(text=say, speaker=SILERO_SPEAKER, sample_rate=48000, put_accent=True, put_yo=True)
+    raw = os.path.join(a.work, f'cue{i}_silero.wav')
+    wavfile.write(raw, 48000, (np.clip(audio.numpy(), -1, 1) * 32767).astype(np.int16))
+    print(f'  реплика {i + 1}: готово')
+    return to_wav48(raw, os.path.join(a.work, f'cue{i}.wav'), SILERO_TEMPO), None
+
 def tts_piper(i, text, prev, nxt):
     """Piper: текст подаётся через stdin в UTF-8 (иначе на Windows кириллица ломается)."""
     if not PIPER_MODEL:
@@ -316,12 +385,14 @@ clips, marks, words_all = [], [], []
 for i, (clean, mk) in enumerate(texts):
     prev = texts[i - 1][0] if i else ''
     nxt = texts[i + 1][0] if i + 1 < len(texts) else ''
-    x, at = {'elevenlabs': tts_eleven, 'rec': tts_rec, 'piper': tts_piper, 'edge': tts_edge}.get(engine, tts_say)(i, clean, prev, nxt)
+    x, at = {'elevenlabs': tts_eleven, 'rec': tts_rec, 'piper': tts_piper, 'edge': tts_edge, 'silero': tts_silero}.get(engine, tts_say)(i, clean, prev, nxt)
     x, off = trim(x)
     x, remap = squeeze(x)
     L = len(x) / SR
     # время метки внутри клипа: по выравниванию ElevenLabs, иначе — пропорционально позиции символа
-    tm = lambda idx: max(0.0, remap(at(idx) - off)) if at else L * idx / len(clean)
+    # без таймингов от движка — оценка по доле произнесённого текста (цифры считаем словами: «9150» звучит длинно)
+    sp_total = max(1, len(speakable(clean)))
+    tm = lambda idx: max(0.0, remap(at(idx) - off)) if at else L * len(speakable(clean[:idx])) / sp_total
     m = {k: tm(idx) for k, idx in mk.items()}
     # слова для субтитров: каждое слово (с прилипшей пунктуацией) и время его начала
     ws = [(tm(mt.start()), mt.group()) for mt in re.finditer(r'\S+', clean) if re.search(r'\w', mt.group())]

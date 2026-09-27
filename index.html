@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>WoW Forever — бан за ник</title>
+<title>WoW Forever — кем играет бета</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -189,6 +189,58 @@ html, body { background: #0b0705; }
 .cam { font-family: WowH; font-weight: 900; font-size: 84px; color: var(--wowy); text-shadow: 0 5px 0 #3a2106, 0 0 30px rgba(255,200,80,.35); letter-spacing: 3px; }
 .qrcard { background: linear-gradient(180deg, #f6ead0, #e8d6aa); border: 6px solid var(--gold); box-shadow: inset 0 0 0 3px #7a5a24, 0 16px 0 #3a2410, 0 30px 70px rgba(0,0,0,.6); }
 .qrlogo { border-color: var(--gold); background: #1a1009; }
+
+/* ================= рилс «кем играет бета» ================= */
+/* сцена 1: хук */
+.big9 { font-size: 250px !important; letter-spacing: -2px; }
+.hsub { font: 900 58px/1.1 WowH; color: var(--cream); text-align: center; text-shadow: 0 4px 0 #2a1605, 0 0 24px rgba(0,0,0,.8); }
+.ask { font-size: 58px !important; padding: 22px 46px 26px !important; }
+#flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 30%, #fff6d8, #ffd27a 45%, rgba(255,180,60,0) 80%); opacity: 0; pointer-events: none; mix-blend-mode: screen; }
+
+/* графики: строки-полоски */
+.bars { width: 940px; display: flex; flex-direction: column; gap: 12px; }
+.br { height: 86px; display: flex; align-items: center; gap: 18px; padding: 0 22px; position: relative;
+  background: linear-gradient(180deg, rgba(44,29,16,.92), rgba(20,12,6,.92)); border: 3px solid rgba(214,178,90,.65); border-radius: 14px; }
+.br .nm { width: 210px; flex: none; font: 800 38px/1 WowH; color: var(--cream); }
+.br .tr { flex: 1; height: 38px; border-radius: 8px; background: rgba(255,255,255,.07); overflow: hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.6); }
+.br .fl { height: 100%; width: 0; border-radius: 8px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.25), inset 0 3px 0 rgba(255,255,255,.35); }
+.br .vl { width: 200px; flex: none; text-align: right; font: 900 40px/1 WowH; color: var(--wowy); white-space: nowrap; }
+.br .vl small { font: 700 26px/1 Man; color: #cdb88a; margin-left: 6px; }
+.br.big { height: 150px; }
+.br.big .nm { width: 300px; font-size: 44px; }
+.br.big .tr { height: 56px; }
+.br.big .vl { width: 230px; font-size: 50px; }
+.tagw { position: absolute; top: -22px; right: 26px; font: 900 26px/1 WowH; padding: 10px 18px; border-radius: 999px; color: var(--wowy);
+  background: linear-gradient(180deg, #d42222, #7c0b0b); border: 2px solid var(--gold); box-shadow: 0 5px 0 #360404; white-space: nowrap; }
+.tagw.gold { background: linear-gradient(180deg, #ffe08a, #c08a1e); color: #2a1605; box-shadow: 0 5px 0 #5a3508; }
+.tagw.blue { background: linear-gradient(180deg, #5ec8ff, #1f6fb0); color: #fff; box-shadow: 0 5px 0 #0c3558; }
+.hot { box-shadow: 0 0 0 4px var(--wowy), 0 0 40px rgba(255,209,0,.45) !important; }
+.cold { box-shadow: 0 0 0 4px #e8332a, 0 0 40px rgba(232,51,42,.45) !important; }
+
+/* связки */
+.combo { width: 940px; height: 230px; display: flex; align-items: center; gap: 26px; padding: 0 34px; position: relative; }
+.combo .rk { width: 96px; height: 96px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font: 900 50px/1 WowH; color: #2a1605; background: linear-gradient(180deg, #ffe08a, #c08a1e); border: 4px solid #3a2410; }
+.combo .ct { flex: 1; }
+.combo .cn { font: 900 50px/1.05 WowH; color: var(--wowy); }
+.combo .cs { font: 700 28px/1.2 Man; color: #cdb88a; margin-top: 10px; }
+.combo .cv { font: 900 96px/1 WowH; color: var(--cream); text-shadow: 0 4px 0 #2a1605; }
+.combo .stk { width: 170px; height: 170px; flex: none; }
+
+/* нюанс */
+.pct { font-size: 230px !important; }
+.fact { width: 920px; padding: 30px 36px; display: flex; align-items: center; gap: 26px; }
+.fact .fi { width: 90px; height: 90px; flex: none; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: rgba(214,178,90,.14); border: 2px solid rgba(214,178,90,.55); }
+.fact .ft { font: 800 38px/1.25 WowH; color: var(--cream); }
+.fact .ft b { color: var(--wowy); }
+
+/* субтитры: безопасная зона — выше кнопок соцсетей (снизу ~320px) и левее иконок справа (~140px) */
+#subs { position: absolute; left: 60px; width: 840px; top: 1405px; height: 190px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+#subs .ln { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 18px; transform-origin: 50% 60%; }
+#subs .w { text-align: center; font: 900 1em/1.12 WowH; color: #fff; text-transform: uppercase; letter-spacing: 1px;
+  -webkit-text-stroke: 10px #120a04; paint-order: stroke fill; text-shadow: 0 8px 18px rgba(0,0,0,.75); }
+#subs .w.on { color: var(--wowy); }
+#subs .w.done { color: #fff; }
 </style>
 </head>
 <body>
@@ -203,95 +255,71 @@ html, body { background: #0b0705; }
   <div id="floor"></div>
 
   <div id="world">
-    <!-- 1. Хук: ник → бан -->
+    <!-- 1. Хук: 9150 персонажей (кадр 0 уже полный — для ленты и для петли) -->
     <section class="sec" id="s1">
-      <div class="row" style="top:30px"><img class="logo" id="lg1" src="assets/news/logo.png" alt="World of Warcraft: Forever"></div>
-      <div class="row" style="top:290px"><div class="hdr" id="h1"><div class="t3d pink sm" data-text="БАН ЗА НИК">БАН ЗА НИК</div></div></div>
-      <div class="row" style="top:500px"><div class="chip" id="k1">World of Warcraft: Forever · <b style="color:#6b3fb0">бета</b></div></div>
-      <div class="row" style="top:610px"><div class="card np" id="c1">
-        <div class="stk" data-anim="sticker_06_surprised_paladin.png"></div>
-        <div class="col"><div class="lbl">ИМЯ ПЕРСОНАЖА</div>
-          <div class="fld nick" id="fld1"><span class="nkw"><span class="nk" id="nk1">Analin</span> <span class="nk" id="nk2">Galereed</span><i class="strike" id="sk1"></i></span></div></div>
-      </div></div>
-      <div class="row" style="top:880px"><div class="down" id="a1"><svg width="120" height="80" viewBox="0 0 120 80"><path d="M14 16l46 46 46-46" stroke="#d6b25a" stroke-width="14" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-      <div class="row" style="top:990px"><div class="shot" id="sh1" style="width:940px"><img src="assets/news/ban.png" alt="">
-        <div class="stampw" style="right:24px; bottom:26px"><div class="stamp" id="st1" style="font-size:96px;border-width:10px">БАН</div></div></div></div>
-      <div class="row" style="top:1380px"><div class="note" id="f1">так бан выглядит на экране входа в бету</div></div>
+      <div class="row" style="top:40px"><img class="logo" id="lg1" src="assets/news/logo.png" alt="World of Warcraft: Forever" style="width:380px"></div>
+      <div class="row" style="top:300px"><div class="t3d yellow big9" id="n1" data-text="9150">9150</div></div>
+      <div class="row" style="top:590px"><div class="hsub" id="t1">персонажей за неделю бэты</div></div>
+      <div class="row" style="top:700px"><div class="stk" id="st1" data-anim="sticker_06_surprised_paladin.png" style="width:330px;height:330px"></div></div>
+      <div class="row" style="top:1080px"><div class="chip" id="k1">Альянс · PvE-сервер · данные аддона</div></div>
+      <div class="row" style="top:1190px"><div class="pill ask" id="p1">КЕМ ИГРАЕТ БЭТА?</div></div>
     </section>
 
-    <!-- 2. Два исхода -->
+    <!-- 2. Классы -->
     <section class="sec" id="s2">
-      <div class="row" style="top:230px"><div class="hdr" id="h2"><div class="t3d yellow sm" data-text="ДВА ИСХОДА">ДВА ИСХОДА</div></div></div>
-      <div class="row" style="top:500px"><div class="chip" id="k2">что будет за неприличный ник</div></div>
-      <div class="row" style="top:610px"><div class="card out" id="r2a">
-        <div class="top"><div class="num1" style="background:var(--amber)">1</div><div class="ttl">Смена имени</div><div class="tag" id="tg2a" style="background:var(--amber)">МЯГКО</div></div>
-        <div class="shot"><img src="assets/news/rename.png" alt=""></div></div></div>
-      <div class="row" style="top:1085px"><div class="card out" id="r2b">
-        <div class="top"><div class="num1" style="background:var(--red)">2</div><div class="ttl">Бан беты</div><div class="tag" id="tg2b" style="background:var(--red)">ЖЁСТКО</div></div>
-        <div class="shot"><img src="assets/news/ban.png" alt=""></div></div></div>
+      <div class="row" style="top:170px"><div class="hdr" id="h2"><div class="t3d yellow sm" data-text="КЛАССЫ">КЛАССЫ</div></div></div>
+      <div class="row" style="top:370px"><div class="bars" id="cls"></div></div>
     </section>
 
-    <!-- 3. Двойные имена -->
+    <!-- 3. Расы -->
     <section class="sec" id="s3">
-      <div class="row" style="top:230px"><div class="hdr" id="h3"><div class="t3d orange sm" data-text="ДВА ИМЕНИ">ДВА ИМЕНИ</div></div></div>
-      <div class="row" style="top:500px"><div class="chip" id="k3">в Forever имя можно собрать из двух частей</div></div>
-      <div class="row" style="top:630px"><div class="wd" id="wd3">
-        <div class="wt">Введите новое имя</div>
-        <div class="two">
-          <div class="fld" id="fa3"><span id="t3a"></span><span class="ph" id="p3a">Главное имя</span><span class="caret" id="ca3"></span></div>
-          <div class="plus">+</div>
-          <div class="fld" id="fb3"><span id="t3b"></span><span class="ph" id="p3b">Второе имя</span><span class="caret" id="cb3" style="opacity:0"></span></div>
-        </div>
-        <div class="badge" id="bd3">НАРУШЕНИЕ</div>
-      </div></div>
-      <div class="row" style="top:960px"><div class="stk" id="duck3" data-anim="sticker_05_winking_orc.png" style="width:280px;height:280px"></div></div>
-      <div class="row" style="top:1270px"><div class="pill" id="p3" style="font-size:40px;background:var(--red);box-shadow:0 8px 0 #9c1c38,0 18px 40px rgba(60,0,20,.35)">«раскрыли о себе слишком много»</div></div>
-      <div class="row" style="top:1390px"><div class="note" id="f3">формулировка из заявления разработчиков</div></div>
+      <div class="row" style="top:170px"><div class="hdr" id="h3"><div class="t3d yellow sm" data-text="РАСЫ">РАСЫ</div></div></div>
+      <div class="row" style="top:390px"><div class="bars" id="rcs" style="gap:22px"></div></div>
+      <div class="row" style="top:1270px"><div class="chip" id="k3">небеснорожденные — новая раса Forever</div></div>
     </section>
 
-    <!-- 4. Без апелляций -->
+    <!-- 4. Связки раса + класс -->
     <section class="sec" id="s4">
-      <div class="row" style="top:230px"><div class="hdr" id="h4"><div class="t3d pink sm" data-text="БЕЗ ШАНСОВ">БЕЗ ШАНСОВ</div></div></div>
-      <div class="row" style="top:500px"><div class="chip" id="k4">решала сама команда WoW · <b>всё перепроверено</b></div></div>
-      <div class="row" style="top:640px"><div class="card tk" id="tk4">
-        <div class="th"><i></i>Обращение в поддержку</div>
-        <div class="tt">Апелляция:<br>верните доступ к бете</div>
-        <div class="ln" style="width:560px"></div><div class="ln" style="width:480px"></div><div class="ln" style="width:520px"></div>
+      <div class="row" style="top:170px"><div class="hdr" id="h4"><div class="t3d yellow sm" data-text="СВЯЗКИ">СВЯЗКИ</div></div></div>
+      <div class="row" style="top:400px"><div class="card combo" id="c4a">
+        <div class="rk">1</div>
+        <div class="ct"><div class="cn">Человек-паладин</div><div class="cs">самая популярная связка</div></div>
+        <div class="cv" id="v4a">0</div><div class="tagw gold">ТОП-1</div></div></div>
+      <div class="row" style="top:670px"><div class="card combo" id="c4b">
+        <div class="rk" style="background:linear-gradient(180deg,#5ec8ff,#1f6fb0);color:#fff">⚡</div>
+        <div class="ct"><div class="cn">Дворф-шаман</div><div class="cs">больше половины всех дворфов</div></div>
+        <div class="cv" id="v4b">0</div><div class="tagw blue">НОВИНКА FOREVER</div></div></div>
+      <div class="row" style="top:940px"><div class="card combo" id="c4c">
         <div class="stk" data-anim="sticker_03_laughing_dwarf.png"></div>
-        <div class="stampw" style="left:150px; top:300px"><div class="stamp sm" id="st4">ОТКЛОНЕНО</div></div>
-      </div></div>
-      <div class="row" style="top:1180px"><div class="note" id="f4" style="font-size:32px;color:#fff;opacity:.85;max-width:880px">«Служба поддержки не может и не будет<br>рассматривать никакие апелляции»</div></div>
+        <div class="ct"><div class="cn">Дворф-разбойник</div><div class="cs">реже всех</div></div>
+        <div class="cv" id="v4c" style="color:#ff6a5a">0</div><div class="tagw">РЕДКОСТЬ</div></div></div>
     </section>
 
-    <!-- 5. Автофильтр -->
+    <!-- 5. Нюанс -->
     <section class="sec" id="s5">
-      <div class="row" style="top:230px"><div class="hdr" id="h5"><div class="t3d white sm" style="font-size:86px" data-text="АВТОФИЛЬТР">АВТОФИЛЬТР</div></div></div>
-      <div class="row" style="top:470px"><div class="stk" id="party" data-anim="sticker_01_happy_orc.png" style="width:400px;height:400px"></div></div>
-      <div class="row" style="top:920px"><div class="card li" id="l5a">
-        <div class="ico" style="background:#fff2d6"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="21" stroke="#f5a524" stroke-width="6" fill="none"/><path d="M28 16v13l8 6" stroke="#f5a524" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div><div class="t">Скоро включат</div><div class="s">автопроверка имён</div></div>
-        <div class="ok" style="background:var(--amber)"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M15 6v11" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="15" cy="24" r="3" fill="#fff"/></svg></div></div></div>
-      <div class="row" style="top:1068px"><div class="card li" id="l5b">
-        <div class="ico" style="background:#fde3e9"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="24" cy="24" r="14" stroke="#ef3a5d" stroke-width="6" fill="none"/><path d="M34 34l12 12" stroke="#ef3a5d" stroke-width="7" stroke-linecap="round"/></svg></div>
-        <div><div class="t">Не «тестируй» его</div><div class="s">можно вылететь из беты</div></div>
-        <div class="ok" style="background:var(--red)"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M8 8l14 14M22 8L8 22" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg></div></div></div>
-      <div class="row" style="top:1216px"><div class="card li" id="l5c">
-        <div class="ico" style="background:#dcf7ea"><svg width="56" height="56" viewBox="0 0 56 56"><rect x="8" y="16" width="40" height="26" rx="6" stroke="#14b26a" stroke-width="6" fill="none"/><path d="M17 29h22" stroke="#14b26a" stroke-width="6" stroke-linecap="round"/></svg></div>
-        <div><div class="t">Нормальный ник</div><div class="s">уважительный и по правилам</div></div>
-        <div class="ok" style="background:var(--green)"><svg width="30" height="30" viewBox="0 0 30 30"><path d="M6 15l6 6 12-13" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+      <div class="row" style="top:170px"><div class="hdr" id="h5"><div class="t3d pink sm" data-text="НО ЕСТЬ НЮАНС">НО ЕСТЬ НЮАНС</div></div></div>
+      <div class="row" style="top:390px"><div class="t3d yellow pct" id="n5" data-text="70%">70%</div></div>
+      <div class="row" style="top:680px"><div class="card fact" id="f5a">
+        <div class="fi"><svg width="54" height="54" viewBox="0 0 54 54"><path d="M8 22L27 9l19 13v4H8z" fill="#d6b25a"/><rect x="12" y="28" width="6" height="14" fill="#d6b25a"/><rect x="24" y="28" width="6" height="14" fill="#d6b25a"/><rect x="36" y="28" width="6" height="14" fill="#d6b25a"/><rect x="7" y="43" width="40" height="5" fill="#d6b25a"/></svg></div>
+        <div class="ft">данных — у <b>банка и аукциона</b><br>в Штормграде и Стальгорне</div></div></div>
+      <div class="row" style="top:920px"><div class="card fact" id="f5b">
+        <div class="fi"><svg width="54" height="54" viewBox="0 0 54 54"><path d="M4 27s9-14 23-14 23 14 23 14-9 14-23 14S4 27 4 27z" fill="none" stroke="#d6b25a" stroke-width="5"/><circle cx="27" cy="27" r="7" fill="#d6b25a"/><path d="M8 46L46 8" stroke="#e8332a" stroke-width="6" stroke-linecap="round"/></svg></div>
+        <div class="ft"><b>разбойников и друидов</b> в скрытности<br>аддон просто не видит</div></div></div>
+      <div class="row" style="top:1130px"><div class="stk" id="st5" data-anim="sticker_04_undead_drink.png" style="width:240px;height:240px"></div></div>
     </section>
 
-    <!-- 6. QR -->
+    <!-- 6. Вопрос + QR -->
     <section class="sec" id="s6">
-      <div class="row" style="top:20px"><img class="logo" id="lg6" src="assets/news/logo.png" alt="" style="width:360px"></div>
-      <div class="row" style="top:250px"><div class="cam" id="h6">НАВОДИ КАМЕРУ</div></div>
-      <div class="row" style="top:380px"><div class="qrcard" id="qr"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
-      <div class="row" style="top:1128px"><div class="pill tg" id="p6">@goldfarm_xbot</div></div>
-      <div class="row" style="top:1236px"><div class="note" id="f6">телеграм-бот</div></div>
+      <div class="row" style="top:150px"><div class="cam" id="h6" style="font-size:78px">А ТЫ КЕМ ИГРАЕШЬ?</div></div>
+      <div class="row" style="top:290px"><div class="qrcard" id="qr"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
+      <div class="row" style="top:1040px"><div class="pill tg" id="p6">@goldfarm_xbot</div></div>
+      <div class="row" style="top:1150px"><div class="note" id="f6" style="font-size:32px">пиши свой класс в комментах</div></div>
     </section>
   </div>
 
   <div id="vig"></div>
+  <div id="flash"></div>
+  <div id="subs"></div>
   <div id="fade"></div>
 </div>
 <svg width="0" height="0" style="position:absolute"><filter id="mb" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="mbg" stdDeviation="0 0"/></filter></svg>

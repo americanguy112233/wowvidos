@@ -26,12 +26,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # (минимальная длительность сцены, задержка голоса от начала сцены, текст)
 CUES = [
-    (3.5, 0.10, "Представь: заходишь в бэту вов Форевер, а тебе |a|закрыли доступ. И всё |b|из-за ника."),
-    (3.5, 0.12, "Близзард взялись за неприличные имена. Кому повезло, тем |a|просто сменят ник. Остальным — |b|прощай, бэта."),
-    (4.0, 0.12, "Виноваты |a|двойные имена. Простор для фантазии, и некоторые, по словам Близзард, |b|рассказали о себе слишком много."),
-    (3.0, 0.12, "Писать в поддержку бесполезно: решали |a|сами разработчики, и |b|апелляций не будет."),
-    (3.5, 0.12, "Скоро включат |b|автофильтр. Мой совет: |c|не проверяйте его на прочность и |d|берите нормальный ник."),
-    (4.0, 0.12, "А я пошёл проверять свой. Заглядывай в мой телеграм-бот — |a|наводи камеру!"),
+    (3.5, 0.05, "Игрок за неделю бэты переписал |a|9150 персонажей. Смотрим, |b|кем играет Альянс."),
+    (4.0, 0.12, "Топ-1 — |a|паладин, охотник отстал всего на 25. А |b|разбойник — последний."),
+    (4.0, 0.12, "Люди — |a|почти треть Альянса. А новые |b|небеснорожденные лишь третьи."),
+    (4.5, 0.12, "Лучшая связка — |a|человек-паладин, 1018. Больше половины дворфов — |b|шаманы. А дворфов-разбойников |c|всего 22."),
+    (4.5, 0.12, "Но есть нюанс: |a|70% данных — у банка и аукциона в столицах. А |b|разбойников и друидов в скрытности не видно."),
+    (3.5, 0.12, "А ты кем играешь? Пиши в комменты и |a|заглядывай в мой телеграм-бот."),
 ]
 TAIL = float(os.environ.get('TAIL', '0.2'))            # воздух после реплики до смены сцены
 STEP = 0.05
@@ -67,7 +67,7 @@ def find_piper_model():
 PIPER_MODEL = find_piper_model()
 PIPER_SPEED = float(os.environ.get('PIPER_SPEED', '1.1'))
 EDGE_VOICE = os.environ.get('EDGE_VOICE', 'ru-RU-DmitryNeural')
-EDGE_RATE = os.environ.get('EDGE_RATE', '+10%')
+EDGE_RATE = os.environ.get('EDGE_RATE', '+15%')
 EDGE_PITCH = os.environ.get('EDGE_PITCH', '+0Hz')
 def has_edge():
     try:
@@ -258,7 +258,7 @@ def process(x):
     return x / np.max(np.abs(x)) * .75
 
 texts = [parse(t) for _, _, t in CUES]
-clips, marks = [], []
+clips, marks, words_all = [], [], []
 for i, (clean, mk) in enumerate(texts):
     prev = texts[i - 1][0] if i else ''
     nxt = texts[i + 1][0] if i + 1 < len(texts) else ''
@@ -267,15 +267,19 @@ for i, (clean, mk) in enumerate(texts):
     x, remap = squeeze(x)
     L = len(x) / SR
     # время метки внутри клипа: по выравниванию ElevenLabs, иначе — пропорционально позиции символа
-    m = {k: (remap(at(idx) - off) if at else L * idx / len(clean)) for k, idx in mk.items()}
-    clips.append(process(x)); marks.append(m)
+    tm = lambda idx: max(0.0, remap(at(idx) - off)) if at else L * idx / len(clean)
+    m = {k: tm(idx) for k, idx in mk.items()}
+    # слова для субтитров: каждое слово (с прилипшей пунктуацией) и время его начала
+    ws = [(tm(mt.start()), mt.group()) for mt in re.finditer(r'\S+', clean) if re.search(r'\w', mt.group())]
+    clips.append(process(x)); marks.append(m); words_all.append(ws)
 
 scenes, t = [], 0.0
-for (mind, lead, _), c, m in zip(CUES, clips, marks):
+for (mind, lead, _), c, m, ws in zip(CUES, clips, marks, words_all):
     L = len(c) / SR
     dur = max(mind, math.ceil((lead + L + TAIL) / STEP) * STEP)
     scenes.append({'start': round(t, 3), 'dur': dur, 'vo': [round(t + lead, 3), round(t + lead + L, 3)],
-                   'marks': {k: round(t + lead + max(0, v), 3) for k, v in m.items()}})
+                   'marks': {k: round(t + lead + max(0, v), 3) for k, v in m.items()},
+                   'words': [[round(t + lead + w_t, 3), w] for w_t, w in ws]})
     t += dur
 total = t
 

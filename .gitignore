@@ -19,3 +19,4 @@ __pycache__/
 # мусор Windows
 Thumbs.db
 desktop.ini
+voice_samples/

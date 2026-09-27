@@ -38,7 +38,7 @@ CUES = [
 ]
 TAIL = float(os.environ.get('TAIL', '0.2'))            # воздух после реплики до смены сцены
 STEP = 0.05
-PAUSE_MAX = float(os.environ.get('PAUSE_MAX', '0.15'))  # паузы внутри фразы длиннее этого — укорачиваются
+PAUSE_MAX = float(os.environ.get('PAUSE_MAX', '0'))   # 0 — по движку: edge 0.15 с, остальные 0.35 с  # паузы внутри фразы длиннее этого — укорачиваются
 
 ap = argparse.ArgumentParser()
 ap.add_argument('work'); ap.add_argument('out')
@@ -243,7 +243,7 @@ def edge_finish(i, text, raw_wav, words):
 
 # ---------------------------------------------------------------- Silero: локальная русская нейросеть, бесплатно и без лимитов
 SILERO_SPEAKER = os.environ.get('SILERO_SPEAKER', 'eugene')      # aidar, eugene (муж.), baya, kseniya, xenia (жен.)
-SILERO_TEMPO = float(os.environ.get('SILERO_TEMPO', '1.12'))    # ускорение речи без изменения высоты голоса
+SILERO_TEMPO = float(os.environ.get('SILERO_TEMPO', '1.0'))     # скорость речи: 1.0 — как есть, 1.1 — быстрее (без изменения высоты)
 
 _U = 'ноль один два три четыре пять шесть семь восемь девять'.split()
 _UF = ['ноль', 'одна', 'две'] + _U[3:]
@@ -340,7 +340,7 @@ def tts_rec(i, text, prev, nxt):
 
 def squeeze(x, maxgap=None):
     """Укорачивает паузы внутри реплики до maxgap секунд. Возвращает звук и функцию старое время → новое."""
-    maxgap = PAUSE_MAX if maxgap is None else maxgap
+    maxgap = (PAUSE_MAX or (0.15 if engine == 'edge' else 0.35)) if maxgap is None else maxgap
     win = int(.01 * SR)
     env = np.convolve(np.abs(x), np.ones(win) / win, 'same')
     quiet = env < 0.03 * env.max()

@@ -1,0 +1,21 @@
+# тяжёлое и пересоздаваемое
+node_modules/
+.venv/
+build/
+voice_cache/
+voices/
+recordings/
+__pycache__/
+*.pyc
+
+# готовые ролики и превью
+*.mp4
+Превью*.png
+Превью*.jpg
+
+# секреты: ключи ElevenLabs, токен бота и т.п.
+.env
+
+# мусор Windows
+Thumbs.db
+desktop.ini

@@ -67,6 +67,10 @@ def find_piper_model():
 PIPER_MODEL = find_piper_model()
 PIPER_SPEED = float(os.environ.get('PIPER_SPEED', '1.1'))
 EDGE_VOICE = os.environ.get('EDGE_VOICE', 'ru-RU-DmitryNeural')
+# слова, на которых голос Microsoft «спотыкается» (сервер не отдаёт звук): regex → варианты для произношения
+SPOKEN_ALIASES = [
+    (r'дворф', ['дварф', 'дворв', 'двóрф']),
+]
 EDGE_RATE = os.environ.get('EDGE_RATE', '+15%')
 EDGE_PITCH = os.environ.get('EDGE_PITCH', '+0Hz')
 def has_edge():
@@ -149,18 +153,35 @@ def tts_edge(i, text, prev, nxt):
         return bytes(audio)
 
     err = ['']
+    def spoken_variants(txt):
+        """Текст для голоса: сначала как есть, потом с подменой «трудных» слов (на экране остаётся оригинал)."""
+        out = [txt]
+        for src, alts in SPOKEN_ALIASES:
+            if re.search(src, txt, re.I):
+                for alt in alts:
+                    out.append(re.sub(src, lambda m: alt if m.group(0)[0].islower() else alt[0].upper() + alt[1:], txt, flags=re.I))
+        return list(dict.fromkeys(out))
     def synth(txt, waits, label):
-        """Один запрос к Microsoft с повторами. Темп не передаём — сервер часто отвергает такие запросы."""
+        """Запрос к Microsoft с повторами и подменой трудных слов. Темп не передаём — сервер часто отвергает такие запросы."""
+        variants = spoken_variants(txt)
         for n, w in enumerate(waits):
             if w:
                 print(f'  {label}: сервер не отдал звук, жду {w} с ({n + 1}/{len(waits)})…')
                 time.sleep(w)
-            words = []
-            try:
-                data = asyncio.run(run(txt, words))
-                if data: return data, words
-            except Exception as e:
-                err[0] = f'{type(e).__name__}: {e}'
+            for vt in (variants if n else variants[:1]) if len(variants) > 1 else variants:
+                words = []
+                try:
+                    data = asyncio.run(run(vt, words))
+                    if data:
+                        if vt != txt: print(f'  {label}: прошло с подменой слова для голоса')
+                        # слова в таймингах возвращаем к оригиналу, чтобы метки нашлись в тексте
+                        back = txt.split()
+                        spoken = vt.split()
+                        fix = {s: o for s, o in zip(spoken, back) if s != o}
+                        return data, [(t, next((o for s, o in fix.items() if w in s), w)) for t, w in words]
+                except Exception as e:
+                    err[0] = f'{type(e).__name__}: {e}'
+                time.sleep(1)
         return None
 
     def decode(data, k):

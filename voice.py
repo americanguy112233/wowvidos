@@ -90,8 +90,9 @@ def parse(text):
         else: clean += part
     return clean, marks
 
-def to_wav48(src, dst):
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-ac', '1', '-ar', str(SR), dst], check=True)
+def to_wav48(src, dst, tempo=1.0):
+    af = ['-af', f'atempo={tempo:.4f}'] if abs(tempo - 1) > 1e-3 else []   # ускорение без изменения высоты голоса
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, *af, '-ac', '1', '-ar', str(SR), dst], check=True)
     return wavfile.read(dst)[1].astype(np.float64) / 32768
 
 def tts_eleven(i, text, prev, nxt):
@@ -121,7 +122,7 @@ def tts_edge(i, text, prev, nxt):
     global EDGE_VOICE
     # кэш: уже озвученная реплика с тем же текстом/голосом/темпом берётся с диска, без запроса к Microsoft
     cdir = os.path.join(HERE, 'voice_cache'); os.makedirs(cdir, exist_ok=True)
-    key = hashlib.sha1(f'{text}|{EDGE_VOICE.lower()}|{EDGE_RATE}|{EDGE_PITCH}'.encode('utf-8')).hexdigest()[:16]
+    key = hashlib.sha1(f'{text}|{EDGE_VOICE.lower()}|raw'.encode('utf-8')).hexdigest()[:16]
     cmp3, cjs = os.path.join(cdir, key + '.mp3'), os.path.join(cdir, key + '.json')
     if os.path.exists(cmp3) and os.path.exists(cjs) and os.path.getsize(cmp3) > 1000:
         print(f'  реплика {i + 1}: из кэша')
@@ -153,9 +154,10 @@ def tts_edge(i, text, prev, nxt):
     data, err = None, ''
     if getattr(tts_edge, 'asked', False): time.sleep(1.5)   # пауза между репликами — реже упираемся в лимит сервера
     tts_edge.asked = True
-    plans = [dict(rate=EDGE_RATE, pitch=EDGE_PITCH), dict(rate=EDGE_RATE), {}, dict(rate=EDGE_RATE), {}, {}, dict(rate=EDGE_RATE), {}]
+    # темп в запросе не передаём: сервер Microsoft часто отвергает такие запросы; ускоряем локально (EDGE_RATE → atempo)
+    plans = [{}] * 8
     waits = [0, 3, 6, 10, 15, 20, 30, 45]
-    texts_try = [text, text, text, simple(text), simple(text), text, simple(text), simple(text)]
+    texts_try = [text, text, simple(text), text, simple(text), simple(text), text, simple(text)]
     for n, (kw, w, txt) in enumerate(zip(plans, waits, texts_try)):
         if w:
             print(f'  реплика {i + 1}: сервер не отдал звук, жду {w} с и пробую ещё раз ({n + 1}/{len(plans)})…')
@@ -175,9 +177,15 @@ def tts_edge(i, text, prev, nxt):
     print(f'  реплика {i + 1}: готово')
     return edge_finish(i, text, data, words)
 
+def edge_tempo():
+    m = re.fullmatch(r'\s*([+-]?\d+(?:\.\d+)?)\s*%\s*', EDGE_RATE or '')
+    return max(.5, min(2.0, 1 + float(m.group(1)) / 100)) if m else 1.0
+
 def edge_finish(i, text, data, words):
+    tempo = edge_tempo()
     mp3 = os.path.join(a.work, f'cue{i}.mp3'); open(mp3, 'wb').write(data)
-    x = to_wav48(mp3, os.path.join(a.work, f'cue{i}.wav'))
+    x = to_wav48(mp3, os.path.join(a.work, f'cue{i}.wav'), tempo)
+    words = [(t / tempo, w) for t, w in words]
     # позиции слов в тексте → время метки = начало первого слова, стоящего на месте метки или после неё
     pos, spans = 0, []
     for t, w in words:

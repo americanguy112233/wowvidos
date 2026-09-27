@@ -137,26 +137,32 @@ def tts_edge(i, text, prev, nxt):
             print('Не получил список голосов:', e)
         tts_edge.checked = True
     words = []
-    async def run(kw):
+    def simple(s):   # запасной вариант текста: без тире и символов, которые иногда ломают синтез
+        s = s.replace('—', ',').replace('–', ',').replace('%', ' процентов').replace('Топ-1', 'Топ один')
+        return re.sub(r'\s+,', ',', s)
+    async def run(kw, txt):
         try:
-            c = edge_tts.Communicate(text, EDGE_VOICE, boundary='WordBoundary', **kw)
+            c = edge_tts.Communicate(txt, EDGE_VOICE, boundary='WordBoundary', **kw)
         except TypeError:                      # старые версии edge-tts: слова приходят и так
-            c = edge_tts.Communicate(text, EDGE_VOICE, **kw)
+            c = edge_tts.Communicate(txt, EDGE_VOICE, **kw)
         audio = bytearray()
         async for ch in c.stream():
             if ch['type'] == 'audio': audio += ch['data']
             elif ch['type'] == 'WordBoundary': words.append((ch['offset'] / 1e7, ch['text']))
         return bytes(audio)
     data, err = None, ''
-    plans = [dict(rate=EDGE_RATE, pitch=EDGE_PITCH), dict(rate=EDGE_RATE), {}, dict(rate=EDGE_RATE), {}, {}]
-    waits = [0, 3, 6, 12, 20, 30]
-    for n, (kw, w) in enumerate(zip(plans, waits)):
+    if getattr(tts_edge, 'asked', False): time.sleep(1.5)   # пауза между репликами — реже упираемся в лимит сервера
+    tts_edge.asked = True
+    plans = [dict(rate=EDGE_RATE, pitch=EDGE_PITCH), dict(rate=EDGE_RATE), {}, dict(rate=EDGE_RATE), {}, {}, dict(rate=EDGE_RATE), {}]
+    waits = [0, 3, 6, 10, 15, 20, 30, 45]
+    texts_try = [text, text, text, simple(text), simple(text), text, simple(text), simple(text)]
+    for n, (kw, w, txt) in enumerate(zip(plans, waits, texts_try)):
         if w:
             print(f'  реплика {i + 1}: сервер не отдал звук, жду {w} с и пробую ещё раз ({n + 1}/{len(plans)})…')
             time.sleep(w)
         words.clear()
         try:
-            data = asyncio.run(run(kw))
+            data = asyncio.run(run(kw, txt))
             if data: break
         except Exception as e:
             err = f'{type(e).__name__}: {e}'

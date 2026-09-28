@@ -8,7 +8,7 @@ from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
 MUSIC = float(os.environ.get('MUSIC', '0'))   # громкость фоновой музыки: 0 — выключена, 1 — как в оригинале
-_tl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(sys.argv[1])), 'timeline.json')))
+_tl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(sys.argv[1])), 'timeline.json'), encoding='utf-8'))
 DUR = float(_tl['dur'])       # длительность ролика
 D = float(_tl['drop'])        # дроп = приземление маскота
 END = DUR
@@ -229,7 +229,7 @@ MONO = {'pop': lambda e: pop(e.get('f', 1)), 'thump': lambda e: thump(), 'tick':
 GAIN = {'pop': .8, 'thump': .7, 'tick': .5, 'bonk': .9, 'ding': .8, 'success': .8, 'coin': .8, 'click': 1, 'blip': .8, 'check': .9,
         'zip': .6, 'riser': .5, 'fall': .5, 'impact': 1.0, 'sparkle': .7, 'swoosh': .75, 'swish': .6, 'whoosh': .9}
 
-events = json.load(open(sys.argv[1]))
+events = json.load(open(sys.argv[1], encoding='utf-8'))
 for e in events:
     g = e.get('g', 1) * GAIN.get(e['type'], 1)
     if e['type'] == 'whoosh': sfx.add(whoosh(e.get('d', .6)), e['t'] - .05, g)

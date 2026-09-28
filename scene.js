@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [3.8, 5.5, 5.5, 6.5, 5.5, 6.5, 6.5, 6];
+const MIN = [3.5, 5.5, 5, 4.5, 6, 7];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -93,6 +93,7 @@ const typeOut = (key, t, d, n) => {   // печать команды + щелч�
 // ================================================================ движок монтажа: сцена = кадр A → склейка → кадр B
 // Всё управляется разметкой в index.html: data-fx, data-mark, data-at, data-count, data-shatter.
 const COUNTS = [];                                   // счётчики: { el, o: { v }, ph }
+const VIDS = [];                                     // видео-вставки: { img, name, from, rate, n, t0, t1 }
 const BURSTS = [];                                   // взрывы частиц: { t, x, y (мировые координаты), c }
 const SECS = [...document.querySelectorAll('.sec')];
 const POS = new Map();                               // центры элементов до анимаций (для частиц)
@@ -138,6 +139,14 @@ function layerFx(layer, i, t0, t1) {
     tl.to(el, { scale: 0, rotation: k % 2 ? 40 : -40, opacity: 0, duration: .26, ease: 'back.in(2.2)', immediateRender: false }, t);
     burstAt(t + .2, el, k % 2 ? '120,255,150' : '255,209,0'); if (k % 2 === 0) sfx(t + .2, 'impact', { g: .35 });
   });
+  // видео: кадры из assets/video/<имя>/f_0001.jpg, 30 кадров/с; звук клипа — из assets/video/<имя>.wav
+  layer.querySelectorAll('.vid').forEach(v => {
+    const o = { img: v.querySelector('img'), name: v.dataset.video, from: +(v.dataset.from || 0), rate: +(v.dataset.rate || 1),
+                n: +(v.dataset.frames || 1), t0, t1 };
+    VIDS.push(o);
+    if (o.rate === 1 && v.dataset.audio !== '0')
+      SFX.push({ t: +t0.toFixed(3), type: 'clip', file: `assets/video/${o.name}.wav`, from: o.from, d: +(t1 - t0).toFixed(3), g: +(v.dataset.gain || .45) });
+  });
   // медленный наезд на скриншоты
   layer.querySelectorAll('.shotz img').forEach(img =>
     tl.fromTo(img, { scale: 1 }, { scale: 1.12, duration: Math.max(.5, t1 - t0), ease: 'none', immediateRender: false }, t0));
@@ -163,12 +172,12 @@ SECS.forEach((sec, i) => {
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, счётчик «??» → 45, пульс кнопки
+// хук: удар в первые 0.05 с, вторая волна на ~1 с, пульс кнопки
 {
-  const A = SECS[0].querySelector('.layer.A');
+  const A = SECS[0].querySelector('.layer.A'), vid = A.querySelector('.vid');
   flashAt(.04, .95, .45); speedAt(.04, .8); shake(A, .04); sfx(.04, 'impact', { g: .9 }); sfx(.04, 'thump');
-  pulse('#dc2', 1.08, 1.1); glowC('#dc2', 1.08, '82,240,138'); burstAt(1.08, $('dc2'), '82,240,138'); flashAt(1.08, .5, .3); sfx(1.08, 'success');
-  pulse('#p1', 1.4, 1.12);
+  pulse(vid, 1.0, 1.05); burstAt(1.0, vid, '255,140,255'); flashAt(1.0, .45, .3); sfx(1.0, 'impact', { g: .5 });
+  pulse('#p1', 1.35, 1.14); sfx(1.35, 'pop', { f: 1.2 });
 }
 // финал: QR собирается из модулей, пульс кнопки на метке «наводи камеру»
 {
@@ -230,7 +239,7 @@ async function loadStickers() {
 }
 
 // ---------------------------------------------------------------- фон: скриншоты игры + искры
-const BG_FOREST = [0, 0, 0, 1, 1, 0, 1, 0];    // 0 — Тёмный портал (bgA), 1 — тропа (bgB)
+const BG_FOREST = [1, 1, 0, 1, 1, 0];          // 0 — Тёмный портал (bgA), 1 — лес (bgB)
 const EMB = [...Array(70)].map((_, k) => {     // детерминированные искры (одинаковые при каждом рендере)
   const r = n => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
   return { x: r(1) * 1080, sp: 40 + r(2) * 90, sz: 1.5 + r(3) * 3.5, ph: r(4) * 1920, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
@@ -311,7 +320,7 @@ function subs(t) {
   if (c !== lastChunk) {
     const chars = c.words.reduce((n, w) => n + w.w.length + 1, 0), longest = Math.max(...c.words.map(w => w.w.length));
     const fs = Math.max(50, Math.min(74, 860 / Math.max(chars * .62, longest * .66)));   // вся фраза — максимум в 2 строки
-    el.innerHTML = `<div class="ln" style="font-size:${fs.toFixed(0)}px">` + c.words.map(w => `<span class="w">${w.w.replace(/[—–]/g, '')}</span>`).join('') + '</div>';
+    el.innerHTML = `<div class="ln" style="font-size:${fs.toFixed(0)}px">` + c.words.map(w => `<span class="w">${(/^[—–]$/.test(w.w) ? '' : w.w)}</span>`).join('') + '</div>';
     lastChunk = c;
   }
   const dt = t - c.start, ln = el.firstChild;
@@ -342,6 +351,18 @@ function apply(t) {
   $('bgA').style.transform = kb; $('bgB').style.transform = kb;
   drawEmbers(t);
   $('flash').style.opacity = P.flash.toFixed(3);
+  // видео: нужный кадр клипа; рендер ждёт загрузку картинки
+  for (const v of VIDS) {
+    const loopBack = v.t0 === 0 && t >= DUR - LOOP;        // петля: первый кадр ролика снова с начала клипа
+    if (!loopBack && (t < v.t0 - .05 || t > v.t1 + .05)) continue;
+    const vt = loopBack ? v.from : Math.max(0, Math.min((v.n - 1) / 30, v.from + (Math.max(t, v.t0) - v.t0) * v.rate));
+    const src = `assets/video/${v.name}/f_${String(Math.floor(vt * 30) + 1).padStart(4, '0')}.jpg`;
+    if (v.img.dataset.cur !== src) {
+      v.img.dataset.cur = src; v.img.src = src;
+      PENDING.push(new Promise(r => { if (v.img.complete && v.img.naturalWidth) return r();
+        v.img.addEventListener('load', r, { once: true }); v.img.addEventListener('error', r, { once: true }); setTimeout(r, 5000); }));
+    }
+  }
   // счётчики
   for (const c of COUNTS) { const v = c.o.v < 0 ? c.ph : String(Math.round(c.o.v)); if (c.el.textContent !== v) c.el.textContent = v; }
   drawBursts(t);
@@ -360,7 +381,8 @@ function apply(t) {
   }
 }
 
-window.renderAt = t => { tl.seek(Math.min(t, DUR), false); apply(t); };
+let PENDING = [];
+window.renderAt = t => { PENDING = []; tl.seek(Math.min(t, DUR), false); apply(t); return PENDING.length ? Promise.all(PENDING) : undefined; };
 window.DUR = DUR;
 window.CUTS = CUTS;
 window.SFX = SFX.sort((a, b) => a.t - b.t);

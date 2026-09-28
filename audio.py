@@ -4,6 +4,7 @@
 """
 import json, sys, os
 import numpy as np
+from scipy.io import wavfile
 from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
@@ -220,7 +221,23 @@ def sparkle(seed=0):
         i = int(t0 * SR); out[i:i + len(b)] += b[:len(out) - i]
     return out
 
-MONO = {'pop': lambda e: pop(e.get('f', 1)), 'thump': lambda e: thump(), 'tick': lambda e: tick(e.get('f', 1)),
+_clips = {}
+def clip(e):
+    """Звук из видео-вставки: кусок wav с from, длиной d, с короткими фейдами."""
+    f = e['file']
+    if f not in _clips:
+        if not os.path.exists(f): print('нет звука клипа', f); _clips[f] = np.zeros(1)
+        else:
+            sr, x = wavfile.read(f); x = x.astype(np.float64); x = x.mean(1) if x.ndim > 1 else x
+            x /= 32768 if np.abs(x).max() > 1.5 else 1
+            if sr != SR: x = np.interp(np.arange(int(len(x) * SR / sr)) * sr / SR, np.arange(len(x)), x)
+            _clips[f] = x
+    x = _clips[f]; i0 = int(e.get('from', 0) * SR); y = x[i0:i0 + int(e.get('d', 1) * SR)].copy()
+    n = min(len(y) // 2, int(.03 * SR))
+    if n: y[:n] *= np.linspace(0, 1, n); y[-n:] *= np.linspace(1, 0, n)
+    return y
+
+MONO = {'clip': clip, 'pop': lambda e: pop(e.get('f', 1)), 'thump': lambda e: thump(), 'tick': lambda e: tick(e.get('f', 1)),
         'bonk': lambda e: bonk(), 'ding': lambda e: ding(e.get('f', 1)), 'success': lambda e: success(), 'coin': lambda e: coin(),
         'click': lambda e: click(), 'blip': lambda e: blip(e.get('f', 1)), 'check': lambda e: check(),
         'zip': lambda e: zip_(e.get('d', .7)), 'riser': lambda e: riser(e.get('d', 1.5)), 'fall': lambda e: fall(e.get('d', .3)),

@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [2.9, 6.5, 4, 5.5, 5, 4.5];
+const MIN = [3.8, 5.5, 5.5, 6.5, 5.5, 6.5, 6.5, 6];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -11,8 +11,7 @@ const sfx = (t, type, o = {}) => SFX.push({ t: +t.toFixed(3), type, ...o });
 const mk = (i, k, def) => SC[i].marks?.[k] ?? SC[i].start + def;   // метка из озвучки или запасное время
 
 const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
-const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, fps: 32, t2a: 0, t2b: 0, w: 100, c4a: 0, c4b: 0, c4c: 0, c4d: 0 };
-const T2A = '/console DynamicRenderScale 1', T2B = '/console DynamicRenderScaleMin 0.5';
+const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0 };
 
 document.querySelectorAll('.sec').forEach((s, i) => (s.style.top = i * H + 'px'));
 
@@ -91,119 +90,109 @@ const typeOut = (key, t, d, n) => {   // печать команды + щелч�
   for (let k = 0; k < n; k += 3) sfx(t + d * k / n, 'tick', { f: 1.3 + (k % 7) * .05, g: .45 });
 };
 
-// ================================================================ 1. хук: три удара за 3 секунды
-{
-  const h = .04, CUT = 1.75;
-  hide('#x1'); hide('#s1b');
-  flashAt(h, .95, .45); speedAt(h, .8);
-  tl.fromTo('#n1', { scale: 1.55 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, h);
-  pulse('#q1', .5, 1.12); pulse('#q1', .8, 1.12);
-  tl.fromTo('#l1', { scale: 1.3, opacity: .3 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(2)', immediateRender: false }, h + .05);
-  shake('#s1a', h); sfx(h, 'impact', { g: .9 }); sfx(h, 'thump');
-  // счётчик 32 → 112 с разгоном
-  tl.fromTo(P, { fps: 32 }, { fps: 112, duration: .8, ease: 'power2.in', immediateRender: false }, .25);
-  ticks(.25, .8, 14, 1, 2.2);
-  pulse('#n1', 1.05, 1.18); flashAt(1.05, .6, .3); speedAt(1.05, .5); sfx(1.05, 'success');
-  // печать ×3,5
-  tl.to('#q1', { opacity: 0, scale: .6, duration: .12, immediateRender: false }, 1.0);
-  slamIn('#x1', 1.12); shake('#s1a', 1.36); sfx(1.34, 'impact', { g: .7 }); sfx(1.36, 'bonk', { g: .5 });
-  pulse('#p1', 1.45, 1.14);
-  // склейка ко второму кадру: сравнение трёх скриншотов
-  tl.set('#s1a', { opacity: 0 }, CUT); tl.set('#s1b', { opacity: 1 }, CUT);
-  flashAt(CUT, 1, .35); speedAt(CUT, .6); sfx(CUT - .08, 'whoosh', { d: .3 }); sfx(CUT, 'impact', { g: .5 });
-  pop('#h1b', CUT, { s: 1.6, o: 0, d: .4, ease: 'back.out(2.2)' });
-  [['#pa', -1], ['#pb', 0], ['#pc', 1]].forEach(([id, dx], k) => {
-    pop(id, CUT + .08 + k * .1, { y: 260, x: dx * 80, r: dx * 8, s: .7, d: .45, ease: 'back.out(1.6)' });
-    sfx(CUT + .08 + k * .1, 'pop', { f: 1 + k * .15 });
-  });
-  glowC('#pc', CUT + .55, '62,224,122'); pulse('#pc', CUT + .55, 1.06); sfx(CUT + .55, 'ding');
-  pop('#k1b', CUT + .5, { s: .7 });
-  tl.fromTo('#s1b .panels', { scale: 1 }, { scale: 1.06, duration: 1.4, ease: 'none', immediateRender: false }, CUT + .5);
-}
-
-// ================================================================ 2. команда №1
-{
-  const s = SC[1].start, a = mk(1, 'a', .5), b = mk(1, 'b', 2.8), c = mk(1, 'c', 4.8);
-  hdr(1, '#h2');
-  pop('#tm2', s + .12, { y: 80, s: .9, d: .4 }); sfx(s + .12, 'pop');
-  const ta = Math.max(s + .3, a - .15), da = .9;
-  typeOut('t2a', ta, da, T2A.length);
-  typeOut('t2b', ta + da + .15, .9, T2B.length);
-  hide('#p2a'); hide('#p2b'); hide('#k2');
-  const b0 = Math.max(ta + da + 1.1, b - .25);
-  pop('#p2a', b0, { x: -220, r: -8, s: .8, d: .45, ease: 'back.out(1.6)' }); sfx(b0, 'pop');
-  pop('#p2b', b0 + .15, { x: 220, r: 8, s: .8, d: .45, ease: 'back.out(1.6)' }); sfx(b0 + .15, 'pop', { f: 1.2 });
-  glowC('#p2b', b0 + .6, '62,224,122'); pulse('#f2b', b0 + .6, 1.25); flashAt(b0 + .6, .4, .3); sfx(b0 + .6, 'success');
-  const c0 = Math.max(b0 + 1.1, c - .1);
-  pop('#k2', c0, { s: .6 }); shake('#k2', c0 + .3); sfx(c0, 'bonk', { g: .7 });
-}
-
-// ================================================================ 3. освещение: шторка до/после
-{
-  const s = SC[2].start, a = mk(2, 'a', .6), b = mk(2, 'b', 2.2);
-  hdr(2, '#h3');
-  pop('#wp', s + .12, { s: .85, d: .45 }); sfx(s + .12, 'pop');
-  hide('#wTag');
-  const a0 = Math.max(s + .5, a - .1);
-  shake('#wp', a0); sfx(a0, 'bonk', { g: .6 });
-  const b0 = Math.max(a0 + .6, b - .3);
-  tl.fromTo(P, { w: 100 }, { w: 42, duration: .9, ease: 'power3.inOut', immediateRender: false }, b0);
-  sfx(b0, 'zip', { d: .8 }); speedAt(b0 + .1, .5);
-  pop('#wTag', b0 + .7, { s: .3, d: .35 }); flashAt(b0 + .8, .35, .3); sfx(b0 + .8, 'sparkle');
-  tl.fromTo('#wp', { scale: 1 }, { scale: 1.04, duration: 1.2, ease: 'none', immediateRender: false }, b0 + .9);
-}
-
-// ================================================================ 4. ещё 4 команды — пулемётом
-{
-  const s = SC[3].start;
-  hdr(3, '#h4');
-  let prev = s + .15;
-  ['a', 'b', 'c', 'd'].forEach((k, n) => {
-    const t = Math.max(prev + .55, mk(3, k, .5 + n * 1.1) - .15); prev = t;
-    const id = '#c4' + k;
-    hide(id);
-    pop(id, t, { x: n % 2 ? -260 : 260, r: n % 2 ? -6 : 6, s: .85, d: .38, ease: 'back.out(1.7)' });
-    sfx(t, 'swoosh', { f: 1 + n * .1 }); speedAt(t, .35);
-    typeOut('c4' + k, t + .15, .45, 26);
-    glowC(id, t + .6, '255,209,0'); sfx(t + .6, 'check', { g: .8 });
+// ================================================================ движок монтажа: сцена = кадр A → склейка → кадр B
+// Всё управляется разметкой в index.html: data-fx, data-mark, data-at, data-count, data-shatter.
+const COUNTS = [];                                   // счётчики: { el, o: { v }, ph }
+const BURSTS = [];                                   // взрывы частиц: { t, x, y (мировые координаты), c }
+const SECS = [...document.querySelectorAll('.sec')];
+const POS = new Map();                               // центры элементов до анимаций (для частиц)
+document.querySelectorAll('[data-fx], [data-shatter]').forEach(el => {
+  const r = el.getBoundingClientRect(); POS.set(el, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
+});
+const burstAt = (t, el, c = '255,209,0') => { const p = POS.get(el) || { x: 540, y: 800 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
+let nsnd = 0;
+const FX = {
+  pop:   (el, t) => { pop(el, t, { s: .5, d: .4 }); sfx(t, 'pop', { f: .9 + (nsnd++ % 5) * .08 }); },
+  left:  (el, t) => { pop(el, t, { x: -280, r: -6, s: .85, d: .42, ease: 'back.out(1.6)' }); sfx(t, 'swoosh', { f: 1.1 }); },
+  right: (el, t) => { pop(el, t, { x: 280, r: 6, s: .85, d: .42, ease: 'back.out(1.6)' }); sfx(t, 'swoosh', { f: .95 }); },
+  up:    (el, t) => { pop(el, t, { y: 280, s: .85, d: .45, ease: 'back.out(1.5)' }); sfx(t, 'swoosh', { f: .85 }); },
+  zoom:  (el, t) => { pop(el, t, { s: 1.6, o: 0, d: .4, ease: 'back.out(2.2)' }); sfx(t, 'thump', { g: .75 }); },
+  slam:  (el, t) => { slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
+};
+function startCount(el, t) {
+  el.querySelectorAll('[data-count]').forEach(c => {
+    const [a, b] = c.dataset.count.split(',').map(Number), t0 = c.dataset.atAbs ? +c.dataset.atAbs : t + .15;
+    const o = { v: -1 }; COUNTS.push({ el: c, o, ph: c.dataset.ph ?? String(a) });
+    tl.fromTo(o, { v: a }, { v: b, duration: .75, ease: 'power2.in', immediateRender: false }, t0);
+    ticks(t0, .75, 10, 1, 2.1); sfx(t0 + .75, 'coin');
   });
 }
-
-// ================================================================ 5. важно
-{
-  const s = SC[4].start, a = mk(4, 'a', .5), b = mk(4, 'b', 2.4);
-  tl.fromTo('#s5 .stripes', { x: -1100 }, { x: 0, duration: .45, ease: 'power3.out', immediateRender: false, stagger: .08 }, s + .02);
-  pop('#h5', s + .05, { s: 1.8, o: 0, d: .4, ease: 'back.out(2.4)' }); shake('#s5', s + .3); sfx(s + .05, 'impact', { g: .7 });
-  hide('#w5a'); hide('#w5b'); hide('#w5c');
-  const a0 = Math.max(s + .45, a - .1);
-  pop('#w5a', a0, { x: -240, s: .9, d: .4, ease: 'back.out(1.6)' }); sfx(a0, 'blip');
-  const b0 = Math.max(a0 + .7, b - .15);
-  pop('#w5b', b0, { x: 240, s: .9, d: .4, ease: 'back.out(1.6)' }); glowC('#w5b', b0 + .4, '232,51,42'); shake('#w5b', b0 + .45); sfx(b0 + .4, 'bonk');
-  pop('#w5c', b0 + .9, { x: -240, s: .9, d: .4, ease: 'back.out(1.6)' }); sfx(b0 + .9, 'blip', { f: .8 });
+function layerFx(layer, i, t0, t1) {
+  const els = [...layer.querySelectorAll('[data-fx]')];
+  els.forEach((el, k) => {
+    const at = el.dataset.at != null ? +el.dataset.at : null;
+    let t;
+    if (el.dataset.mark) {
+      const m = SC[i].marks?.[el.dataset.mark];
+      t = Math.max(t0 + .05, m != null ? m - .1 : t0 + .45 + k * .18) + (at || 0);
+    } else t = t0 + (at ?? (.06 + k * .12));
+    t = Math.min(t, t1 - .35);                        // успеть показать до склейки
+    if (el.dataset.fx === 'punch') {                 // кадр 0: элемент уже на месте, лишь «ударяется»
+      tl.fromTo(el, { scale: 1.28 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, .04 + k * .03);
+    } else (FX[el.dataset.fx] || FX.pop)(el, t);
+    startCount(el, t);
+  });
+  // «рассыпание» вещей на метке
+  [...layer.querySelectorAll('[data-shatter]')].forEach((el, k) => {
+    const m = SC[i].marks?.[el.dataset.shatter], t = Math.min(t1 - .5, Math.max(t0 + .9, m != null ? m + .15 : t0 + 1.4)) + k * .06;
+    tl.to(el, { scale: 0, rotation: k % 2 ? 40 : -40, opacity: 0, duration: .26, ease: 'back.in(2.2)', immediateRender: false }, t);
+    burstAt(t + .2, el, k % 2 ? '120,255,150' : '255,209,0'); if (k % 2 === 0) sfx(t + .2, 'impact', { g: .35 });
+  });
+  // медленный наезд на скриншоты
+  layer.querySelectorAll('.shotz img').forEach(img =>
+    tl.fromTo(img, { scale: 1 }, { scale: 1.12, duration: Math.max(.5, t1 - t0), ease: 'none', immediateRender: false }, t0));
 }
+const CUTS = [];
+SECS.forEach((sec, i) => {
+  const s = i ? SC[i].start : 0, e = SC[i].start + SC[i].dur;
+  const L = [...sec.querySelectorAll(':scope > .layer')];
+  const cuts = [];
+  L.slice(1).forEach((layer, n) => {
+    const key = ['x', 'y', 'z'][n], m = SC[i].marks?.[key];
+    let c = m != null ? m - .12 : s + SC[i].dur * (n + 1) / L.length;
+    const prev = cuts.at(-1) ?? s;
+    c = Math.max(prev + 1.3, Math.min(e - 1.4 * (L.length - 1 - n), c));
+    if (i === 0 && n === 0) c = Math.min(Math.max(c, 1.6), 2.2);   // хук: склейка до 2.2 с
+    cuts.push(c); CUTS.push(c);
+    if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
+    tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
+    tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
+    flashAt(c, .85, .3); speedAt(c, .45); BURSTS.push({ t: c, x: 540, y: i * H + 760, c: '255,220,140' });
+    sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
+  });
+  L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
+});
 
-// ================================================================ 6. воронка в бота + перелёт к первому кадру (петля)
+// хук: удар в первые 0.05 с, счётчик «??» → 45, пульс кнопки
 {
-  const s = SC[5].start, a = mk(5, 'a', 2.2);
-  pop('#lg6', s, { s: .7, d: .45 });
-  pop('#h6', s + .05, { s: 1.5, o: 0, d: .45, ease: 'back.out(2)' }); sfx(s + .05, 'thump', { g: .8 });
-  pop('#qr', s + .2, { s: .75, d: .5 }); sfx(s + .2, 'pop', { f: .9 });
+  const A = SECS[0].querySelector('.layer.A');
+  flashAt(.04, .95, .45); speedAt(.04, .8); shake(A, .04); sfx(.04, 'impact', { g: .9 }); sfx(.04, 'thump');
+  pulse('#dc2', 1.08, 1.1); glowC('#dc2', 1.08, '82,240,138'); burstAt(1.08, $('dc2'), '82,240,138'); flashAt(1.08, .5, .3); sfx(1.08, 'success');
+  pulse('#p1', 1.4, 1.12);
+}
+// финал: QR собирается из модулей, пульс кнопки на метке «наводи камеру»
+{
+  const i = SECS.length - 1, s = CUTS.at(-1) ?? SC[i].start, a = mk(i, 'a', SC[i].dur - 2);
   tl.fromTo('#qrsvg .qm', { opacity: 0, scale: .2, transformOrigin: '50% 50%' },
     { opacity: 1, scale: 1, duration: .3, ease: 'back.out(2)', stagger: { each: 0, from: 'center', amount: .5 } }, s + .3);
   tl.fromTo('#qrsvg .qf', { opacity: 0 }, { opacity: 1, duration: .25 }, s + .35);
   ticks(s + .3, .5, 6, 1.2, 1.9);
-  pop('#qrlogo', s + .7, { s: .2, d: .5, ease: 'back.out(2.5)' }); sfx(s + .7, 'pop', { f: 1.3 });
-  pop('#p6', s + .85, { s: .6 }); sfx(s + .85, 'blip', { f: 1.2 });
-  fadeUp('#f6', s + 1.05);
+  pop('#qrlogo', s + .75, { s: .2, d: .5, ease: 'back.out(2.5)' }); sfx(s + .75, 'pop', { f: 1.3 });
   const a0 = Math.max(s + 1.3, a);
-  pulse('#p6', a0, 1.14); pulse('#qr', a0 + .1, 1.04); sfx(a0, 'ding', { f: 1.2 });
-  const L0 = DUR - LOOP;
-  tl.fromTo(P, { cam: 5 * H }, { cam: 0, duration: LOOP, ease: 'power3.in', immediateRender: false }, L0);
+  pulse('#p8', a0, 1.14); sfx(a0, 'ding', { f: 1.2 });
+  // смена кадра без склейки: наезд на QR (код остаётся на экране и читается)
+  const fin = SECS[i].querySelector(':scope > .layer:last-of-type');
+  tl.fromTo(fin, { scale: 1 }, { scale: 1.13, duration: .5, ease: 'power3.out', immediateRender: false, transformOrigin: '50% 38%' }, a0 - .05);
+  flashAt(a0 - .05, .5, .25); speedAt(a0 - .05, .4);
+}
+// петля: камера перелетает к первому кадру, он возвращается в исходное состояние
+{
+  const L0 = DUR - LOOP, A = SECS[0].querySelector('.layer.A'), B = SECS[0].querySelector('.layer.B');
+  tl.fromTo(P, { cam: (SECS.length - 1) * H }, { cam: 0, duration: LOOP, ease: 'power3.in', immediateRender: false }, L0);
   tl.fromTo(P, { mb: 0 }, { mb: 60, duration: LOOP * .8, ease: 'power2.in', immediateRender: false }, L0);
   speedAt(L0, LOOP);
-  // возвращаем первый кадр в исходное состояние — приземление совпадёт с кадром 0
-  tl.set('#s1a', { opacity: 1 }, L0); tl.set('#s1b', { opacity: 0 }, L0); tl.set('#x1', { opacity: 0 }, L0); tl.set('#q1', { opacity: 1, scale: 1 }, L0);
-  tl.set(P, { fps: 32 }, L0);
+  tl.set(A, { opacity: 1 }, L0); SECS[0].querySelectorAll(':scope > .layer:not(.A)').forEach(l => tl.set(l, { opacity: 0 }, L0));
+  COUNTS.filter(c => SECS[0].contains(c.el)).forEach(c => tl.set(c.o, { v: -1 }, L0));
   tl.set(P, { mb: 0 }, DUR);
   sfx(L0, 'whoosh', { d: LOOP + .1 });
 }
@@ -241,7 +230,7 @@ async function loadStickers() {
 }
 
 // ---------------------------------------------------------------- фон: скриншоты игры + искры
-const BG_FOREST = [0, 0, 1, 1, 0, 1];          // 0 — тропа (bgA), 1 — Тельдрассил (bgB)
+const BG_FOREST = [0, 0, 0, 1, 1, 0, 1, 0];    // 0 — Тёмный портал (bgA), 1 — тропа (bgB)
 const EMB = [...Array(70)].map((_, k) => {     // детерминированные искры (одинаковые при каждом рендере)
   const r = n => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
   return { x: r(1) * 1080, sp: 40 + r(2) * 90, sz: 1.5 + r(3) * 3.5, ph: r(4) * 1920, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
@@ -272,6 +261,23 @@ function drawSpeed(t) {
     spc.beginPath(); spc.moveTo(Math.cos(l.a) * r0, Math.sin(l.a) * r0); spc.lineTo(Math.cos(l.a) * r1, Math.sin(l.a) * r1); spc.stroke();
   }
   spc.restore();
+}
+
+// ---------------------------------------------------------------- взрывы частиц (детерминированные)
+const fxc = document.getElementById('fx').getContext('2d');
+function drawBursts(t) {
+  fxc.clearRect(0, 0, 1080, 1920);
+  for (const b of BURSTS) {
+    const dt = t - b.t; if (dt < 0 || dt > .9) continue;
+    const y0 = b.y - P.cam; if (y0 < -400 || y0 > 2300) continue;
+    const life = 1 - dt / .9;
+    for (let k = 0; k < 28; k++) {
+      const ang = k / 28 * Math.PI * 2 + (b.t * 7 % 1), sp = 380 + ((k * 37) % 11) * 45;
+      const x = b.x + Math.cos(ang) * sp * dt, y = y0 + Math.sin(ang) * sp * dt + 700 * dt * dt;
+      fxc.fillStyle = `rgba(${b.c},${(life * .95).toFixed(3)})`;
+      fxc.beginPath(); fxc.arc(x, y, 3 + life * 7 * ((k % 3) / 2 + .5), 0, 7); fxc.fill();
+    }
+  }
 }
 
 // ---------------------------------------------------------------- субтитры: по 1–3 слова, текущее слово золотое
@@ -336,23 +342,9 @@ function apply(t) {
   $('bgA').style.transform = kb; $('bgB').style.transform = kb;
   drawEmbers(t);
   $('flash').style.opacity = P.flash.toFixed(3);
-  // счётчик FPS: красный → зелёный
-  const fv = Math.round(P.fps) + '';
-  if ($('n1').textContent !== fv) { $('n1').textContent = fv; $('n1').dataset.text = fv; }
-  const green = P.fps >= 100, n1s = $('n1').style;
-  n1s.setProperty('--c1', green ? '#c8ffd8' : '#ffd0b8'); n1s.setProperty('--c2', green ? '#1fd060' : '#e8332a'); n1s.setProperty('--ex', green ? '#063a18' : '#3e0703');
-  // печать команд
-  const typed = (el, txt, p) => {
-    const n = Math.round(p * txt.length), cmd = txt.slice(0, n).replace(/^(\/console)/, '<span class="k">$1</span>');
-    el.innerHTML = cmd + (p > 0 && p < 1 || (p >= 1 && Math.floor(t * 3) % 2 === 0 && el.dataset.last === '1') ? '<span class="caret"></span>' : '');
-  };
-  $('t2a').dataset.last = P.t2b > 0 ? '0' : '1'; $('t2b').dataset.last = '1';
-  typed($('t2a'), T2A, P.t2a); typed($('t2b'), T2B, P.t2b);
-  ['a', 'b', 'c', 'd'].forEach(k => { const el = $('cc4' + k); el.dataset.last = '0'; typed(el, el.dataset.cmd, P['c4' + k]); });
-  // шторка до/после
-  $('wAft').style.clipPath = `inset(0 0 0 ${P.w.toFixed(2)}%)`;
-  $('wLine').style.left = P.w.toFixed(2) + '%'; $('wKnob').style.left = P.w.toFixed(2) + '%';
-  $('wLine').style.opacity = $('wKnob').style.opacity = P.w > 99.5 ? 0 : 1;
+  // счётчики
+  for (const c of COUNTS) { const v = c.o.v < 0 ? c.ph : String(Math.round(c.o.v)); if (c.el.textContent !== v) c.el.textContent = v; }
+  drawBursts(t);
   drawSpeed(t);
   subs(t);
   // картинки-стикеры слегка покачиваются
@@ -370,6 +362,7 @@ function apply(t) {
 
 window.renderAt = t => { tl.seek(Math.min(t, DUR), false); apply(t); };
 window.DUR = DUR;
+window.CUTS = CUTS;
 window.SFX = SFX.sort((a, b) => a.t - b.t);
 window.TIMELINE = { dur: DUR, drop: SC[4].start, scenes: SC };
 window.STAGE = 'старт';

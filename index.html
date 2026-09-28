@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>WoW Forever — команды для графики</title>
+<title>WoW Forever — фарм голды зачарованием</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -191,56 +191,57 @@ html, body { background: #0b0705; }
 .qrlogo { border-color: var(--gold); background: #1a1009; }
 
 
-/* ================= рилс «команды для графики» ================= */
+
+/* ================= рилс «фарм голды зачарованием» (55 с, 8 сцен × 2 кадра) ================= */
 #flash { position: absolute; inset: 0; background: radial-gradient(circle at 50% 35%, #fff8e0, #ffd27a 45%, rgba(255,180,60,0) 80%); opacity: 0; pointer-events: none; mix-blend-mode: screen; }
-#speed { position: absolute; inset: 0; pointer-events: none; }
-.fpsn { font-size: 330px !important; letter-spacing: -6px; }
-.fpsl { font: 900 90px/1 WowH; color: var(--cream); letter-spacing: 8px; text-shadow: 0 5px 0 #2a1605, 0 0 30px rgba(0,0,0,.8); }
-.x35 { font: 900 150px/1 WowH; color: #fff; padding: 10px 40px 20px; border-radius: 22px; transform: rotate(-8deg);
-  background: linear-gradient(180deg, #3ee07a, #0f8a3e); border: 6px solid var(--gold); box-shadow: 0 10px 0 #06401c, 0 20px 50px rgba(0,0,0,.6); text-shadow: 0 5px 0 #06401c; }
+#speed, #fx { position: absolute; inset: 0; pointer-events: none; }
 .layer { position: absolute; inset: 0; }
+.big { font-size: 150px !important; } .mid { font-size: 120px !important; }
+.stampg { font: 900 110px/1 WowH; color: #fff; padding: 10px 36px 18px; border-radius: 22px; transform: rotate(-6deg); white-space: nowrap;
+  background: linear-gradient(180deg, #3ee07a, #0f8a3e); border: 6px solid var(--gold); box-shadow: 0 10px 0 #06401c, 0 20px 50px rgba(0,0,0,.6); text-shadow: 0 5px 0 #06401c; }
+.stampy { background: linear-gradient(180deg, #ffe08a, #c08a1e); color: #2a1605; text-shadow: none; box-shadow: 0 10px 0 #5a3508, 0 20px 50px rgba(0,0,0,.6); }
+.stampr { background: linear-gradient(180deg, #e8332a, #8a0f0a); }
 
-/* сравнение: панели скриншота */
-.panels { display: flex; gap: 12px; }
-.pn { position: relative; width: 322px; height: 438px; border-radius: 16px; overflow: hidden; border: 4px solid var(--gold); background: #000; box-shadow: 0 16px 40px rgba(0,0,0,.6); }
-.pn img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.fpsb { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); font: 900 50px/1 WowH; padding: 10px 18px 14px; border-radius: 12px; white-space: nowrap;
-  color: #fff; border: 3px solid rgba(255,255,255,.7); box-shadow: 0 6px 0 rgba(0,0,0,.5); }
-.fpsb small { font-size: 26px; margin-left: 4px; }
-.r { background: linear-gradient(180deg, #e8332a, #8a0f0a); } .y { background: linear-gradient(180deg, #f0a92a, #9a5a06); } .g { background: linear-gradient(180deg, #3ee07a, #0f8a3e); }
-.pn .lab { position: absolute; left: 0; right: 0; top: 0; padding: 10px; text-align: center; font: 700 22px/1.2 Man; color: #fff; background: linear-gradient(180deg, rgba(0,0,0,.75), transparent); }
+/* монеты */
+.coin { display: inline-block; width: .74em; height: .74em; border-radius: 50%; vertical-align: -.02em; margin-left: .12em;
+  box-shadow: inset 0 -.08em 0 rgba(0,0,0,.35), inset 0 .07em 0 rgba(255,255,255,.55), 0 .04em .08em rgba(0,0,0,.5); }
+.coin.s { background: radial-gradient(circle at 35% 30%, #ffffff, #c9ccd4 45%, #7b808c); }
+.coin.g { background: radial-gradient(circle at 35% 30%, #fff6b0, #ffc928 45%, #a86b00); }
 
-/* консоль */
-.term { width: 960px; border-radius: 18px; overflow: hidden; border: 4px solid var(--gold); background: #0b0d0a; box-shadow: 0 18px 44px rgba(0,0,0,.65); }
-.term .bar { height: 44px; background: linear-gradient(180deg, #3a2410, #20140a); display: flex; align-items: center; gap: 10px; padding: 0 18px; font: 800 22px/1 WowH; color: var(--gold); }
-.term .bar i { width: 14px; height: 14px; border-radius: 50%; display: block; }
-.term .ln { font: 700 36px/1.5 Mono; color: #b9ff9e; padding: 0 26px; white-space: pre; min-height: 54px; }
-.term .ln:first-of-type { padding-top: 14px; } .term .ln:last-child { padding-bottom: 16px; }
-.term .ln .k { color: #ffd100; }
-.term .caret { display: inline-block; width: 18px; height: 38px; background: #b9ff9e; vertical-align: -6px; margin-left: 2px; }
+/* скриншоты и иконки */
+.shotz { border-radius: 18px; overflow: hidden; border: 5px solid var(--gold); background: #000; box-shadow: inset 0 0 0 2px #3a2410, 0 18px 50px rgba(0,0,0,.7); }
+.shotz img { display: block; width: 100%; height: auto; transform-origin: 50% 40%; }
+.ic { width: 170px; height: 170px; border-radius: 20px; overflow: hidden; border: 4px solid var(--gold); background: #000; box-shadow: 0 12px 30px rgba(0,0,0,.6); flex: none; }
+.ic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ic.xl { width: 250px; height: 250px; } .ic.sm { width: 140px; height: 140px; } .ic.green { border-color: #3ee07a; } .ic.blue { border-color: #5ec8ff; }
+.op { font: 900 96px/1 WowH; color: var(--wowy); text-shadow: 0 5px 0 #3a2106, 0 0 26px rgba(0,0,0,.8); }
+.eq { display: flex; align-items: center; gap: 22px; }
 
-/* до/после */
-.wipe { position: relative; width: 960px; height: 980px; border-radius: 20px; overflow: hidden; border: 5px solid var(--gold); box-shadow: 0 18px 50px rgba(0,0,0,.7); }
-.wipe img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.wipe #wAft { clip-path: inset(0 0 0 100%); }
-.wipe .line { position: absolute; top: 0; bottom: 0; width: 8px; margin-left: -4px; background: var(--gold); box-shadow: 0 0 24px rgba(255,209,0,.8); left: 100%; }
-.wipe .knob { position: absolute; top: 50%; width: 80px; height: 80px; margin: -40px 0 0 -40px; border-radius: 50%; background: linear-gradient(180deg, #ffe08a, #c08a1e); border: 5px solid #3a2410; left: 100%;
-  display: flex; align-items: center; justify-content: center; font: 900 34px/1 WowH; color: #3a2410; }
-.wipe .tg { position: absolute; top: 20px; }
+/* сделка на хуке */
+.deal { display: flex; align-items: center; gap: 18px; }
+.dcard { width: 410px; height: 440px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+.dcard .lab { font: 800 36px/1 WowH; color: var(--gold); letter-spacing: 2px; }
+.dcard .val { font: 900 130px/1 WowH; color: var(--cream); text-shadow: 0 5px 0 #2a1605; white-space: nowrap; }
+.red { color: #ff6a5a !important; } .grn { color: #52f08a !important; }
 
-/* быстрые команды */
-.cmd { width: 960px; min-height: 150px; padding: 20px 28px; display: flex; align-items: center; gap: 24px; }
-.cmd .no { width: 76px; height: 76px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 900 42px/1 WowH; color: #2a1605; background: linear-gradient(180deg, #ffe08a, #c08a1e); border: 3px solid #3a2410; }
-.cmd .cc { font: 700 30px/1.25 Mono; color: #b9ff9e; }
-.cmd .cd { font: 800 36px/1.2 WowH; color: var(--cream); margin-top: 8px; }
-.cmd .cd b { color: var(--wowy); }
-
-/* предупреждения */
-.warn { width: 960px; padding: 26px 30px; display: flex; align-items: center; gap: 26px; }
-.warn .wi { width: 96px; height: 96px; flex: none; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: rgba(232,51,42,.16); border: 3px solid #e8332a; }
-.warn .wt { font: 800 40px/1.25 WowH; color: var(--cream); }
-.warn .wt b { color: var(--wowy); } .warn .wt code { font: 700 34px/1 Mono; color: #b9ff9e; }
-.stripes { position: absolute; left: 0; right: 0; height: 34px; background: repeating-linear-gradient(-45deg, #ffd100 0 34px, #1a1009 34px 68px); opacity: .9; }
+/* карточки */
+.rc { width: 960px; padding: 24px 30px; display: flex; align-items: center; gap: 28px; }
+.rc .nm { font: 900 50px/1.05 WowH; color: var(--wowy); }
+.rc .en { font: 700 30px/1.2 Mono; color: #b9ff9e; margin-top: 8px; }
+.rc .ds { font: 700 32px/1.25 Man; color: var(--cream); margin-top: 10px; }
+.rc .ds b { color: var(--wowy); }
+.reag { width: 300px; padding: 24px 10px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.reag .nm { font: 900 36px/1.1 WowH; color: var(--wowy); }
+.reag .en { font: 700 22px/1.2 Mono; color: #b9ff9e; }
+.chips { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 960px; }
+.fchip { padding: 26px 20px; border-radius: 18px; text-align: center; font: 900 46px/1.1 WowH; color: var(--wowy);
+  background: linear-gradient(180deg, rgba(44,29,16,.95), rgba(20,12,6,.95)); border: 4px solid var(--gold); box-shadow: 0 12px 30px rgba(0,0,0,.6); }
+.fchip small { display: block; font: 700 26px/1.2 Man; color: #cdb88a; margin-top: 6px; }
+.grid6 { display: grid; grid-template-columns: repeat(3, 200px); gap: 30px; }
+.grid6 .ic { width: 200px; height: 200px; }
+.jack { position: absolute; top: -26px; right: 30px; }
+.bigtxt { font: 900 64px/1.15 WowH; color: var(--cream); text-align: center; text-shadow: 0 5px 0 #2a1605, 0 0 24px rgba(0,0,0,.8); }
+.bigtxt b { color: var(--wowy); }
 
 /* финал-воронка */
 .funnel { font: 900 60px/1.1 WowH !important; text-align: center; white-space: normal !important; width: 960px; }
@@ -258,8 +259,8 @@ html, body { background: #0b0705; }
 <body>
 <div id="view">
   <div id="bg"></div>
-  <div class="bgi" id="bgA" style="background-image:url(assets/news/bg_path.jpg)"></div>
-  <div class="bgi" id="bgB" style="background-image:url(assets/news/bg_teldrassil.jpg);opacity:0"></div>
+  <div class="bgi" id="bgA" style="background-image:url(assets/news/bg_portal.jpg)"></div>
+  <div class="bgi" id="bgB" style="background-image:url(assets/news/bg_path.jpg);opacity:0"></div>
   <canvas id="embers" width="1080" height="1920"></canvas>
   <canvas id="speed" width="1080" height="1920"></canvas>
   <svg id="star" viewBox="-100 -100 200 200"><path id="starp" fill="#3f0b63"/></svg>
@@ -267,88 +268,204 @@ html, body { background: #0b0705; }
   <div id="grid"></div>
   <div id="floor"></div>
 
+  <!-- Разметка монтажа: в каждой сцене слой A (первый кадр) и слой B (склейка на метке |x| из озвучки).
+       data-fx — как появляется: pop | left | right | up | zoom | slam | punch (виден с кадра 0, удар на 0.04 с) | shatter (рассыпается на метке)
+       data-mark — на каком слове (метка из CUES), data-at — через сколько секунд после начала кадра,
+       data-count="от,до" — счётчик, data-ph — что показывать до начала счёта. -->
   <div id="world">
-    <!-- 1. Хук: 32 → 112 FPS, внутри сцены склейка ко второму кадру -->
+    <!-- 1. Хук -->
     <section class="sec" id="s1">
-      <div class="layer" id="s1a">
-        <div class="row" style="top:30px"><img class="logo" id="lg1" src="assets/news/logo.png" alt="World of Warcraft: Forever" style="width:330px"></div>
-        <div class="row" style="top:250px"><div class="t3d pink fpsn" id="n1" data-text="32">32</div></div>
-        <div class="row" style="top:600px"><div class="fpsl" id="l1">КАДРОВ В СЕКУНДУ</div></div>
-        <div class="row" style="top:770px"><div class="t3d yellow" id="q1" data-text="→ 112?" style="font-size:170px">→ 112?</div></div>
-        <div class="row" style="top:760px"><div class="x35" id="x1" style="opacity:0">×3,5</div></div>
-        <div class="row" style="top:1030px"><div class="chip" id="k1">одна команда в консоли · WoW Forever</div></div>
-        <div class="row" style="top:1140px"><div class="pill ask" id="p1">ОДНОЙ КОМАНДОЙ!</div></div>
-      </div>
-      <div class="layer" id="s1b" style="opacity:0">
-        <div class="row" style="top:150px"><div class="hdr" id="h1b"><div class="t3d yellow sm" data-text="32 → 112 FPS">32 → 112 FPS</div></div></div>
-        <div class="row" style="top:400px"><div class="panels">
-          <div class="pn" id="pa"><img src="assets/news/gfx_drs0.jpg" alt=""><div class="lab">выключено</div><div class="fpsb r">32<small>FPS</small></div></div>
-          <div class="pn" id="pb"><img src="assets/news/gfx_drs1.jpg" alt=""><div class="lab">мин. 1</div><div class="fpsb y">78<small>FPS</small></div></div>
-          <div class="pn" id="pc"><img src="assets/news/gfx_drs2.jpg" alt=""><div class="lab">мин. 0.5</div><div class="fpsb g">112<small>FPS</small></div></div>
+      <div class="layer A">
+        <div class="row" style="top:24px"><img class="logo" data-fx="punch" src="assets/news/logo.png" alt="World of Warcraft: Forever" style="width:300px"></div>
+        <div class="row" style="top:220px"><div class="hdr" data-fx="punch"><div class="t3d yellow sm" data-text="ФАРМ ГОЛДЫ">ФАРМ ГОЛДЫ</div></div></div>
+        <div class="row" style="top:440px"><div class="deal">
+          <div class="card dcard" data-fx="punch"><div class="lab">ЗЕЛЁНЫЙ МУСОР</div><div class="ic"><img src="assets/news/ic_belt.png" alt=""></div><div class="val red">5<i class="coin s"></i></div></div>
+          <div class="op" data-fx="punch">→</div>
+          <div class="card dcard" data-fx="punch" id="dc2"><div class="lab">ТОРГОВЦУ</div><div class="ic"><img src="assets/news/ic_wand.png" alt=""></div><div class="val grn"><span data-count="5,45" data-at-abs="0.3" data-ph="??">??</span><i class="coin s"></i></div></div>
         </div></div>
-        <div class="row" style="top:900px"><div class="chip" id="k1b">Render Scale 200% · цель 120 FPS</div></div>
+        <div class="row" style="top:930px"><div class="chip" data-fx="punch">бэта Форевер · 20 уровень · только зачарование</div></div>
+        <div class="row" style="top:1040px"><div class="pill ask" data-fx="punch" id="p1">СХЕМА ЗА МИНУТУ</div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="РАСПЫЛЕНИЕ">РАСПЫЛЕНИЕ</div></div></div>
+        <div class="row" style="top:380px"><div class="shotz" data-fx="up" style="width:960px"><img src="assets/news/ench_bag.png" alt=""></div></div>
+        <div class="row" style="top:1000px"><div class="chip" data-fx="pop" data-at=".5">сумка после распыления: эссенции, пыль, реагенты</div></div>
       </div>
     </section>
 
-    <!-- 2. Главная команда -->
+    <!-- 2. Профессия -->
     <section class="sec" id="s2">
-      <div class="row" style="top:150px"><div class="hdr" id="h2"><div class="t3d yellow sm" data-text="КОМАНДА №1">КОМАНДА №1</div></div></div>
-      <div class="row" style="top:350px"><div class="term" id="tm2"><div class="bar"><i style="background:#e8332a"></i><i style="background:#f0a92a"></i><i style="background:#3ee07a"></i>&nbsp;чат WoW</div>
-        <div class="ln" id="t2a"></div><div class="ln" id="t2b"></div></div></div>
-      <div class="row" style="top:630px"><div class="panels" style="gap:20px">
-        <div class="pn" id="p2a" style="width:470px;height:640px"><img src="assets/news/gfx_drs0.jpg" alt=""><div class="lab">было</div><div class="fpsb r">32<small>FPS</small></div></div>
-        <div class="pn" id="p2b" style="width:470px;height:640px"><img src="assets/news/gfx_drs2.jpg" alt=""><div class="lab">стало</div><div class="fpsb g" id="f2b">112<small>FPS</small></div></div>
-      </div></div>
-      <div class="row" style="top:1295px"><div class="chip" id="k2">⚠ нужен лимит FPS в настройках графики</div></div>
+      <div class="layer A">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="НУЖНО ТОЛЬКО">НУЖНО ТОЛЬКО</div></div></div>
+        <div class="row" style="top:370px"><div class="t3d yellow mid" data-fx="slam" data-text="ЗАЧАРОВАНИЕ">ЗАЧАРОВАНИЕ</div></div>
+        <div class="row" style="top:560px"><div class="stampg stampy" data-fx="slam" data-mark="a">навык 70+</div></div>
+        <div class="row" style="top:760px"><div class="shotz" data-fx="up" data-at=".4" style="width:620px"><img src="assets/news/ench_wand.png" alt=""></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="ВСЕГО 2 РЕЦЕПТА">ВСЕГО 2 РЕЦЕПТА</div></div></div>
+        <div class="row" style="top:400px"><div class="card rc" data-fx="left"><div class="ic xl"><img src="assets/news/ic_oil.png" alt=""></div>
+          <div><div class="nm">Волшебное масло</div><div class="en">Minor Wizard Oil</div><div class="ds">на реагентах от торговца</div></div></div></div>
+        <div class="row" style="top:760px"><div class="card rc" data-fx="right" data-mark="b"><div class="ic xl green"><img src="assets/news/ic_wand.png" alt=""></div>
+          <div><div class="nm">Волшебная палочка</div><div class="en">Greater Magic Wand</div><div class="ds">из <b>малых эссенций</b> и древесины</div></div></div></div>
+      </div>
     </section>
 
-    <!-- 3. Освещение: шторка до/после -->
+    <!-- 3. Подгород -->
     <section class="sec" id="s3">
-      <div class="row" style="top:150px"><div class="hdr" id="h3"><div class="t3d yellow sm" data-text="ОСВЕЩЕНИЕ">ОСВЕЩЕНИЕ</div></div></div>
-      <div class="row" style="top:340px"><div class="wipe" id="wp">
-        <img id="wBef" src="assets/news/gfx_light_low.jpg" alt=""><img id="wAft" src="assets/news/gfx_light_fair.jpg" alt="">
-        <div class="line" id="wLine"></div><div class="knob" id="wKnob">⇆</div>
-        <div class="tg tagw" style="left:20px;right:auto;top:20px">LOW · 82 FPS</div>
-        <div class="tg tagw gold" id="wTag" style="right:20px;top:20px">FAIR · 70 FPS</div>
-      </div></div>
+      <div class="layer A">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="ГДЕ БРАТЬ">ГДЕ БРАТЬ</div></div></div>
+        <div class="row" style="top:400px"><div class="t3d yellow big" data-fx="slam" data-mark="a" data-text="ПОДГОРОД">ПОДГОРОД</div></div>
+        <div class="row" style="top:620px"><div class="chip" data-fx="pop" data-mark="a" data-at=".3">торговцы — прямо в центре города</div></div>
+        <div class="row" style="top:760px"><div class="stk" data-fx="up" data-at=".3" data-anim="sticker_01_happy_orc.png" style="width:360px;height:360px"></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="РЕАГЕНТЫ">РЕАГЕНТЫ</div></div></div>
+        <div class="row" style="top:360px;gap:30px">
+          <div class="card reag" data-fx="up"><div class="ic"><img src="assets/news/ic_wood.png" alt=""></div><div class="nm">Простая древесина</div><div class="en">Simple Wood</div></div>
+          <div class="card reag" data-fx="up" data-mark="b"><div class="ic"><img src="assets/news/ic_seed.png" alt=""></div><div class="nm">Семя клёна</div><div class="en">Maple Seed</div></div>
+          <div class="card reag" data-fx="up" data-mark="c"><div class="ic"><img src="assets/news/ic_vial.png" alt=""></div><div class="nm">Пустая склянка</div><div class="en">Empty Vial</div></div>
+        </div>
+        <div class="row" style="top:770px;gap:30px">
+          <div class="shotz" data-fx="left" data-at=".6" style="width:430px"><img src="assets/news/ench_vendor1.png" alt=""></div>
+          <div class="shotz" data-fx="right" data-at=".75" style="width:430px"><img src="assets/news/ench_vendor2.png" alt=""></div>
+        </div>
+      </div>
     </section>
 
-    <!-- 4. Ещё 4 команды — быстрые карточки -->
+    <!-- 4. Аукцион: фильтр → 16+ → скупка -->
     <section class="sec" id="s4">
-      <div class="row" style="top:150px"><div class="hdr" id="h4"><div class="t3d yellow sm" data-text="ЕЩЁ 4 КОМАНДЫ">ЕЩЁ 4 КОМАНДЫ</div></div></div>
-      <div class="row" style="top:350px"><div class="card cmd" id="c4a"><div class="no">1</div><div><div class="cc" id="cc4a" data-cmd="/console horizonstart 4000"></div><div class="cd">туман уходит <b>дальше</b></div></div></div></div>
-      <div class="row" style="top:580px"><div class="card cmd" id="c4b"><div class="no">2</div><div><div class="cc" id="cc4b" data-cmd="/console shadowNumCascades 4"></div><div class="cd">тени мягче · <b>87 → 86 FPS</b></div></div></div></div>
-      <div class="row" style="top:810px"><div class="card cmd" id="c4c"><div class="no">3</div><div><div class="cc" id="cc4c" data-cmd="/console ResampleAlwaysSharpen 1"></div><div class="cd">картинка <b>резче</b></div></div></div></div>
-      <div class="row" style="top:1040px"><div class="card cmd" id="c4d"><div class="no">4</div><div><div class="cc" id="cc4d" data-cmd="/console groundEffectDensity 256"></div><div class="cd">трава <b>гуще</b></div></div></div></div>
+      <div class="layer A">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="АУКЦИОН">АУКЦИОН</div></div></div>
+        <div class="row" style="top:380px"><div class="chips">
+          <div class="fchip" data-fx="left" data-mark="a">Доспехи<small>категория</small></div>
+          <div class="fchip" data-fx="right" data-mark="a" data-at=".2">ур. 11<small>как у автора</small></div>
+          <div class="fchip" data-fx="left" data-mark="a" data-at=".5" style="color:#52f08a">Зелёные+<small>необычные и выше</small></div>
+          <div class="fchip" data-fx="right" data-mark="a" data-at=".8">16+<small>уровень предмета</small></div>
+        </div></div>
+        <div class="row" style="top:800px"><div class="stk" data-fx="up" data-at=".6" data-anim="sticker_06_surprised_paladin.png" style="width:320px;height:320px"></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:230px"><div class="t3d yellow" data-fx="slam" data-text="16+" style="font-size:300px">16+</div></div>
+        <div class="row" style="top:600px"><div class="bigtxt" data-fx="zoom" data-at=".3">уровень предмета 16+<br>даёт <b>большие эссенции</b></div></div>
+        <div class="row" style="top:820px;gap:26px">
+          <div class="ic xl green" data-fx="left" data-at=".5"><img src="assets/news/ic_belt.png" alt=""></div>
+          <div class="op" data-fx="pop" data-at=".7">→</div>
+          <div class="ic xl blue" data-fx="right" data-at=".9"><img src="assets/news/ic_greater.png" alt=""></div>
+        </div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="СКУПАЙ ДЁШЕВО">СКУПАЙ ДЁШЕВО</div></div></div>
+        <div class="row" style="top:370px"><div class="shotz" data-fx="up" style="width:900px"><img src="assets/news/ench_ah.png" alt=""></div></div>
+        <div class="row" style="top:1040px"><div class="stampg stampy" data-fx="slam" data-at=".35">до 7<i class="coin s"></i></div></div>
+        <div class="row" style="top:1210px"><div class="chip" data-fx="pop" data-mark="b">кожаные пояса бывают по 5 серебра</div></div>
+      </div>
     </section>
 
-    <!-- 5. Важно -->
+    <!-- 5. Распыление -->
     <section class="sec" id="s5">
-      <div class="stripes" style="top:110px"></div>
-      <div class="row" style="top:190px"><div class="hdr" id="h5"><div class="t3d pink sm" data-text="ВАЖНО!">ВАЖНО!</div></div></div>
-      <div class="row" style="top:420px"><div class="card warn" id="w5a">
-        <div class="wi"><svg width="56" height="56" viewBox="0 0 56 56"><path d="M8 6h32l8 8v36H8z" fill="none" stroke="#ffd100" stroke-width="5" stroke-linejoin="round"/><rect x="16" y="6" width="20" height="14" fill="#ffd100"/><rect x="15" y="32" width="26" height="14" rx="2" fill="none" stroke="#ffd100" stroke-width="4"/></svg></div>
-        <div class="wt">сохрани копию <code>Config.wtf</code></div></div></div>
-      <div class="row" style="top:640px"><div class="card warn" id="w5b">
-        <div class="wi"><svg width="56" height="56" viewBox="0 0 56 56"><circle cx="28" cy="28" r="20" fill="none" stroke="#ffd100" stroke-width="5"/><path d="M28 8a20 20 0 0 1 0 40z" fill="#ffd100"/></svg></div>
-        <div class="wt">тени — на <b>«Минимальное»</b>,<br>иначе новое освещение пропадает</div></div></div>
-      <div class="row" style="top:880px"><div class="card warn" id="w5c">
-        <div class="wi"><svg width="56" height="56" viewBox="0 0 56 56"><path d="M46 28a18 18 0 1 1-6-13.4" fill="none" stroke="#ffd100" stroke-width="5" stroke-linecap="round"/><path d="M42 6v11H31" fill="none" stroke="#ffd100" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="wt">часть настроек <b>сбрасывается</b><br>при смене графики и в рейде</div></div></div>
-      <div class="stripes" style="top:1150px"></div>
+      <div class="layer A">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d pink sm" data-text="РАСПЫЛЯЙ!">РАСПЫЛЯЙ!</div></div></div>
+        <div class="row" style="top:400px"><div class="grid6">
+          <div class="ic green" data-fx="pop" data-shatter="a"><img src="assets/news/ic_belt.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-shatter="a"><img src="assets/news/ic_boot.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-shatter="a"><img src="assets/news/ic_gear3.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-shatter="a"><img src="assets/news/ic_pants.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-shatter="a"><img src="assets/news/ic_belt.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-shatter="a"><img src="assets/news/ic_boot.png" alt=""></div>
+        </div></div>
+        <div class="row" style="top:950px;gap:26px"><div class="ic" data-fx="zoom" data-mark="a" data-at=".5"><img src="assets/news/ic_dust.png" alt=""></div>
+          <div class="op" data-fx="pop" data-mark="a" data-at=".7">→</div>
+          <div class="ic" data-fx="zoom" data-mark="a" data-at=".9"><img src="assets/news/ic_oil.png" alt=""></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="А ВОТ ЭТО —">А ВОТ ЭТО —</div></div></div>
+        <div class="row" style="top:420px"><div class="card rc" data-fx="up" id="jk" style="padding:34px 30px"><div class="ic xl blue"><img src="assets/news/ic_greater.png" alt=""></div>
+          <div><div class="nm" style="font-size:56px">Большая эссенция</div><div class="en">Greater Magic Essence</div><div class="ds">из вещей с уровнем <b>16+</b></div></div>
+          <div class="tagw gold jack" data-fx="slam" data-mark="b" style="font-size:40px;padding:14px 26px">ДЖЕКПОТ!</div></div></div>
+        <div class="row" style="top:830px"><div class="stk" data-fx="up" data-mark="b" data-at=".3" data-anim="sticker_06_surprised_paladin.png" style="width:330px;height:330px"></div></div>
+      </div>
     </section>
 
-    <!-- 6. Воронка в бота -->
+    <!-- 6. Математика палочек -->
     <section class="sec" id="s6">
-      <div class="row" style="top:30px"><img class="logo" id="lg6" src="assets/news/logo.png" alt="" style="width:280px"></div>
-      <div class="row" style="top:215px"><div class="cam funnel" id="h6">ХОЧЕШЬ УЗНАТЬ <b>ЗАПРЕТНЫЕ</b> МЕТОДЫ ФАРМА?</div></div>
-      <div class="row" style="top:400px"><div class="qrcard" id="qr"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
-      <div class="row" style="top:1130px"><div class="pill tg" id="p6">@goldfarm_xbot</div></div>
-      <div class="row" style="top:1245px"><div class="note" id="f6" style="font-size:36px;color:var(--wowy)">пройди тест в tg</div></div>
+      <div class="layer A">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="МАТЕМАТИКА">МАТЕМАТИКА</div></div></div>
+        <div class="row" style="top:420px"><div class="eq">
+          <div class="ic xl blue" data-fx="left"><img src="assets/news/ic_greater.png" alt=""></div>
+          <div class="op" data-fx="pop" data-mark="a">=</div>
+          <div class="op" data-fx="slam" data-mark="a" data-at=".15">3×</div>
+          <div class="ic xl" data-fx="right" data-mark="a" data-at=".25"><img src="assets/news/ic_lesser.png" alt=""></div>
+        </div></div>
+        <div class="row" style="top:760px"><div class="shotz" data-fx="up" data-at=".5" style="width:760px"><img src="assets/news/ic_tooltip.png" alt=""></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="ПАЛОЧКИ">ПАЛОЧКИ</div></div></div>
+        <div class="row" style="top:380px"><div class="eq">
+          <div class="op" data-fx="pop">2×</div><div class="ic" data-fx="pop" data-at=".1"><img src="assets/news/ic_lesser.png" alt=""></div>
+          <div class="op" data-fx="pop" data-at=".25">+</div><div class="ic" data-fx="pop" data-at=".35"><img src="assets/news/ic_wood.png" alt=""></div>
+          <div class="op" data-fx="pop" data-at=".5">→</div><div class="ic green" data-fx="slam" data-at=".65"><img src="assets/news/ic_wand.png" alt=""></div>
+        </div></div>
+        <div class="row" style="top:620px"><div class="stampg" data-fx="slam" data-mark="b">15<i class="coin s"></i> у торговца</div></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="row" style="top:170px"><div class="bigtxt" data-fx="zoom" style="font-size:80px">2 большие эссенции</div></div>
+        <div class="row" style="top:300px;gap:22px">
+          <div class="ic green" data-fx="pop" data-at=".15"><img src="assets/news/ic_wand.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-at=".25"><img src="assets/news/ic_wand.png" alt=""></div>
+          <div class="ic green" data-fx="pop" data-at=".35"><img src="assets/news/ic_wand.png" alt=""></div>
+        </div>
+        <div class="row" style="top:540px"><div class="t3d yellow" data-fx="slam" data-mark="c" style="font-size:260px" data-text="= 45"><span>= <span data-count="0,45">0</span></span></div></div>
+        <div class="row" style="top:820px"><div class="bigtxt" data-fx="pop" data-mark="c" data-at=".4">серебра у торговца <i class="coin s"></i></div></div>
+        <div class="row" style="top:960px"><div class="stk" data-fx="up" data-mark="c" data-at=".5" data-anim="sticker_03_laughing_dwarf.png" style="width:330px;height:330px"></div></div>
+      </div>
+    </section>
+
+    <!-- 7. Масло и лайфхаки -->
+    <section class="sec" id="s7">
+      <div class="layer A">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="МАСЛО">МАСЛО</div></div></div>
+        <div class="row" style="top:380px"><div class="eq" style="gap:16px">
+          <div class="ic sm" data-fx="pop"><img src="assets/news/ic_dust.png" alt=""></div><div class="op" data-fx="pop" data-at=".1" style="font-size:70px">+</div>
+          <div class="ic sm" data-fx="pop" data-at=".2"><img src="assets/news/ic_seed.png" alt=""></div><div class="op" data-fx="pop" data-at=".3" style="font-size:70px">+</div>
+          <div class="ic sm" data-fx="pop" data-at=".4"><img src="assets/news/ic_vial.png" alt=""></div><div class="op" data-fx="pop" data-at=".5" style="font-size:70px">→</div>
+          <div class="ic sm" data-fx="slam" data-at=".6"><img src="assets/news/ic_oil.png" alt=""></div>
+        </div></div>
+        <div class="row" style="top:600px"><div class="shotz" data-fx="up" data-at=".5" style="width:560px"><img src="assets/news/ench_oil.png" alt=""></div></div>
+        <div class="row" style="top:1150px"><div class="stampg" data-fx="slam" data-mark="a">5<i class="coin s"></i> у торговца</div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="ЛАЙФХАКИ">ЛАЙФХАКИ</div></div></div>
+        <div class="row" style="top:380px"><div class="card rc" data-fx="left"><div class="ic"><img src="assets/news/ic_dust.png" alt=""></div>
+          <div><div class="nm">Лень крафтить?</div><div class="ds">пыль на аукционе — <b>2–2,5<i class="coin s"></i></b> за штуку</div></div></div></div>
+        <div class="row" style="top:680px"><div class="t3d yellow" data-fx="slam" data-at=".5" data-text="2–2,5" style="font-size:200px">2–2,5</div></div>
+        <div class="row" style="top:920px"><div class="bigtxt" data-fx="pop" data-at=".8">серебра за штуку <i class="coin s"></i></div></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="row" style="top:150px"><div class="hdr" data-fx="zoom"><div class="t3d yellow sm" data-text="БОНУС">БОНУС</div></div></div>
+        <div class="row" style="top:390px"><div class="t3d yellow" data-fx="slam" data-mark="b" data-text="150" style="font-size:300px">150</div></div>
+        <div class="row" style="top:740px"><div class="bigtxt" data-fx="zoom" data-mark="b" data-at=".3">зачарование качается<br><b>только на этих рецептах</b></div></div>
+        <div class="row" style="top:990px"><div class="stk" data-fx="up" data-mark="b" data-at=".5" data-anim="sticker_04_undead_drink.png" style="width:300px;height:300px"></div></div>
+      </div>
+    </section>
+
+    <!-- 8. Воронка в бота -->
+    <section class="sec" id="s8">
+      <div class="layer A">
+        <div class="row" style="top:330px"><div class="bigtxt" data-fx="slam" style="font-size:110px">ЭТО —<br><b>ЧЕСТНАЯ</b><br>СХЕМА</div></div>
+        <div class="row" style="top:790px"><div class="stk" data-fx="up" data-at=".3" data-anim="sticker_05_winking_orc.png" style="width:380px;height:380px"></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:30px"><img class="logo" data-fx="pop" src="assets/news/logo.png" alt="" style="width:280px"></div>
+        <div class="row" style="top:215px"><div class="cam funnel" data-fx="slam">ХОЧЕШЬ УЗНАТЬ <b>ЗАПРЕТНЫЕ</b> МЕТОДЫ ФАРМА?</div></div>
+        <div class="row" style="top:400px"><div class="qrcard" id="qr" data-fx="zoom" data-at=".2"><svg id="qrsvg"></svg><div class="qrlogo" id="qrlogo"><div class="stk" data-anim="sticker_02_love_elf.png"></div></div></div></div>
+        <div class="row" style="top:1130px"><div class="pill tg" data-fx="pop" data-at=".8" id="p8">@goldfarm_xbot</div></div>
+        <div class="row" style="top:1245px"><div class="note" data-fx="pop" data-at="1.0" style="font-size:36px;color:var(--wowy)">пройди тест в tg</div></div>
+      </div>
     </section>
   </div>
 
   <div id="vig"></div>
+  <canvas id="fx" width="1080" height="1920"></canvas>
   <div id="flash"></div>
   <div id="subs"></div>
   <div id="fade"></div>

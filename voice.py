@@ -428,8 +428,10 @@ for s, c in zip(scenes, clips):
     i0 = int(s['vo'][0] * SR); track[i0:i0 + len(c)] += c
 track = track[:int(SR * total)]
 wavfile.write(a.out, SR, (np.clip(track, -1, 1) * 32767).astype(np.int16))
-open(os.path.join(HERE, 'assets', 'timeline.js'), 'w').write(
-    f"window.SCENES = {json.dumps(scenes, ensure_ascii=False)};\nwindow.VOICE_ENGINE = {json.dumps(engine)};\n")
+# UTF-8 явно + кириллица кодами \uXXXX: на Windows Python по умолчанию пишет в cp1251,
+# а браузер читает как UTF-8 — субтитры превращались в «ромбики с вопросами»
+open(os.path.join(HERE, 'assets', 'timeline.js'), 'w', encoding='utf-8').write(
+    f"window.SCENES = {json.dumps(scenes, ensure_ascii=True)};\nwindow.VOICE_ENGINE = {json.dumps(engine)};\n")
 
 print(f'engine={engine}' + (f' voice={VOICE} model={MODEL}' if engine == 'elevenlabs' else '') + (f' model={PIPER_MODEL}' if engine == 'piper' else '') + (f' voice={EDGE_VOICE} rate={EDGE_RATE}' if engine == 'edge' else ''))
 for s, (clean, _) in zip(scenes, texts):

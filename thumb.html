@@ -1,145 +1,31 @@
 <!doctype html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<title>WoW Forever — фарм магом, превью</title>
+<html lang="ru"><head><meta charset="utf-8"><title>Ника — обложка</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
-:root { --ink: #1d1233; --muted: #7b6e93; --red: #ef3a5d; --green: #14b26a; --mint: #4fe3b2; }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { position: relative; overflow: hidden; background: #3e0c5c; font-family: Man, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
-body.h { width: 1920px; height: 1080px; }
-body.v { width: 1080px; height: 1920px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #f4f1ec; font-family: Man; color: #121212; position: relative; overflow: hidden; }
+body.v { width: 1080px; height: 1920px; } body.h { width: 1920px; height: 1080px; }
 .abs { position: absolute; }
-
-/* фон как в ролике + свечение за героем */
-#bg { inset: 0; background: radial-gradient(120% 90% at var(--gx) var(--gy), #7a2cbd 0%, #5a168c 40%, #3a0a56 100%); }
-#glow { inset: 0; background: radial-gradient(circle at var(--gx) var(--gy), rgba(255,196,120,.55) 0, rgba(255,140,90,.22) 16%, transparent 34%); mix-blend-mode: screen; }
-#star { opacity: .6; }
-#grid { inset: 0; background-image: linear-gradient(rgba(206,160,255,.28) 2px, transparent 2px), linear-gradient(90deg, rgba(206,160,255,.28) 2px, transparent 2px); background-size: 108px 108px; background-position: -1px -1px; }
-#vig { inset: 0; background: radial-gradient(120% 95% at 50% 45%, transparent 55%, rgba(20,0,35,.6) 100%); }
-#rays { opacity: .35; mix-blend-mode: screen; }
-
-/* объёмный текст */
-.t3d { position: relative; font-weight: 900; font-family: Unb; line-height: 1; letter-spacing: -2px; color: transparent; white-space: nowrap; }
-.t3d::before, .t3d::after { content: attr(data-text); position: absolute; left: 0; top: 0; }
-.t3d::before { color: var(--ex); text-shadow: 0 3px var(--ex), 0 6px var(--ex), 0 9px var(--ex), 0 12px var(--ex), 0 15px var(--ex), 0 18px var(--ex), 0 30px 34px rgba(15,0,30,.55); }
-.t3d::after { background: linear-gradient(180deg, var(--c1) 20%, var(--c2) 95%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.orange { --c1: #ffc39a; --c2: #e0703f; --ex: #7a2b12; }
-.white  { --c1: #ffffff; --c2: #dccbff; --ex: #3e1468; }
-.hdr { border: 8px solid #fff; padding: 26px 56px 40px; background: rgba(40,5,70,.25); box-shadow: 0 18px 50px rgba(20,0,40,.45); position: relative; }
-.new { position: absolute; top: -34px; right: -40px; background: var(--mint); color: #063b27; font: 900 38px/1 Unb; padding: 14px 24px 16px; border-radius: 999px; transform: rotate(8deg); box-shadow: 0 7px 0 #1f9c73, 0 16px 30px rgba(0,40,20,.4); }
-
-/* скриншот бана + печать */
-.shot { position: relative; border: 8px solid #fff; border-radius: 30px; overflow: hidden; background: #000; box-shadow: 0 18px 0 rgba(30,0,60,.22), 0 30px 60px rgba(20,0,40,.5); }
-.shot img { display: block; width: 100%; height: auto; }
-.stampw { position: absolute; right: 26px; bottom: 26px; transform: rotate(-12deg); }
-.stamp { font: 900 120px/1 Unb; color: #ef3a5d; border: 12px solid #ef3a5d; border-radius: 22px; padding: 12px 32px 20px; background: rgba(255,255,255,.93); box-shadow: 0 16px 40px rgba(60,0,20,.5); }
-.pink { --c1: #ffb0c4; --c2: #f0406e; --ex: #7a1030; }
-.pill { border-radius: 999px; padding: 22px 46px 26px; font: 900 54px/1 Unb; color: #fff; background: var(--green); box-shadow: 0 9px 0 #0a7445, 0 20px 44px rgba(0,40,20,.45); white-space: nowrap; }
-.hero { filter: drop-shadow(0 30px 40px rgba(20,0,40,.55)); }
-
-/* ---------- 16:9 ---------- */
-.h { --gx: 74%; --gy: 50%; }
-.h #hdrw { left: 96px; top: 110px; }
-.h #hdrw .t3d { font-size: 128px; }
-.h #sub { left: 100px; top: 408px; }
-.h #sub .t3d { font-size: 88px; }
-.h #cmpw { left: 96px; top: 590px; width: 900px; }
-.h .hero { left: 1170px; top: 110px; width: 760px; height: 760px; }
-.h #star { left: 1420px; top: 540px; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; }
-.h #rays { left: 1420px; top: 540px; width: 2200px; height: 2200px; margin: -1100px 0 0 -1100px; }
-.h #pillw { right: 90px; top: 900px; transform: rotate(-4deg); }
-
-/* ---------- 9:16 (важное — в центральной зоне 3:4) ---------- */
-.v { --gx: 50%; --gy: 52%; }
-.v #hdrw { left: 0; right: 0; top: 290px; display: flex; justify-content: center; }
-.v #hdrw .t3d { font-size: 116px; }
-.v #sub { left: 0; right: 0; top: 560px; display: flex; justify-content: center; }
-.v #sub .t3d { font-size: 84px; }
-.v .hero { left: 140px; top: 640px; width: 800px; height: 800px; }
-.v #star { left: 540px; top: 1000px; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; }
-.v #rays { left: 540px; top: 1000px; width: 2400px; height: 2400px; margin: -1200px 0 0 -1200px; }
-.v #cmpw { left: 70px; right: 70px; top: 1250px; }
-.v #pillw { left: 0; right: 0; top: 1660px; display: flex; justify-content: center; }
-
-/* ===== стиль Warcraft ===== */
-@font-face { font-family: WowH; src: url(assets/fonts/AlegreyaSC-Black.ttf); font-weight: 900; }
-body { background: #0b0705; }
-#bg { background: url(assets/news/bg_portal.jpg) center/cover; filter: brightness(.9); }
-.h #bg { background-image: url(assets/news/bg_forest.jpg); background-size: cover; filter: brightness(.8); }
-#grid, #star { display: none; }
-#rays g { fill: #ffcf70; }
-#glow { background: radial-gradient(circle at var(--gx) var(--gy), rgba(255,190,90,.45) 0, rgba(255,120,40,.18) 18%, transparent 36%); }
-#vig { background: radial-gradient(120% 95% at 50% 45%, transparent 45%, rgba(5,2,0,.8) 100%); }
-.t3d { font-family: WowH; letter-spacing: 1px; }
-.pink  { --c1: #ffd0b8; --c2: #e8332a; --ex: #3e0703; }
-.white { --c1: #fff4c2; --c2: #e0a634; --ex: #4a2a06; }
-.hdr { border: 7px solid #d6b25a; border-radius: 14px; background: linear-gradient(180deg, rgba(46,30,14,.95), rgba(20,12,6,.95));
-  box-shadow: inset 0 0 0 4px #3a2410, inset 0 0 0 8px rgba(214,178,90,.35), 0 18px 50px rgba(0,0,0,.7); }
-.new { background: linear-gradient(180deg, #d42222, #7c0b0b); color: #ffd100; border: 3px solid #d6b25a; box-shadow: 0 7px 0 #360404; font-family: WowH; }
-.shot { border-color: #d6b25a; border-radius: 20px; }
-.pill { font-family: WowH; color: #ffd100; border: 4px solid #d6b25a; background: linear-gradient(180deg, #d42222, #7c0b0b) !important; box-shadow: 0 9px 0 #360404, 0 20px 44px rgba(0,0,0,.55) !important; }
-.logo { position: absolute; filter: drop-shadow(0 14px 30px rgba(0,0,0,.7)); }
-.h .logo { left: 1290px; top: 20px; width: 520px; }
-.h .hero { top: 250px; left: 1210px; width: 680px; height: 680px; }
-.v .logo { left: 290px; top: 40px; width: 500px; }
-.tb { background: linear-gradient(180deg, rgba(44,29,16,.95), rgba(20,12,6,.95)); border: 6px solid #d6b25a; border-radius: 20px; padding: 26px 30px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 18px 50px rgba(0,0,0,.7); }
-.tb .tr { display: flex; align-items: center; gap: 20px; }
-.tb .tn { width: 250px; font: 900 44px/1 WowH; color: #f3e4c0; }
-.tb .tt { flex: 1; height: 42px; border-radius: 9px; background: rgba(255,255,255,.08); overflow: hidden; }
-.tb .tt i { display: block; height: 100%; border-radius: 9px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.25), inset 0 3px 0 rgba(255,255,255,.35); }
-.tb .tv { width: 150px; text-align: right; font: 900 46px/1 WowH; color: #ffd100; }
-.h #sub .t3d { font-size: 84px !important; }
-.v #sub .t3d { font-size: 74px !important; }
-.v #cmpw { top: 1230px !important; }
-.duo { display: flex; align-items: center; gap: 18px; }
-.dp { position: relative; width: 380px; height: 300px; border-radius: 18px; overflow: hidden; border: 6px solid #d6b25a; box-shadow: 0 16px 40px rgba(0,0,0,.6); }
-.dp img { width: 100%; height: 100%; object-fit: cover; }
-.fb { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); font: 900 50px/1 WowH; color: #fff; padding: 8px 18px 12px; border-radius: 12px; border: 3px solid rgba(255,255,255,.7); white-space: nowrap; }
-.fb.r { background: linear-gradient(180deg, #e8332a, #8a0f0a); } .fb.g { background: linear-gradient(180deg, #3ee07a, #0f8a3e); }
-.arr { font: 900 90px/1 WowH; color: #ffd100; text-shadow: 0 6px 0 #3a2106; }
-.v .dp { width: 400px; height: 330px; }
-.v #cmpw { left: 0 !important; right: 0 !important; display: flex; justify-content: center; }
-.v .arr { font-size: 70px; }
-.dp.ico { width: 300px; height: 300px; } .v .dp.ico { width: 320px; height: 320px; }
-</style>
-</head>
+.bg { inset: 0; background: radial-gradient(60% 45% at 80% 20%, #fbe3e3 0, transparent 70%), #f4f1ec; }
+.t { font: 900 150px/1 Unb; letter-spacing: -5px; } .t em { font-style: normal; color: #c8102e; }
+.ph { border-radius: 60px; overflow: hidden; box-shadow: 0 30px 80px rgba(60,40,20,.2); } .ph img { width: 100%; height: 100%; object-fit: cover; }
+.tag { font: 800 54px/1 Unb; padding: 26px 44px 30px; border-radius: 999px; background: #c8102e; color: #fff; white-space: nowrap; }
+.prof { display: flex; align-items: center; gap: 22px; font: 800 44px/1 Man; } .prof img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; }
+.prof span { display: block; font: 600 32px/1 Man; color: #8b857e; margin-top: 8px; }
+.v .t { left: 0; right: 0; top: 230px; text-align: center; font-size: 130px; } .v .ph { left: 190px; top: 640px; width: 700px; height: 860px; }
+.v .tag { left: 0; right: 0; margin: 0 auto; width: max-content; top: 1560px; } .v .prof { left: 70px; top: 80px; }
+.h .t { left: 90px; top: 250px; font-size: 140px; } .h .ph { right: 110px; top: 90px; width: 700px; height: 900px; }
+.h .tag { left: 90px; top: 760px; } .h .prof { left: 90px; top: 80px; }
+</style></head>
 <body>
-  <div class="abs" id="bg"></div>
-  <svg class="abs" id="rays" viewBox="-100 -100 200 200"><g id="raysg" fill="#ffd9a8"></g></svg>
-  <svg class="abs" id="star" viewBox="-100 -100 200 200"><path id="starp" fill="#3f0b63"/></svg>
-  <div class="abs" id="grid"></div>
-  <div class="abs" id="glow"></div>
-  <div class="abs" id="vig"></div>
-
-  <img class="logo" src="assets/news/logo.png" alt="">
-  <img class="abs hero" src="assets/stickers/sticker_02_love_elf.png" alt="">
-
-  <div class="abs" id="hdrw"><div class="hdr"><div class="t3d white" data-text="4–5 ЗОЛОТЫХ/Ч">4–5 ЗОЛОТЫХ/Ч</div><div class="new">МАГ 20</div></div></div>
-  <div class="abs" id="sub"><div class="t3d pink" data-text="ЗАПАДНЫЙ КРАЙ">ЗАПАДНЫЙ КРАЙ</div></div>
-
-  <div class="abs" id="cmpw"><div class="duo">
-    <div class="dp"><img src="assets/video/mage/f_0130.jpg" alt=""><span class="fb r">ПУЛЛ</span></div>
-    <div class="arr">→</div>
-    <div class="dp"><img src="assets/video/mage/f_0190.jpg" alt=""><span class="fb g">ЛУТ</span></div>
-  </div></div>
-
-  <div class="abs" id="pillw"><div class="pill" style="background:#ef3a5d;box-shadow:0 9px 0 #9c1c38,0 20px 44px rgba(60,0,20,.45)">ПРОСТОЙ ФАРМ</div></div>
-
+<div class="abs bg"></div>
+<div class="abs prof"><img src="assets/nika/face.jpg" alt=""><div>Я Ника<span>Фитнес | Питание</span></div></div>
+<div class="abs t">СУШУСЬ<br><em>И НЕ</em><br>ХУДЕЮ</div>
+<div class="abs ph"><img src="assets/nika/face.jpg" alt=""></div>
+<div class="abs tag">3 ошибки на сушке</div>
 <script>
 document.body.className = new URLSearchParams(location.search).get('v') === 'v' ? 'v' : 'h';
-const pt = (k, n, r1, r2) => { const r = k % 2 ? r2 : r1, a = (k / n) * Math.PI * 2 - Math.PI / 2; return `${(Math.cos(a) * r).toFixed(2)} ${(Math.sin(a) * r).toFixed(2)}`; };
-document.getElementById('starp').setAttribute('d', 'M' + [...Array(16)].map((_, k) => pt(k, 16, 100, 52)).join('L') + 'Z');
-document.getElementById('star').style.transform = 'rotate(11deg)';
-// лучи от героя
-document.getElementById('raysg').innerHTML = [...Array(18)].map((_, k) => {
-  const a0 = (k / 18) * Math.PI * 2, w = .07;
-  const p = a => `${(Math.cos(a) * 100).toFixed(2)} ${(Math.sin(a) * 100).toFixed(2)}`;
-  return `<path d="M0 0L${p(a0 - w)}L${p(a0 + w)}Z" opacity="${k % 2 ? .35 : .7}"/>`;
-}).join('');
 window.READY = Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode())]);
 </script>
-</body>
-</html>
+</body></html>

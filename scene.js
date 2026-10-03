@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [3.5, 5.5, 5, 4.5, 6, 7];
+const MIN = [3.2, 5.5, 4.5, 4.5, 5, 5];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -38,6 +38,7 @@ document.querySelectorAll('.sec').forEach((s, i) => {
 
 // ---------------------------------------------------------------- QR
 (function buildQR() {
+  if (!$('qrsvg')) return;
   const q = window.QR, n = q.length, svg = $('qrsvg');
   svg.setAttribute('viewBox', `-0.5 -0.5 ${n + 1} ${n + 1}`);
   const inFinder = (x, y) => (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
@@ -100,7 +101,7 @@ const POS = new Map();                               // центры элеме�
 document.querySelectorAll('[data-fx], [data-shatter]').forEach(el => {
   const r = el.getBoundingClientRect(); POS.set(el, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
 });
-const burstAt = (t, el, c = '255,209,0') => { const p = POS.get(el) || { x: 540, y: 800 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
+const burstAt = (t, el, c = '200,16,46') => { const p = POS.get(el) || { x: 540, y: 800 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
 let nsnd = 0;
 const FX = {
   pop:   (el, t) => { pop(el, t, { s: .5, d: .4 }); sfx(t, 'pop', { f: .9 + (nsnd++ % 5) * .08 }); },
@@ -108,6 +109,10 @@ const FX = {
   right: (el, t) => { pop(el, t, { x: 280, r: 6, s: .85, d: .42, ease: 'back.out(1.6)' }); sfx(t, 'swoosh', { f: .95 }); },
   up:    (el, t) => { pop(el, t, { y: 280, s: .85, d: .45, ease: 'back.out(1.5)' }); sfx(t, 'swoosh', { f: .85 }); },
   zoom:  (el, t) => { pop(el, t, { s: 1.6, o: 0, d: .4, ease: 'back.out(2.2)' }); sfx(t, 'thump', { g: .75 }); },
+  draw:  (el, t) => { tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: .15, immediateRender: false }, t); tl.set(el, { opacity: 0 }, 0);
+                      const ps = [...el.querySelectorAll('.dr')];
+                      ps.forEach((p, k) => tl.fromTo(p, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: .55, ease: 'power2.inOut', immediateRender: true }, t + k * .12));
+                      sfx(t, 'zip', { d: .5 }); },
   slam:  (el, t) => { slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
 function startCount(el, t) {
@@ -137,7 +142,7 @@ function layerFx(layer, i, t0, t1) {
   [...layer.querySelectorAll('[data-shatter]')].forEach((el, k) => {
     const m = SC[i].marks?.[el.dataset.shatter], t = Math.min(t1 - .5, Math.max(t0 + .9, m != null ? m + .15 : t0 + 1.4)) + k * .06;
     tl.to(el, { scale: 0, rotation: k % 2 ? 40 : -40, opacity: 0, duration: .26, ease: 'back.in(2.2)', immediateRender: false }, t);
-    burstAt(t + .2, el, k % 2 ? '120,255,150' : '255,209,0'); if (k % 2 === 0) sfx(t + .2, 'impact', { g: .35 });
+    burstAt(t + .2, el, k % 2 ? '26,163,107' : '200,16,46'); if (k % 2 === 0) sfx(t + .2, 'impact', { g: .35 });
   });
   // видео: кадры из assets/video/<имя>/f_0001.jpg, 30 кадров/с; звук клипа — из assets/video/<имя>.wav
   layer.querySelectorAll('.vid').forEach(v => {
@@ -166,33 +171,26 @@ SECS.forEach((sec, i) => {
     if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
     tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .85, .3); speedAt(c, .45); BURSTS.push({ t: c, x: 540, y: i * H + 760, c: '255,220,140' });
+    flashAt(c, .85, .3); speedAt(c, .45); BURSTS.push({ t: c, x: 540, y: i * H + 760, c: '200,16,46' });
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, вторая волна на ~1 с, пульс кнопки
+// хук: удар в первые 0.05 с, весы «дрожат» и встают на 0,0
 {
-  const A = SECS[0].querySelector('.layer.A'), vid = A.querySelector('.vid');
-  flashAt(.04, .95, .45); speedAt(.04, .8); shake(A, .04); sfx(.04, 'impact', { g: .9 }); sfx(.04, 'thump');
-  pulse(vid, 1.0, 1.05); burstAt(1.0, vid, '255,140,255'); flashAt(1.0, .45, .3); sfx(1.0, 'impact', { g: .5 });
-  pulse('#p1', 1.35, 1.14); sfx(1.35, 'pop', { f: 1.2 });
+  const A = SECS[0].querySelector('.layer.A');
+  flashAt(.04, .9, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
+  tl.to('#sc1', { keyframes: { y: [0, -18, 0, -10, 0] }, duration: .6, ease: 'none' }, .5); ticks(.5, .6, 8, 1, 1.4);
+  pulse('#lcd', 1.15, 1.15); burstAt(1.15, $('sc1')); flashAt(1.15, .4, .25); sfx(1.15, 'bonk');
 }
-// финал: QR собирается из модулей, пульс кнопки на метке «наводи камеру»
+// финал: гайд пульсирует, кнопка-призыв качается
 {
-  const i = SECS.length - 1, s = CUTS.at(-1) ?? SC[i].start, a = mk(i, 'a', SC[i].dur - 2);
-  tl.fromTo('#qrsvg .qm', { opacity: 0, scale: .2, transformOrigin: '50% 50%' },
-    { opacity: 1, scale: 1, duration: .3, ease: 'back.out(2)', stagger: { each: 0, from: 'center', amount: .5 } }, s + .3);
-  tl.fromTo('#qrsvg .qf', { opacity: 0 }, { opacity: 1, duration: .25 }, s + .35);
-  ticks(s + .3, .5, 6, 1.2, 1.9);
-  pop('#qrlogo', s + .75, { s: .2, d: .5, ease: 'back.out(2.5)' }); sfx(s + .75, 'pop', { f: 1.3 });
-  const a0 = Math.max(s + 1.3, a);
-  pulse('#p8', a0, 1.14); sfx(a0, 'ding', { f: 1.2 });
-  // смена кадра без склейки: наезд на QR (код остаётся на экране и читается)
-  const fin = SECS[i].querySelector(':scope > .layer:last-of-type');
-  tl.fromTo(fin, { scale: 1 }, { scale: 1.13, duration: .5, ease: 'power3.out', immediateRender: false, transformOrigin: '50% 38%' }, a0 - .05);
-  flashAt(a0 - .05, .5, .25); speedAt(a0 - .05, .4);
+  const i = SECS.length - 1, s = CUTS.at(-1) ?? SC[i].start, b = mk(i, 'b', SC[i].dur - 1.5);
+  const g = $('guide');
+  tl.fromTo(g, { rotation: -4 }, { rotation: 0, duration: .5, ease: 'back.out(2)', immediateRender: false }, s + .05);
+  pulse('#guide', Math.max(s + .9, b - .2), 1.05); sfx(Math.max(s + .9, b - .2), 'ding', { f: 1.2 });
+  tl.to('#cta', { keyframes: { rotation: [0, -4, 4, -3, 0] }, duration: .6, ease: 'none' }, Math.max(s + 1.2, b + .4));
 }
 // петля: камера перелетает к первому кадру, он возвращается в исходное состояние
 {
@@ -266,7 +264,7 @@ function drawSpeed(t) {
   spc.save(); spc.translate(540, 820);
   for (const l of SPL) {
     const o = ((t * 3 + l.sp) % 1) * 200, r0 = l.r0 + o, r1 = r0 + l.len;
-    spc.strokeStyle = `rgba(255,236,190,${(P.spd * .55).toFixed(3)})`; spc.lineWidth = l.w;
+    spc.strokeStyle = `rgba(18,18,18,${(P.spd * .22).toFixed(3)})`; spc.lineWidth = l.w;
     spc.beginPath(); spc.moveTo(Math.cos(l.a) * r0, Math.sin(l.a) * r0); spc.lineTo(Math.cos(l.a) * r1, Math.sin(l.a) * r1); spc.stroke();
   }
   spc.restore();
@@ -363,6 +361,12 @@ function apply(t) {
         v.img.addEventListener('load', r, { once: true }); v.img.addEventListener('error', r, { once: true }); setTimeout(r, 5000); }));
     }
   }
+  // сторис: полоски прогресса по сценам
+  document.querySelectorAll('#bars b').forEach((b, k) => {
+    const sc = SC[k]; if (!sc) return;
+    const p = t >= DUR - LOOP ? 0 : Math.max(0, Math.min(1, (t - sc.start) / sc.dur));
+    b.style.width = (p * 100).toFixed(2) + '%';
+  });
   // счётчики
   for (const c of COUNTS) { const v = c.o.v < 0 ? c.ph : String(Math.round(c.o.v)); if (c.el.textContent !== v) c.el.textContent = v; }
   drawBursts(t);

@@ -201,12 +201,12 @@ SECS.forEach((sec, i) => {
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, галочки будней щёлкают по очереди, выходные трясёт
+// хук: удар в первые 0.05 с; элементы .hk по очереди «щёлкают», .hkx трясёт (2-й удар), заголовок пульсирует (3-й)
 {
   const A = SECS[0].querySelector('.layer.A');
   flashAt(.04, .6, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
-  A.querySelectorAll('.day .ok').forEach((o, k) => { const t = .3 + k * .1; pulse(o, t, 1.35); sfx(t, 'tick', { f: 1 + k * .1, g: .5 }); });
-  A.querySelectorAll('.day.bad').forEach(d => { pulse(d, .95, 1.18); shake(d, .95); }); sfx(.95, 'impact', { g: .6 });
+  A.querySelectorAll('.hk').forEach((o, k) => { const t = .3 + k * .14; pulse(o, t, 1.12); sfx(t, 'tick', { f: 1 + k * .12, g: .5 }); });
+  A.querySelectorAll('.hkx').forEach(d => { pulse(d, .95, 1.12); shake(d, .95); }); sfx(.95, 'impact', { g: .6 });
   pulse(A.querySelector('.h1'), 1.45, 1.06); sfx(1.45, 'bonk');
 }
 // финал: гайд пульсирует, кнопка-призыв качается

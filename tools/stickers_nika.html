@@ -1,0 +1,116 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Unb; src: url(../assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
+body{margin:0;background:transparent} svg{display:block}
+</style></head><body><div id="out"></div>
+<script>
+const SK='#fbe3d4', SK2='#efc8b2', HAIR='#fbf8f2', HAIR2='#e4ddd0', LINE='#2b2422', EYE='#8fa9bd', LIP='#c8102e', GOLD='#d9a441';
+function face(o){
+  const dx=o.dx||0, tilt=o.tilt||0, e=o.eyes, m=o.mouth;
+  const ex1=242+dx, ex2=358+dx, ey=318;
+  const far = dx>0 ? 1 : dx<0 ? 2 : 0;       // дальний глаз чуть уже
+  const sq = k => (far===k ? .82 : 1);
+  let s='';
+  // волосы сзади + пучки
+  s+=`<ellipse cx="300" cy="292" rx="178" ry="186" fill="${HAIR2}"/>`;
+  s+=`<circle cx="${132+dx*.3}" cy="400" r="46" fill="${HAIR}" stroke="${HAIR2}" stroke-width="6"/><circle cx="${468+dx*.3}" cy="400" r="46" fill="${HAIR}" stroke="${HAIR2}" stroke-width="6"/>`;
+  // шея, плечи, топ
+  s+=`<path d="M255 440 L255 505 Q300 520 345 505 L345 440Z" fill="${SK2}"/>`;
+  s+=`<path d="M110 600 Q120 520 230 500 Q300 530 370 500 Q480 520 490 600Z" fill="${SK}"/>`;
+  s+=`<path d="M150 600 Q160 545 215 525 L225 600Z M450 600 Q440 545 385 525 L375 600Z" fill="#141414"/>`;
+  s+=`<path d="M215 600 Q235 560 300 562 Q365 560 385 600Z" fill="#141414"/>`;
+  // лицо
+  s+=`<path transform="translate(${dx*.15} 0)" d="M158 285 C158 410 235 478 300 480 C365 478 442 410 442 285 C442 175 380 128 300 128 C220 128 158 175 158 285Z" fill="${SK}"/>`;
+  // серьги
+  if(far!==1) s+=`<circle cx="${160+dx*.6}" cy="385" r="27" fill="none" stroke="${GOLD}" stroke-width="10"/>`;
+  if(far!==2) s+=`<circle cx="${440+dx*.6}" cy="385" r="27" fill="none" stroke="${GOLD}" stroke-width="10"/>`;
+  // румянец
+  if(o.blush) s+=`<ellipse cx="${ex1-12}" cy="388" rx="34" ry="18" fill="#f4a3a3" opacity=".6"/><ellipse cx="${ex2+12}" cy="388" rx="34" ry="18" fill="#f4a3a3" opacity=".6"/>`;
+  // веснушки
+  for(const [x,y] of [[-60,372],[-42,382],[-68,388],[-50,362],[60,372],[42,382],[68,388],[50,362],[-14,368],[14,368]]) s+=`<circle cx="${300+dx+x}" cy="${y}" r="3.2" fill="#c98d6e" opacity=".7"/>`;
+  // брови
+  const B={ up:[-22,-6], flat:[0,0], angry:[8,-10], sad:[-6,10], raise:[-24,0] }[o.brows||'flat'];
+  s+=`<path d="M${ex1-32} ${266+B[0]} Q${ex1} ${254+B[0]+B[1]*.3} ${ex1+30} ${262+B[0]+B[1]}" stroke="#b9a996" stroke-width="11" fill="none" stroke-linecap="round"/>`;
+  const B2 = o.brows==='raise' ? [-2,0] : B;
+  s+=`<path d="M${ex2-30} ${262+B2[0]+B2[1]} Q${ex2} ${254+B2[0]+B2[1]*.3} ${ex2+32} ${266+B2[0]}" stroke="#b9a996" stroke-width="11" fill="none" stroke-linecap="round"/>`;
+  // глаза
+  const look=o.look||[0,0];
+  const eye=(x,k,kind)=>{
+    const w=36*sq(k);
+    if(kind==='open'||kind==='wide'){const r=kind==='wide'?32:27, p=kind==='wide'?9:15;
+      return `<ellipse cx="${x}" cy="${ey}" rx="${w}" ry="${r}" fill="#fff" stroke="${LINE}" stroke-width="5"/><circle cx="${x+look[0]}" cy="${ey+look[1]}" r="${p+3}" fill="${EYE}"/><circle cx="${x+look[0]}" cy="${ey+look[1]}" r="${p-4}" fill="${LINE}"/><circle cx="${x+look[0]+5}" cy="${ey+look[1]-6}" r="4" fill="#fff"/><path d="M${x-w-2} ${ey-4} Q${x} ${ey-r-12} ${x+w+2} ${ey-4}" stroke="${LINE}" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M${x+w-2} ${ey-12} l14 -10 M${x+w-12} ${ey-20} l10 -12" stroke="${LINE}" stroke-width="5" stroke-linecap="round"/>`;}
+    if(kind==='half') return `<path d="M${x-w} ${ey} Q${x} ${ey+20} ${x+w} ${ey}Z" fill="#fff" stroke="${LINE}" stroke-width="5"/><circle cx="${x+look[0]}" cy="${ey+5}" r="9" fill="${EYE}"/><path d="M${x-w-2} ${ey} L${x+w+2} ${ey}" stroke="${LINE}" stroke-width="7" stroke-linecap="round"/>`;
+    if(kind==='happy') return `<path d="M${x-w} ${ey+6} Q${x} ${ey-22} ${x+w} ${ey+6}" stroke="${LINE}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+    if(kind==='closed') return `<path d="M${x-w} ${ey-2} Q${x} ${ey+16} ${x+w} ${ey-2}" stroke="${LINE}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+    if(kind==='heart') return `<path transform="translate(${x} ${ey}) scale(${1.25*sq(k)})" d="M0 14 C-28 -6 -18 -26 0 -12 C18 -26 28 -6 0 14Z" fill="${LIP}"/>`;
+    if(kind==='x') return `<path d="M${x-18} ${ey-14} L${x+18} ${ey+14} M${x+18} ${ey-14} L${x-18} ${ey+14}" stroke="${LINE}" stroke-width="7" stroke-linecap="round"/>`;
+  };
+  s+=eye(ex1,1,e[0])+eye(ex2,2,e[1]);
+  // нос
+  s+=`<path d="M${300+dx*1.1} 345 Q${292+dx*1.1} 372 ${302+dx*1.1} 378" stroke="#d9a58c" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  // рот
+  const mx=300+dx*.9, my=418;
+  const M={
+    smile:`<path d="M${mx-42} ${my-4} Q${mx-20} ${my-16} ${mx} ${my-8} Q${mx+20} ${my-16} ${mx+42} ${my-4} Q${mx} ${my+34} ${mx-42} ${my-4}Z" fill="${LIP}"/>`,
+    grin:`<path d="M${mx-52} ${my-12} Q${mx} ${my+62} ${mx+52} ${my-12}Z" fill="${LIP}"/><path d="M${mx-44} ${my-8} Q${mx} ${my+4} ${mx+44} ${my-8} L${mx+40} ${my+4} Q${mx} ${my+14} ${mx-40} ${my+4}Z" fill="#fff"/>`,
+    o:`<ellipse cx="${mx}" cy="${my+6}" rx="22" ry="30" fill="${LIP}"/><ellipse cx="${mx}" cy="${my+10}" rx="12" ry="18" fill="#6b0a18"/>`,
+    smirk:`<path d="M${mx-34} ${my+2} Q${mx+6} ${my+14} ${mx+40} ${my-14} Q${mx+6} ${my+26} ${mx-34} ${my+2}Z" fill="${LIP}"/>`,
+    flat:`<path d="M${mx-36} ${my} Q${mx-18} ${my-14} ${mx} ${my-6} Q${mx+18} ${my-14} ${mx+36} ${my} Q${mx} ${my+26} ${mx-36} ${my}Z" fill="${LIP}"/>`,
+    frown:`<path d="M${mx-34} ${my+12} Q${mx} ${my-14} ${mx+34} ${my+12} Q${mx} ${my-2} ${mx-34} ${my+12}Z" fill="${LIP}"/>`,
+    tight:`<path d="M${mx-30} ${my+2} L${mx+30} ${my+2}" stroke="${LIP}" stroke-width="14" stroke-linecap="round"/>`,
+    pant:`<path d="M${mx-26} ${my-4} Q${mx} ${my-12} ${mx+26} ${my-4} Q${mx+20} ${my+30} ${mx} ${my+30} Q${mx-20} ${my+30} ${mx-26} ${my-4}Z" fill="${LIP}"/><path d="M${mx-12} ${my+18} Q${mx} ${my+10} ${mx+12} ${my+18}" fill="#ff8a95"/>`,
+  }[m];
+  s+=M;
+  // чёлка: пробор по центру, пряди на лоб
+  s+=`<path d="M${150+dx*.2} 320 C134 165 228 112 ${300+dx*.4} 122 C372 112 466 165 ${450+dx*.2} 320 C446 250 410 200 ${306+dx*.4} 192 C318 215 322 228 ${300+dx*.4} 216 C278 228 282 215 ${294+dx*.4} 192 C190 200 154 250 ${150+dx*.2} 320Z" fill="${HAIR}"/>`;
+  s+=`<path d="M150 300 Q140 380 168 430 Q172 360 182 300Z M450 300 Q460 380 432 430 Q428 360 418 300Z" fill="${HAIR}"/><path d="M${300+dx*.4} 124 L${300+dx*.4} 194" stroke="${HAIR2}" stroke-width="5" stroke-linecap="round"/>`;
+  s+=`<path d="M192 196 Q218 158 262 142 M408 196 Q382 158 338 142" stroke="${HAIR2}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  // слёзы / пот
+  if(o.tear) s+=`<path d="M${ex1+6} ${ey+26} Q${ex1-6} ${ey+50} ${ex1+6} ${ey+60} Q${ex1+18} ${ey+50} ${ex1+6} ${ey+26}Z" fill="#7cc4ff"/>`;
+  if(o.sweat) s+=`<path d="M455 210 Q440 240 455 252 Q470 240 455 210Z" fill="#7cc4ff" stroke="#3d93d6" stroke-width="3"/><path d="M480 250 Q470 270 480 278 Q490 270 480 250Z" fill="#7cc4ff" stroke="#3d93d6" stroke-width="3"/>`;
+  let face_g = `<g transform="rotate(${tilt} 300 330)">${s}</g>`;
+  // реквизит
+  let prop='';
+  const P={
+    dumbbell:`<g transform="translate(450 470) rotate(-25)"><rect x="-70" y="-9" width="140" height="18" rx="9" fill="#555"/><rect x="-100" y="-38" width="34" height="76" rx="10" fill="#141414"/><rect x="66" y="-38" width="34" height="76" rx="10" fill="#141414"/></g>`,
+    donut:`<g transform="translate(470 470) rotate(15)"><circle r="62" fill="#e9b26f"/><circle r="56" fill="#f48fb1"/><circle r="20" fill="#e9b26f"/><circle r="16" fill="#fff0" stroke="#d99a55" stroke-width="2"/>${[[-30,-20,'#fff'],[20,-34,'#7cc4ff'],[34,10,'#ffd84a'],[-12,34,'#fff'],[-40,14,'#ffd84a']].map(([x,y,c])=>`<rect x="${x}" y="${y}" width="16" height="6" rx="3" fill="${c}" transform="rotate(${x*2} ${x} ${y})"/>`).join('')}</g>`,
+    hearts:`<path transform="translate(480 150) scale(1.6)" d="M0 14 C-28 -6 -18 -26 0 -12 C18 -26 28 -6 0 14Z" fill="${LIP}"/><path transform="translate(110 190) scale(1.1) rotate(-15)" d="M0 14 C-28 -6 -18 -26 0 -12 C18 -26 28 -6 0 14Z" fill="#ff6b7d"/>`,
+    question:`<text x="470" y="200" font-family="Unb" font-weight="900" font-size="130" fill="${LIP}" transform="rotate(12 470 160)">?</text>`,
+    sparkle:`${[[480,150,1.4],[110,200,1],[505,260,.8]].map(([x,y,k])=>`<path transform="translate(${x} ${y}) scale(${k})" d="M0 -34 Q4 -4 34 0 Q4 4 0 34 Q-4 4 -34 0 Q-4 -4 0 -34Z" fill="#ffc83d"/>`).join('')}`,
+    tape:`<g transform="translate(300 560) rotate(-4)"><rect x="-230" y="-26" width="460" height="52" rx="10" fill="#ffd84a" stroke="#141414" stroke-width="5"/>${[...Array(22)].map((_,k)=>`<path d="M${-220+k*20} -26 V${k%5?-12:-2}" stroke="#141414" stroke-width="4"/>`).join('')}<text x="0" y="16" text-anchor="middle" font-family="Unb" font-weight="900" font-size="30" fill="#141414">−3 КГ</text></g>`,
+    shock:`<path d="M110 150 l30 40 M90 210 l45 10 M490 150 l-30 40 M510 210 l-45 10" stroke="${LIP}" stroke-width="10" stroke-linecap="round"/>`,
+    fire:`<path transform="translate(485 165)" d="M0 -60 C30 -30 50 -10 40 25 C32 52 -32 52 -40 25 C-46 0 -24 -20 -14 -38 C-10 -18 0 -14 0 -60Z" fill="#ff7a1a"/><path transform="translate(485 180)" d="M0 -30 C14 -14 24 0 18 18 C12 32 -12 32 -18 18 C-22 6 -8 -6 0 -30Z" fill="#ffd84a"/>`,
+    zz:`<text x="440" y="170" font-family="Unb" font-weight="900" font-size="64" fill="#7a8a99">z</text><text x="490" y="120" font-family="Unb" font-weight="900" font-size="84" fill="#7a8a99">Z</text>`,
+  };
+  (o.props||[]).forEach(p=>prop+=P[p]);
+  // подпись
+  const cap=o.cap, fs=60;
+  const label=`<g transform="translate(300 545) rotate(${o.capRot??-4})"><rect class="cr" x="-200" y="-46" width="400" height="92" rx="46" fill="${o.dark?'#141414':LIP}"/><text x="0" y="${fs*.36}" text-anchor="middle" font-family="Unb" font-weight="800" font-size="${fs}" fill="#fff" class="ct">${cap}</text></g>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="-20 -20 640 640">
+  <defs><filter id="o" x="-10%" y="-10%" width="120%" height="120%"><feMorphology in="SourceAlpha" operator="dilate" radius="12" result="d"/><feFlood flood-color="#fff"/><feComposite in2="d" operator="in" result="w"/>
+  <feMorphology in="SourceAlpha" operator="dilate" radius="14" result="d2"/><feFlood flood-color="#000" flood-opacity=".18"/><feComposite in2="d2" operator="in" result="sh"/><feOffset in="sh" dy="6" result="sh2"/><feGaussianBlur in="sh2" stdDeviation="6" result="sh3"/>
+  <feMerge><feMergeNode in="sh3"/><feMergeNode in="w"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <clipPath id="c"><rect x="0" y="0" width="600" height="600"/></clipPath></defs>
+  <g filter="url(#o)"><g clip-path="url(#c)">${face_g}</g>${prop}${label}</g></svg>`;
+}
+const SET=[
+ {n:'01_shock', eyes:['wide','wide'], mouth:'o', brows:'up', props:['shock'], cap:'ОПЯТЬ +1?!'},
+ {n:'02_happy', eyes:['happy','happy'], mouth:'grin', brows:'up', blush:1, props:['tape'], cap:'МИНУС 3!', tilt:-6},
+ {n:'03_wink', eyes:['open','happy'], mouth:'smirk', brows:'raise', dx:22, tilt:6, cap:'ЛОВИ ЛАЙФХАК', dark:1},
+ {n:'04_power', eyes:['open','open'], mouth:'tight', brows:'angry', sweat:1, props:['dumbbell'], cap:'ЕЩЁ ПОДХОД', look:[0,2]},
+ {n:'05_tired', eyes:['half','half'], mouth:'pant', brows:'sad', sweat:1, dx:-18, tilt:-8, cap:'НОГИ ВСЁ…', dark:1},
+ {n:'06_think', eyes:['open','open'], mouth:'flat', brows:'raise', dx:26, look:[8,-8], props:['question'], cap:'СКОЛЬКО ККАЛ?'},
+ {n:'07_love', eyes:['heart','heart'], mouth:'smile', brows:'up', blush:1, props:['hearts'], cap:'ЛЮБЛЮ БЕЛОК', tilt:5},
+ {n:'08_sad', eyes:['open','open'], mouth:'frown', brows:'sad', tear:1, props:['donut'], look:[-6,6], cap:'СОРВАЛАСЬ…', dark:1, dx:-20},
+ {n:'09_laugh', eyes:['closed','closed'], mouth:'grin', brows:'up', blush:1, tilt:-10, dx:-14, props:['fire'], cap:'ЖИРОТОП'},
+ {n:'10_cool', eyes:['half','half'], mouth:'smirk', brows:'flat', dx:24, tilt:4, props:['sparkle'], cap:'СУШКА ИДЁТ', look:[6,0]},
+];
+document.getElementById('out').innerHTML=SET.map(o=>`<div id="s_${o.n}" style="width:640px;height:640px">${face(o)}</div>`).join('');
+document.fonts.ready.then(()=>document.querySelectorAll('.ct').forEach(t=>{
+  let w=t.getBBox().width; if(w>500){t.setAttribute('font-size',60*500/w); w=500;}
+  const r=t.previousElementSibling; r.setAttribute('x',-(w/2+36)); r.setAttribute('width',w+72);
+  const h=parseFloat(t.getAttribute('font-size')); t.setAttribute('y',h*.36);
+}));
+window.NAMES=SET.map(o=>o.n);
+window.READY=document.fonts.ready;
+</script></body></html>

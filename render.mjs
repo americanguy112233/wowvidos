@@ -65,6 +65,19 @@ if (args.stills) {
   fs.writeFileSync(path.join(OUT, 'timeline.json'), JSON.stringify(await first.evaluate(() => window.TIMELINE)));
   const N = Math.round(dur * FPS);
   const fname = i => path.join(OUT, `f_${String(i).padStart(5, '0')}.jpg`);
+  // подпись рендера: если с прошлого раза поменялись вёрстка/анимация/озвучка — старые кадры не годятся
+  const sig = ['index.html', 'scene.js', 'assets/timeline.js'].map(f => { try { return fs.readFileSync(path.join(ROOT, f), 'utf8'); } catch { return ''; } }).join('|') + `|${FPS}|${N}`;
+  const sigHash = (await import('node:crypto')).createHash('sha1').update(sig).digest('hex');
+  const sigFile = path.join(OUT, 'frames.sig');
+  try { fs.unlinkSync(path.join(OUT, 'frames.ok')); } catch {}
+  const oldSig = fs.existsSync(sigFile) ? fs.readFileSync(sigFile, 'utf8') : '';
+  if ('resume' in args && oldSig !== sigHash) {
+    console.log('проект изменился с прошлого рендера — рисую все кадры заново');
+    for (const f of fs.readdirSync(OUT)) if (/^f_\d+\.jpg$/.test(f)) fs.unlinkSync(path.join(OUT, f));
+  }
+  fs.writeFileSync(sigFile, sigHash);
+  // лишние кадры от прошлого, более длинного ролика
+  for (const f of fs.readdirSync(OUT)) { const m = /^f_(\d+)\.jpg$/.exec(f); if (m && +m[1] >= N) fs.unlinkSync(path.join(OUT, f)); }
   const have = i => { try { return fs.statSync(fname(i)).size > 1000; } catch { return false; } };
   // --resume: дорисовываем только недостающие кадры (после прерванного рендера)
   const todo = [...Array(N).keys()].filter(i => !('resume' in args) || !have(i));

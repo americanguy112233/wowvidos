@@ -20,7 +20,8 @@ if (-not $env:CHROME) {
 Write-Host "Браузер: $env:CHROME"
 New-Item -ItemType Directory -Force build | Out-Null
 
-if ($Resume -and (Test-Path build\voice.wav) -and (Test-Path build\frames\timeline.json)) {
+$voiceFresh = (Test-Path build\voice.wav) -and ((Get-Item build\voice.wav).LastWriteTime -gt (Get-Item voice.py).LastWriteTime)
+if ($Resume -and $voiceFresh -and (Test-Path build\frames\timeline.json)) {
   Write-Host '1/4 голос уже готов — пропускаю (-Resume)'
   Write-Host '2/4 кадры: дорисовываю недостающие...'
   node render.mjs --out build\frames --fps 60 --workers 4 --resume
@@ -47,8 +48,11 @@ if ($LASTEXITCODE) { throw 'Сведение звука упало' }
 
 Write-Host '4/4 видео...'
 $DUR = node -p "require('./build/frames/timeline.json').dur"
-ffmpeg -v error -y -framerate 60 -i build\frames\f_%05d.jpg -i build\mix.wav -t $DUR `
+ffmpeg -v error -y -framerate 60 -start_number 0 -i build\frames\f_%05d.jpg -i build\mix.wav -t $DUR `
   -af loudnorm=I=-14:TP=-1.5:LRA=11 -c:v libx264 -preset slow -crf 17 -pix_fmt yuv420p -profile:v high `
   -c:a aac -b:a 256k -ar 48000 -movflags +faststart $Out
 if ($LASTEXITCODE) { throw 'ffmpeg упал' }
+# проверка длины готового ролика
+$got = [double](ffprobe -v error -show_entries format=duration -of csv=p=0 $Out)
+if ($got + 0.3 -lt [double]$DUR) { throw "Ролик короче, чем должен: $got с вместо $DUR с. Запусти сборку без -Resume." }
 Write-Host "Готово: $Out ($DUR с)"

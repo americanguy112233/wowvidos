@@ -47,6 +47,9 @@ async function newPage() {
     const stage = await Promise.race([page.evaluate(() => window.STAGE), new Promise(r => setTimeout(() => r('страница не отвечает'), 5000))]);
     throw new Error(`Страница не загрузилась за 90 с, застряла на этапе: «${stage}». Пришли этот текст.`);
   }
+  // картинки, которых нет на диске (в ролике вместо них пустая рамка) — сразу останавливаемся и называем файлы
+  const miss = await page.evaluate(() => [...new Set([...document.images].filter(i => i.getAttribute('src') && !i.naturalWidth).map(i => decodeURI(new URL(i.src).pathname).slice(1)))]);
+  if (miss.length) throw new Error('Нет картинок (положи файлы по этим путям в папке проекта):\n  ' + miss.join('\n  '));
   return page;
 }
 const withTimeout = (p, ms, what) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`${what}: нет ответа ${ms / 1000} с`)), ms))]);

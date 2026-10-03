@@ -344,8 +344,11 @@ function subs(t) {
   if (!c) { if (lastChunk) { el.innerHTML = ''; lastChunk = null; } return; }
   if (c !== lastChunk) {
     const chars = c.words.reduce((n, w) => n + w.w.length + 1, 0), longest = Math.max(...c.words.map(w => w.w.length));
-    const fs = Math.max(66, Math.min(100, 860 / Math.max(chars * .6, longest * .7)));   // вся фраза — максимум в 2 строки
+    let fs = Math.max(66, Math.min(100, 860 / Math.max(chars * .6, longest * .7)));   // вся фраза — максимум в 2 строки
     el.innerHTML = `<div class="ln" style="font-size:${fs.toFixed(0)}px">` + c.words.map(w => `<span class="w">${(/^[—–]$/.test(w.w) ? '' : w.w)}</span>`).join('') + '</div>';
+    // подгон по реальной ширине: у Unbounded широкие заглавные, оценка по буквам ошибалась и текст вылезал за край
+    const ln0 = el.firstChild, fits = () => [...ln0.children].every(sp => sp.offsetWidth <= 820) && ln0.offsetHeight <= fs * 1.15 * 2 + 4;
+    while (!fits() && fs > 40) { fs -= 3; ln0.style.fontSize = fs + 'px'; }
     lastChunk = c;
   }
   const dt = t - c.start, ln = el.firstChild;

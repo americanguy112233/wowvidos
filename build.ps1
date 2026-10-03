@@ -53,6 +53,8 @@ ffmpeg -v error -y -framerate 60 -start_number 0 -i build\frames\f_%05d.jpg -i b
   -c:a aac -b:a 256k -ar 48000 -movflags +faststart $Out
 if ($LASTEXITCODE) { throw 'ffmpeg упал' }
 # проверка длины готового ролика
-$got = [double](ffprobe -v error -show_entries format=duration -of csv=p=0 $Out)
-if ($got + 0.3 -lt [double]$DUR) { throw "Ролик короче, чем должен: $got с вместо $DUR с. Запусти сборку без -Resume." }
+# считаем именно кадры видео (длина файла считается по звуку и не замечает, что картинка кончилась раньше)
+$vf = [int](ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 $Out)
+$want = [int]([math]::Floor([double]$DUR * 60))
+if ($vf + 6 -lt $want) { throw "В видео $vf кадров вместо $want — картинка обрывается на $([math]::Round($vf / 60, 2)) с. Пришли этот текст." }
 Write-Host "Готово: $Out ($DUR с)"

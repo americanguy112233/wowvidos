@@ -53,7 +53,10 @@ async function newPage() {
   return page;
 }
 const withTimeout = (p, ms, what) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error(`${what}: нет ответа ${ms / 1000} с`)), ms))]);
+// после renderAt ждём, пока браузер реально перерисует страницу (2 кадра): иначе скриншот может вернуть старую картинку
+const painted = page => page.evaluate(() => new Promise(r => { requestAnimationFrame(() => requestAnimationFrame(r)); setTimeout(r, 300); }));
 const shot = (page, t, file, type = 'jpeg') => withTimeout(page.evaluate(t => window.renderAt(t), t)
+  .then(() => painted(page))
   .then(() => page.screenshot({ path: file, type, ...(type === 'jpeg' ? { quality: 94 } : {}), optimizeForSpeed: true, captureBeyondViewport: false })), 60000, `кадр ${file}`);
 
 const t0 = Date.now();
@@ -81,7 +84,8 @@ if (args.stills) {
   fs.writeFileSync(sigFile, sigHash);
   // лишние кадры от прошлого, более длинного ролика
   for (const f of fs.readdirSync(OUT)) { const m = /^f_(\d+)\.jpg$/.exec(f); if (m && +m[1] >= N) fs.unlinkSync(path.join(OUT, f)); }
-  const have = i => { try { return fs.statSync(fname(i)).size > 1000; } catch { return false; } };
+  // кадр годен, если это целый JPEG (начало FFD8, конец FFD9): обрезанный файл ffmpeg молча пропустит
+  const have = i => { try { const b = fs.readFileSync(fname(i)); return b.length > 1000 && b[0] === 0xFF && b[1] === 0xD8 && b[b.length - 2] === 0xFF && b[b.length - 1] === 0xD9; } catch { return false; } };
   // --resume: дорисовываем только недостающие кадры (после прерванного рендера)
   const todo = [...Array(N).keys()].filter(i => !('resume' in args) || !have(i));
   if ('resume' in args) console.log(`уже готово ${N - todo.length}/${N} кадров, осталось ${todo.length}`);
@@ -102,6 +106,19 @@ if (args.stills) {
     miss = [...Array(N).keys()].filter(i => !have(i));
   }
   if (miss.length) { console.error(`НЕ ХВАТАЕТ ${miss.length} кадров (первый: ${miss[0]})`); process.exit(1); }
+  // «замёрзшая» картинка: в ролике всё время что-то чуть движется, поэтому соседние кадры никогда не совпадают.
+  // Подряд одинаковые кадры = браузер перестал рисовать (видео «обрывается» и стоит на одном кадре) — перерисовываем свежим браузером.
+  const crypto = await import('node:crypto');
+  const frozen = () => { const out = []; let prev = '';
+    for (let i = 0; i < N; i++) { const h = crypto.createHash('md5').update(fs.readFileSync(fname(i))).digest('hex'); if (h === prev) out.push(i); prev = h; }
+    return out; };
+  for (let pass = 1; pass <= 3; pass++) {
+    const fr = frozen(); if (!fr.length) break;
+    console.log(`картинка «замёрзла» на ${fr.length} кадрах (первый: ${fr[0]}, это ${(fr[0] / FPS).toFixed(2)} с) — перерисовываю, попытка ${pass}`);
+    const fresh = await newPage();
+    for (const i of [...new Set(fr.flatMap(i => [i - 1, i]))].filter(i => i >= 0)) await shot(fresh, i / FPS, fname(i));
+    if (pass === 3 && frozen().length) { console.error(`Картинка стоит на месте с ${(frozen()[0] / FPS).toFixed(2)} с даже после перерисовки. Пришли этот текст.`); process.exit(1); }
+  }
   fs.writeFileSync(path.join(OUT, 'frames.ok'), String(N));
   console.log(`готово: ${N} кадров за ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }

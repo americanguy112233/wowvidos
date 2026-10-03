@@ -1,7 +1,7 @@
 ﻿# Полная сборка на Windows: голос -> кадры -> звук -> mp4
 #   powershell -ExecutionPolicy Bypass -File .\build.ps1
 #   параметры: -Engine silero|edge|piper|rec|elevenlabs   -Out имя.mp4   -Music 0|1
-#   -Resume — не пересобирать голос и кадры, если они уже готовы (продолжить со звука)
+#   -Resume — не пересобирать голос, дорисовать только недостающие кадры и продолжить
 param([string]$Engine = 'silero', [string]$Out = 'nika-reel.mp4', [string]$Music = '0', [switch]$Resume)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
@@ -20,9 +20,11 @@ if (-not $env:CHROME) {
 Write-Host "Браузер: $env:CHROME"
 New-Item -ItemType Directory -Force build | Out-Null
 
-$ready = $Resume -and (Test-Path build\voice.wav) -and (Test-Path build\frames\timeline.json) -and (Test-Path build\frames\sfx.json)
-if ($ready) {
-  Write-Host '1-2/4 голос и кадры уже готовы — пропускаю (-Resume)'
+if ($Resume -and (Test-Path build\voice.wav) -and (Test-Path build\frames\timeline.json)) {
+  Write-Host '1/4 голос уже готов — пропускаю (-Resume)'
+  Write-Host '2/4 кадры: дорисовываю недостающие...'
+  node render.mjs --out build\frames --fps 60 --workers 4 --resume
+  if ($LASTEXITCODE) { throw 'Рендер кадров упал' }
 } else {
 Write-Host '1/4 голос...'
 & $PY voice.py build\vo build\voice.wav --engine $Engine
@@ -33,6 +35,10 @@ if (Test-Path build\frames) { Remove-Item build\frames -Recurse -Force }
 node render.mjs --out build\frames --fps 60 --workers 4
 if ($LASTEXITCODE) { throw 'Рендер кадров упал' }
 }
+# все ли кадры на месте: иначе ffmpeg молча обрежет видео
+$need = [int](Get-Content build\frames\frames.ok -ErrorAction SilentlyContinue)
+$have = (Get-ChildItem build\frames\f_*.jpg).Count
+if (-not $need -or $have -lt $need) { throw "Кадров $have из $need — запусти сборку ещё раз с -Resume" }
 
 Write-Host '3/4 звук...'
 $env:MUSIC = $Music

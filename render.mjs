@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer-core';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (v.startsWith('--') && a.push([v.slice(2), arr[i + 1]]), a), []));
+const args = Object.fromEntries(process.argv.slice(2).reduce((a, v, i, arr) => (v.startsWith('--') && a.push([v.slice(2), arr[i + 1] && !arr[i + 1].startsWith('--') ? arr[i + 1] : true]), a), []));
 const OUT = path.resolve(args.out || path.join(ROOT, 'frames'));
 const FPS = +(args.fps || 60);
 const WORKERS = +(args.workers || 4);
@@ -64,16 +64,30 @@ if (args.stills) {
   fs.writeFileSync(path.join(OUT, 'sfx.json'), JSON.stringify(await first.evaluate(() => window.SFX), null, 1));
   fs.writeFileSync(path.join(OUT, 'timeline.json'), JSON.stringify(await first.evaluate(() => window.TIMELINE)));
   const N = Math.round(dur * FPS);
-  const pages = [first, ...await Promise.all([...Array(WORKERS - 1)].map(newPage))];
+  const fname = i => path.join(OUT, `f_${String(i).padStart(5, '0')}.jpg`);
+  const have = i => { try { return fs.statSync(fname(i)).size > 1000; } catch { return false; } };
+  // --resume: дорисовываем только недостающие кадры (после прерванного рендера)
+  const todo = [...Array(N).keys()].filter(i => !('resume' in args) || !have(i));
+  if ('resume' in args) console.log(`уже готово ${N - todo.length}/${N} кадров, осталось ${todo.length}`);
+  const pages = [first, ...await Promise.all([...Array(Math.max(0, Math.min(WORKERS, todo.length) - 1))].map(newPage))];
   let done = 0;
-  const chunk = Math.ceil(N / WORKERS);
+  const chunk = Math.ceil(todo.length / pages.length);
   await Promise.all(pages.map(async (page, w) => {
-    for (let i = w * chunk; i < Math.min(N, (w + 1) * chunk); i++) {
-      await shot(page, i / FPS, path.join(OUT, `f_${String(i).padStart(5, '0')}.jpg`));
-      if (++done % 60 === 0) console.log(`${done}/${N} кадров, ${((Date.now() - t0) / 1000).toFixed(0)} с`);
+    for (const i of todo.slice(w * chunk, (w + 1) * chunk)) {
+      await shot(page, i / FPS, fname(i));
+      if (++done % 60 === 0) console.log(`${done}/${todo.length} кадров, ${((Date.now() - t0) / 1000).toFixed(0)} с`);
     }
   }));
-  console.log(`rendered ${N} frames in ${((Date.now() - t0) / 1000).toFixed(1)}s`);
+  // проверка: ffmpeg молча обрезает видео на первом пропущенном кадре — дорисовываем пропуски
+  let miss = [...Array(N).keys()].filter(i => !have(i));
+  if (miss.length) {
+    console.log(`пропущено ${miss.length} кадров — дорисовываю`);
+    for (const i of miss) await shot(first, i / FPS, fname(i));
+    miss = [...Array(N).keys()].filter(i => !have(i));
+  }
+  if (miss.length) { console.error(`НЕ ХВАТАЕТ ${miss.length} кадров (первый: ${miss[0]})`); process.exit(1); }
+  fs.writeFileSync(path.join(OUT, 'frames.ok'), String(N));
+  console.log(`готово: ${N} кадров за ${((Date.now() - t0) / 1000).toFixed(1)}s`);
 }
 await Promise.all(BROWSERS.map(b => b.close()));
 server.close();

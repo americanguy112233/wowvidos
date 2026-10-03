@@ -201,13 +201,12 @@ SECS.forEach((sec, i) => {
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, пустые «кубики» пресса мигают, заголовок пульсирует
+// хук: удар в первые 0.05 с, галочки будней щёлкают по очереди, выходные трясёт
 {
   const A = SECS[0].querySelector('.layer.A');
   flashAt(.04, .6, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
-  A.querySelectorAll('.pk').forEach((r, k) => { const t = .35 + k * .08;
-    tl.to(r, { keyframes: { opacity: [1, .15, 1] }, duration: .3, ease: 'none' }, t); sfx(t, 'tick', { f: 1 + k * .1, g: .5 }); });
-  pulse('#abs0', .95, 1.18); shake('#abs0', .95); sfx(.95, 'impact', { g: .6 });
+  A.querySelectorAll('.day .ok').forEach((o, k) => { const t = .3 + k * .1; pulse(o, t, 1.35); sfx(t, 'tick', { f: 1 + k * .1, g: .5 }); });
+  A.querySelectorAll('.day.bad').forEach(d => { pulse(d, .95, 1.18); shake(d, .95); }); sfx(.95, 'impact', { g: .6 });
   pulse(A.querySelector('.h1'), 1.45, 1.06); sfx(1.45, 'bonk');
 }
 // финал: гайд пульсирует, кнопка-призыв качается
@@ -217,6 +216,7 @@ SECS.forEach((sec, i) => {
   tl.fromTo(g, { rotation: -4 }, { rotation: 0, duration: .5, ease: 'back.out(2)', immediateRender: false }, s + .05);
   pulse('#guide', Math.max(s + .9, b - .2), 1.05); sfx(Math.max(s + .9, b - .2), 'ding', { f: 1.2 });
   tl.to('#cta', { keyframes: { rotation: [0, -4, 4, -3, 0] }, duration: .6, ease: 'none' }, Math.max(s + 1.2, b + .4));
+  for (let t = s + 1.4; t < DUR - LOOP - .4; t += 1) pulse('#cta', t, 1.06);   // плашка «пиши ДЕСЕРТ» мягко пульсирует до конца
 }
 // петля: камера перелетает к первому кадру, он возвращается в исходное состояние
 {

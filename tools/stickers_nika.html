@@ -104,6 +104,7 @@ const SET=[
  {n:'08_sad', eyes:['open','open'], mouth:'frown', brows:'sad', tear:1, props:['donut'], look:[-6,6], cap:'СОРВАЛАСЬ…', dark:1, dx:-20},
  {n:'09_laugh', eyes:['closed','closed'], mouth:'grin', brows:'up', blush:1, tilt:-10, dx:-14, props:['fire'], cap:'ЖИРОТОП'},
  {n:'10_cool', eyes:['half','half'], mouth:'smirk', brows:'flat', dx:24, tilt:4, props:['sparkle'], cap:'СУШКА ИДЁТ', look:[6,0]},
+ {n:'11_muscle', eyes:['wide','wide'], mouth:'o', brows:'sad', sweat:1, props:['dumbbell'], cap:'ГДЕ МЫШЦЫ?!', tilt:-5, dx:-16, look:[-6,4], dark:1},
 ];
 document.getElementById('out').innerHTML=SET.map(o=>`<div id="s_${o.n}" style="width:640px;height:640px">${face(o)}</div>`).join('');
 document.fonts.ready.then(()=>document.querySelectorAll('.ct').forEach(t=>{

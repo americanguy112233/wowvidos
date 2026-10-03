@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [3.2, 9, 8, 11, 6];
+const MIN = [4, 8, 7, 9, 6];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -86,7 +86,7 @@ for (let i = 1; i < SC.length; i++) {
   tl.fromTo(P, { mb: 0 }, { mb: 34, duration: .25, ease: 'power2.in', immediateRender: false }, t);
   tl.to(P, { mb: 0, duration: .25, ease: 'power2.out' }, t + .25);
   tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .05);
-  tl.fromTo(P, { flash: .55 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .45);
+  tl.fromTo(P, { flash: .3 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .45);
   const c = CONN[i - 1];
   tl.fromTo(c.el, { height: 0, opacity: 0 }, { height: c.len, opacity: 1, duration: .45, ease: 'power2.inOut', immediateRender: false }, t + .05);
   sfx(t, 'whoosh', { d: .5 }); sfx(t + .45, 'thump', { g: .55 });
@@ -127,13 +127,16 @@ const FX = {
                       const ps = [...el.querySelectorAll('.dr')];
                       ps.forEach((p, k) => tl.fromTo(p, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: .55, ease: 'power2.inOut', immediateRender: true }, t + k * .12));
                       sfx(t, 'zip', { d: .5 }); },
-  drop:  (el, t) => { tl.fromTo(el, { y: -900, rotation: (POS.get(el)?.x % 2 ? 25 : -25), opacity: 1 }, { y: 0, rotation: 0, duration: .75, ease: 'bounce.out', immediateRender: true }, t); sfx(t + .45, 'thump', { g: .45 }); },
+  drop:  (el, t) => { tl.set(el, { opacity: 0 }, 0); tl.set(el, { opacity: 1 }, t);   // до падения скрыт — не висит над экраном
+                      tl.fromTo(el, { y: -900, rotation: (POS.get(el)?.x % 2 ? 25 : -25) }, { y: 0, rotation: 0, duration: .75, ease: 'bounce.out', immediateRender: true }, t); sfx(t + .45, 'thump', { g: .45 }); },
+  grow:  (el, t) => { const [k, v] = el.dataset.h ? ['height', el.dataset.h] : ['width', el.dataset.w || '0,100'], [a, b] = v.split(',');   // столбики/полоски растут
+                      tl.fromTo(el, { [k]: a + '%' }, { [k]: b + '%', duration: .8, ease: 'power3.out', immediateRender: true }, t); sfx(t, 'swoosh', { f: 1.2, g: .5 }); },
   kin:   (el, t) => { const ws = [...el.querySelectorAll('.kw')];
                       tl.fromTo(ws, { y: 110, scale: .2, opacity: 0, rotation: k => (k % 2 ? 14 : -14) }, { y: 0, scale: 1, opacity: 1, rotation: 0, duration: .5, ease: 'back.out(2.6)', stagger: .09 }, t);
                       ws.forEach((w, k) => k % 2 || sfx(t + k * .09, 'pop', { f: 1 + k * .06, g: .55 }));
                       KINS.push({ ws, t }); },
   write: (el, t) => { tl.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'power1.inOut', immediateRender: true }, t); sfx(t, 'zip', { d: .8 }); },
-  slam:  (el, t) => { slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
+  slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
 function startCount(el, t) {
   el.querySelectorAll('[data-count]').forEach(c => {
@@ -192,20 +195,19 @@ SECS.forEach((sec, i) => {
     if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
     tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .85, .3); speedAt(c, .45); BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });
+    flashAt(c, .45, .25); speedAt(c, .45); BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, продукты по очереди «прыгают» в мусорку
+// хук: удар в первые 0.05 с, пустые «кубики» пресса мигают, заголовок пульсирует
 {
   const A = SECS[0].querySelector('.layer.A');
-  flashAt(.04, .9, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
-  const gs = [...A.querySelectorAll('svg.prop > g')];
-  gs.forEach((g, k) => { const t = .45 + k * .3;
-    tl.to(g, { keyframes: { y: [0, -90, 230], scale: [1, 1.05, .55], opacity: [1, 1, 0] }, duration: .55, ease: 'power1.in', transformOrigin: '50% 50%' }, t);
-    sfx(t + .5, 'thump', { g: .5 }); });
+  flashAt(.04, .6, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
+  A.querySelectorAll('.pk').forEach((r, k) => { const t = .35 + k * .08;
+    tl.to(r, { keyframes: { opacity: [1, .15, 1] }, duration: .3, ease: 'none' }, t); sfx(t, 'tick', { f: 1 + k * .1, g: .5 }); });
+  pulse('#abs0', .95, 1.18); shake('#abs0', .95); sfx(.95, 'impact', { g: .6 });
   pulse(A.querySelector('.h1'), 1.45, 1.06); sfx(1.45, 'bonk');
 }
 // финал: гайд пульсирует, кнопка-призыв качается
@@ -380,10 +382,11 @@ function micro(t) {
   });
 }
 const gc = document.getElementById('grain')?.getContext('2d'), GT = [];
-if (gc) for (let n = 0; n < 6; n++) { const im = gc.createImageData(360, 640); for (let i = 0; i < im.data.length; i += 4) { const v = rnd(i, n) * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } GT.push(im); }
-function grain(t) { if (gc) gc.putImageData(GT[Math.floor(t * 24) % GT.length], 0, 0); }
+// зерно — один неподвижный кадр, еле заметный: живая «рябь» 24 раза в секунду утомляла глаза
+if (gc) { const im = gc.createImageData(360, 640); for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (rnd(i, 1) - .5) * 160; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } gc.putImageData(im, 0, 0); }
+function grain(t) {}
 function blobs(t) { document.querySelectorAll('.blob').forEach((b, k) => {
-  b.style.translate = `${(Math.sin(t * .25 + k * 2) * 90 - P.cam / H * 140).toFixed(1)}px ${(Math.cos(t * .2 + k) * 70).toFixed(1)}px`; }); }
+  b.style.translate = `${(Math.sin(t * .12 + k * 2) * 50 - P.cam / H * 60).toFixed(1)}px ${(Math.cos(t * .1 + k) * 40).toFixed(1)}px`; }); }
 
 // ---------------------------------------------------------------- кадр
 let lastFilter = '';

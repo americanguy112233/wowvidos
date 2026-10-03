@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [3.2, 5.5, 4.5, 4.5, 5, 5];
+const MIN = [3.2, 6.5, 7, 8.5, 6, 6];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -177,12 +177,12 @@ SECS.forEach((sec, i) => {
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, весы «дрожат» и встают на 0,0
+// хук: удар в первые 0.05 с, цифры 1-2-3-4 подпрыгивают по очереди
 {
   const A = SECS[0].querySelector('.layer.A');
   flashAt(.04, .9, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
-  tl.to('#sc1', { keyframes: { y: [0, -18, 0, -10, 0] }, duration: .6, ease: 'none' }, .5); ticks(.5, .6, 8, 1, 1.4);
-  pulse('#lcd', 1.15, 1.15); burstAt(1.15, $('sc1')); flashAt(1.15, .4, .25); sfx(1.15, 'bonk');
+  [...A.querySelectorAll('.d')].forEach((d, k) => { pulse(d, .45 + k * .15, 1.22); sfx(.45 + k * .15, 'pop', { f: 1 + k * .12 }); });
+  pulse('#h1t', 1.2, 1.1); burstAt(1.2, $('h1t')); sfx(1.2, 'ding');
 }
 // финал: гайд пульсирует, кнопка-призыв качается
 {

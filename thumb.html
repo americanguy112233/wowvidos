@@ -13,17 +13,17 @@ body.v { width: 1080px; height: 1920px; } body.h { width: 1920px; height: 1080px
 .tag { font: 800 54px/1 Unb; padding: 26px 44px 30px; border-radius: 999px; background: #c8102e; color: #fff; white-space: nowrap; }
 .prof { display: flex; align-items: center; gap: 22px; font: 800 44px/1 Man; } .prof img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; }
 .prof span { display: block; font: 600 32px/1 Man; color: #8b857e; margin-top: 8px; }
-.v .t { left: 0; right: 0; top: 230px; text-align: center; font-size: 130px; } .v .ph { left: 190px; top: 640px; width: 700px; height: 860px; }
+.v .t { left: 0; right: 0; top: 230px; text-align: center; font-size: 104px; } .v .ph { left: 190px; top: 640px; width: 700px; height: 860px; }
 .v .tag { left: 0; right: 0; margin: 0 auto; width: max-content; top: 1560px; } .v .prof { left: 70px; top: 80px; }
-.h .t { left: 90px; top: 250px; font-size: 140px; } .h .ph { right: 110px; top: 90px; width: 700px; height: 900px; }
+.h .t { left: 90px; top: 250px; font-size: 104px; } .h .ph { right: 110px; top: 90px; width: 700px; height: 900px; }
 .h .tag { left: 90px; top: 760px; } .h .prof { left: 90px; top: 80px; }
 </style></head>
 <body>
 <div class="abs bg"></div>
 <div class="abs prof"><img src="assets/nika/face.jpg" alt=""><div>Я Ника<span>Фитнес | Питание</span></div></div>
-<div class="abs t">ЧТО Я ЕМ<br><em>НА</em><br>СУШКЕ</div>
+<div class="abs t">ВЫКИНУЛА<br><em>«ПОЛЕЗНУЮ»</em><br>ЕДУ</div>
 <div class="abs ph"><img src="assets/nika/face.jpg" alt=""></div>
-<div class="abs tag">4 приёма пищи за день</div>
+<div class="abs tag">гранола · сок · орехи</div>
 <script>
 document.body.className = new URLSearchParams(location.search).get('v') === 'v' ? 'v' : 'h';
 window.READY = Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode())]);

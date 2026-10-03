@@ -1,7 +1,7 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
 const H = 1920, FPS = 60;
-const MIN = [3.2, 6.5, 7, 8.5, 6, 6];
+const MIN = [3.2, 9, 8, 11, 6];
 const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
@@ -13,7 +13,20 @@ const mk = (i, k, def) => SC[i].marks?.[k] ?? SC[i].start + def;   // метка
 const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
 const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0 };
 
-document.querySelectorAll('.sec').forEach((s, i) => (s.style.top = i * H + 'px'));
+const W = 1080;
+document.querySelectorAll('.sec').forEach((s, i) => { s.style.left = i * W + 'px'; s.style.top = '0px'; });
+// ритм: музыка в audio.py — 120 BPM, доля 0.5 с; склейки и переходы ставим на доли
+const BEAT = .5, snap = t => Math.round(t / BEAT) * BEAT;
+// кинетический текст: слова в [data-fx="kin"] разбиваем на отдельные span.kw
+document.querySelectorAll('[data-fx="kin"]').forEach(function split(el) {
+  [...el.childNodes].forEach(n => {
+    if (n.nodeType === 3) {
+      const f = document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.append(w); else { const s = document.createElement('span'); s.className = 'kw'; s.textContent = w; f.append(s); } });
+      n.replaceWith(f);
+    } else if (n.nodeType === 1 && n.tagName !== 'BR' && !n.classList.contains('kw')) split(n);
+  });
+});
 
 // ---------------------------------------------------------------- фон: восьмиконечная звезда
 $('starp').setAttribute('d', [...Array(16)].map((_, k) => {
@@ -68,8 +81,8 @@ const ticks = (t0, d, n, f0 = 1, f1 = 1.6) => { for (let k = 0; k < n; k++) sfx(
 
 // камера: быстрый переход (0.5 с) со вспышкой и линиями скорости
 for (let i = 1; i < SC.length; i++) {
-  const t = SC[i].start - .4;
-  tl.fromTo(P, { cam: (i - 1) * H }, { cam: i * H, duration: .5, ease: 'power4.inOut', immediateRender: false }, t);
+  const t = snap(SC[i].start) - .5;          // свайп заканчивается ровно на доле
+  tl.fromTo(P, { cam: (i - 1) * H }, { cam: i * H, duration: .5, ease: 'power3.inOut', immediateRender: false }, t);
   tl.fromTo(P, { mb: 0 }, { mb: 34, duration: .25, ease: 'power2.in', immediateRender: false }, t);
   tl.to(P, { mb: 0, duration: .25, ease: 'power2.out' }, t + .25);
   tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .05);
@@ -93,6 +106,7 @@ const typeOut = (key, t, d, n) => {   // печать команды + щелч�
 
 // ================================================================ движок монтажа: сцена = кадр A → склейка → кадр B
 // Всё управляется разметкой в index.html: data-fx, data-mark, data-at, data-count, data-shatter.
+const KINS = [];                                     // кинетический текст: слова подпрыгивают, когда их произносит голос
 const COUNTS = [];                                   // счётчики: { el, o: { v }, ph }
 const VIDS = [];                                     // видео-вставки: { img, name, from, rate, n, t0, t1 }
 const BURSTS = [];                                   // взрывы частиц: { t, x, y (мировые координаты), c }
@@ -113,6 +127,12 @@ const FX = {
                       const ps = [...el.querySelectorAll('.dr')];
                       ps.forEach((p, k) => tl.fromTo(p, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: .55, ease: 'power2.inOut', immediateRender: true }, t + k * .12));
                       sfx(t, 'zip', { d: .5 }); },
+  drop:  (el, t) => { tl.fromTo(el, { y: -900, rotation: (POS.get(el)?.x % 2 ? 25 : -25), opacity: 1 }, { y: 0, rotation: 0, duration: .75, ease: 'bounce.out', immediateRender: true }, t); sfx(t + .45, 'thump', { g: .45 }); },
+  kin:   (el, t) => { const ws = [...el.querySelectorAll('.kw')];
+                      tl.fromTo(ws, { y: 110, scale: .2, opacity: 0, rotation: k => (k % 2 ? 14 : -14) }, { y: 0, scale: 1, opacity: 1, rotation: 0, duration: .5, ease: 'back.out(2.6)', stagger: .09 }, t);
+                      ws.forEach((w, k) => k % 2 || sfx(t + k * .09, 'pop', { f: 1 + k * .06, g: .55 }));
+                      KINS.push({ ws, t }); },
+  write: (el, t) => { tl.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'power1.inOut', immediateRender: true }, t); sfx(t, 'zip', { d: .8 }); },
   slam:  (el, t) => { slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
 function startCount(el, t) {
@@ -167,22 +187,26 @@ SECS.forEach((sec, i) => {
     const prev = cuts.at(-1) ?? s;
     c = Math.max(prev + 1.3, Math.min(e - 1.4 * (L.length - 1 - n), c));
     if (i === 0 && n === 0) c = Math.min(Math.max(c, 1.6), 2.2);   // хук: склейка до 2.2 с
+    c = Math.max(prev + 1.2, snap(c));                              // склейка — на долю бита
     cuts.push(c); CUTS.push(c);
     if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
     tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .85, .3); speedAt(c, .45); BURSTS.push({ t: c, x: 540, y: i * H + 760, c: '200,16,46' });
+    flashAt(c, .85, .3); speedAt(c, .45); BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
 });
 
-// хук: удар в первые 0.05 с, цифры 1-2-3-4 подпрыгивают по очереди
+// хук: удар в первые 0.05 с, продукты по очереди «прыгают» в мусорку
 {
   const A = SECS[0].querySelector('.layer.A');
   flashAt(.04, .9, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
-  [...A.querySelectorAll('.d')].forEach((d, k) => { pulse(d, .45 + k * .15, 1.22); sfx(.45 + k * .15, 'pop', { f: 1 + k * .12 }); });
-  pulse('#h1t', 1.2, 1.1); burstAt(1.2, $('h1t')); sfx(1.2, 'ding');
+  const gs = [...A.querySelectorAll('svg.prop > g')];
+  gs.forEach((g, k) => { const t = .45 + k * .3;
+    tl.to(g, { keyframes: { y: [0, -90, 230], scale: [1, 1.05, .55], opacity: [1, 1, 0] }, duration: .55, ease: 'power1.in', transformOrigin: '50% 50%' }, t);
+    sfx(t + .5, 'thump', { g: .5 }); });
+  pulse(A.querySelector('.h1'), 1.45, 1.06); sfx(1.45, 'bonk');
 }
 // финал: гайд пульсирует, кнопка-призыв качается
 {
@@ -276,11 +300,11 @@ function drawBursts(t) {
   fxc.clearRect(0, 0, 1080, 1920);
   for (const b of BURSTS) {
     const dt = t - b.t; if (dt < 0 || dt > .9) continue;
-    const y0 = b.y - P.cam; if (y0 < -400 || y0 > 2300) continue;
+    const x0 = b.x - P.cam / H * W, y0 = b.y; if (x0 < -500 || x0 > 1600) continue;
     const life = 1 - dt / .9;
     for (let k = 0; k < 28; k++) {
       const ang = k / 28 * Math.PI * 2 + (b.t * 7 % 1), sp = 380 + ((k * 37) % 11) * 45;
-      const x = b.x + Math.cos(ang) * sp * dt, y = y0 + Math.sin(ang) * sp * dt + 700 * dt * dt;
+      const x = x0 + Math.cos(ang) * sp * dt, y = y0 + Math.sin(ang) * sp * dt + 700 * dt * dt;
       fxc.fillStyle = `rgba(${b.c},${(life * .95).toFixed(3)})`;
       fxc.beginPath(); fxc.arc(x, y, 3 + life * 7 * ((k % 3) / 2 + .5), 0, 7); fxc.fill();
     }
@@ -301,7 +325,8 @@ SC.forEach((sc, i) => {
   ws.forEach(([t, w], k) => {
     if (cur.length && (t - cur.at(-1).t > .6)) flush();
     cur.push({ t, w });
-    if (cur.length >= 3 || /[.,!?:;…]$/.test(w) || (w.length > 11 && cur.length >= 2)) flush();
+    const chars = cur.reduce((n, c) => n + c.w.length + 1, 0);
+    if (cur.length >= 3 || /[.,!?:;…]$/.test(w) || (chars > 15 && cur.length >= 2)) flush();
   });
   flush();
 });
@@ -317,7 +342,7 @@ function subs(t) {
   if (!c) { if (lastChunk) { el.innerHTML = ''; lastChunk = null; } return; }
   if (c !== lastChunk) {
     const chars = c.words.reduce((n, w) => n + w.w.length + 1, 0), longest = Math.max(...c.words.map(w => w.w.length));
-    const fs = Math.max(50, Math.min(74, 860 / Math.max(chars * .62, longest * .66)));   // вся фраза — максимум в 2 строки
+    const fs = Math.max(66, Math.min(100, 860 / Math.max(chars * .6, longest * .7)));   // вся фраза — максимум в 2 строки
     el.innerHTML = `<div class="ln" style="font-size:${fs.toFixed(0)}px">` + c.words.map(w => `<span class="w">${(/^[—–]$/.test(w.w) ? '' : w.w)}</span>`).join('') + '</div>';
     lastChunk = c;
   }
@@ -330,15 +355,48 @@ function subs(t) {
   });
 }
 
+// ---------------------------------------------------------------- микродвижение, зерно, фон
+const rnd = (k, n) => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
+const MICRO = [...document.querySelectorAll('.card,.tst,.plate,.lbl,.tag,.prop,.h1,.h2,.ul')].map((el, k) => ({ el, k, br: el.classList.contains('tst') }));
+function micro(t) {
+  for (const m of MICRO) {
+    const a = 2 * Math.PI * (.12 + rnd(m.k, 1) * .1), ph = rnd(m.k, 2) * 6.28, amp = m.el.classList.contains('h1') || m.el.classList.contains('h2') ? 4 : 9;
+    m.el.style.translate = `${(Math.sin(t * a * .7 + ph) * amp * .6).toFixed(2)}px ${(Math.sin(t * a + ph) * amp).toFixed(2)}px`;
+    m.el.style.rotate = `${(Math.sin(t * a * .8 + ph * 1.3) * (m.br ? 3 : .8)).toFixed(2)}deg`;
+    if (m.br) m.el.style.scale = (1 + .035 * Math.sin(t * 2.6 + ph)).toFixed(4);   // стикеры «дышат»
+  }
+  // пузырьки в стакане и блик
+  document.querySelectorAll('.bub').forEach((b, k) => {
+    const sp = 60 + rnd(k, 3) * 60, y = 330 - ((t * sp + rnd(k, 4) * 300) % 300);
+    b.setAttribute('cy', y.toFixed(1)); b.setAttribute('cx', (rnd(k, 5) * 160 + 60 + Math.sin(t * 3 + k) * 6).toFixed(1));
+  });
+  document.querySelectorAll('.glint').forEach((g, k) => { const p = ((t * .45 + k * .37) % 1.6) - .3; g.setAttribute('transform', `translate(${(p * 400).toFixed(1)} 0) skewX(-20)`); });
+  // кинетический текст: слово подпрыгивает, когда голос его произносит
+  for (const kn of KINS) kn.ws.forEach(w => { if (w._t == null) {
+      const key = w.textContent.toLowerCase().replace(/[^а-яёa-z0-9]/g, ''); const sc = SC.find(s => kn.t >= s.start - .5 && kn.t < s.start + s.dur);
+      const hit = (sc?.words || []).find(([tw, ww]) => tw >= kn.t - .3 && ww.toLowerCase().replace(/[^а-яёa-z0-9]/g, '') === key); w._t = hit ? hit[0] : -1; }
+    const d = t - w._t; w.style.translate = w._t > 0 && d > 0 && d < .35 ? `0 ${(-26 * Math.sin(Math.PI * d / .35)).toFixed(1)}px` : '0 0';
+    w.classList.toggle('hot', w._t > 0 && d > 0 && d < .45);
+  });
+}
+const gc = document.getElementById('grain')?.getContext('2d'), GT = [];
+if (gc) for (let n = 0; n < 6; n++) { const im = gc.createImageData(360, 640); for (let i = 0; i < im.data.length; i += 4) { const v = rnd(i, n) * 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } GT.push(im); }
+function grain(t) { if (gc) gc.putImageData(GT[Math.floor(t * 24) % GT.length], 0, 0); }
+function blobs(t) { document.querySelectorAll('.blob').forEach((b, k) => {
+  b.style.translate = `${(Math.sin(t * .25 + k * 2) * 90 - P.cam / H * 140).toFixed(1)}px ${(Math.cos(t * .2 + k) * 70).toFixed(1)}px`; }); }
+
 // ---------------------------------------------------------------- кадр
 let lastFilter = '';
 function apply(t) {
-  $('world').style.transform = `translate3d(0,${-P.cam}px,0)`;
+  const camX = P.cam / H * W, fr0 = (P.cam / H) % 1, sw = Math.sin(Math.PI * fr0);
+  $('world').style.transformOrigin = `${(camX + 540).toFixed(1)}px 960px`;
+  $('world').style.transform = `translate3d(${(-camX).toFixed(1)}px,0,0) scale(${(1 - .08 * sw).toFixed(4)})`;
+  micro(t); grain(t); blobs(t);
   $('grid').style.transform = `translate3d(0,${-(P.cam % 108)}px,0)`;
   $('star').style.transform = `rotate(${(t * 3 + P.cam * .012).toFixed(2)}deg) scale(${1 + .03 * Math.sin(t * .8)})`;
   $('arc').style.transform = `rotate(${(-t * 5 - P.cam * .02).toFixed(2)}deg)`;
   const f = P.mb > .3 ? 'url(#mb)' : 'none';
-  $('mbg').setAttribute('stdDeviation', `0 ${P.mb.toFixed(2)}`);
+  $('mbg').setAttribute('stdDeviation', `${P.mb.toFixed(2)} 0`);
   if (f !== lastFilter) { $('view').style.filter = f; lastFilter = f; }
   $('fade').style.opacity = P.fade;
   // фон: плавная смена скриншота между сценами + медленный наезд

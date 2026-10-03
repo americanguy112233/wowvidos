@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Ника — что я ем на сушке</title>
+<title>Ника — выкинула полезную еду</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -133,11 +133,32 @@ body { font-family: Man, sans-serif; color: var(--ink); -webkit-font-smoothing: 
 .dots4 .d { width: 190px; height: 190px; border-radius: 50%; background: #fff; box-shadow: 0 14px 40px rgba(60,40,20,.12); display: flex; align-items: center; justify-content: center; font: 900 80px/1 Unb; color: var(--red); }
 .vs2 { display: flex; gap: 30px; align-items: flex-end; }
 .vs2 .col { display: flex; flex-direction: column; align-items: center; gap: 18px; font: 800 34px/1.2 Unb; text-align: center; }
+/* ===== улучшения визуала (свайпы, кинетика, текстура, фирменные элементы) ===== */
+@font-face { font-family: Hand; src: url(assets/fonts/Caveat-VF.ttf); font-weight: 400 700; }
+.kw { display: inline-block; transition: none; }
+.kw.hot { color: var(--red); }
+em .kw.hot { color: var(--ink); }
+#grain { position: absolute; inset: 0; width: 1080px; height: 1920px; opacity: .07; mix-blend-mode: multiply; pointer-events: none; z-index: 6; }
+#blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; }
+.hand { font: 700 64px/1 Hand; color: var(--red); white-space: nowrap; }
+.sign { font: 700 120px/1 Hand; color: var(--red); }
+.ul { display: block; }
+.prop { display: block; }
+.big500 { font: 900 230px/.9 Unb; letter-spacing: -10px; }
+.big500 small { font: 800 54px/1 Unb; letter-spacing: 0; color: var(--muted); display: block; text-align: center; margin-top: 10px; }
+.eq { display: flex; align-items: center; gap: 22px; font: 900 64px/1 Unb; }
+.chipf { padding: 22px 30px; border-radius: 30px; background: #fff; font: 800 40px/1 Unb; box-shadow: 0 14px 34px rgba(60,40,20,.12); }
+.chipf.r { background: var(--red); color: #fff; }
+/* субтитры: крупнее, 2–3 слова, активное слово — красная плашка-маркер */
+#subs .w { -webkit-text-stroke: 14px #fff; padding: 0 10px; border-radius: 18px; }
+#subs .w.on { color: #fff; background: var(--red); -webkit-text-stroke: 0; box-shadow: 0 8px 22px rgba(200,16,46,.35); }
 </style>
 </head>
 <body>
 <div id="view">
   <div id="bg"></div>
+  <div id="blobs"><i class="blob" style="left:-120px;top:120px;width:520px;height:520px;background:#ffc9a3"></i><i class="blob" style="left:620px;top:520px;width:600px;height:600px;background:#f7c1c8"></i><i class="blob" style="left:80px;top:1200px;width:560px;height:560px;background:#efdcb8"></i></div>
   <div class="bgi" id="bgA"></div><div class="bgi" id="bgB"></div>
   <canvas id="embers" width="1080" height="1920"></canvas>
   <canvas id="speed" width="1080" height="1920"></canvas>
@@ -146,135 +167,112 @@ body { font-family: Man, sans-serif; color: var(--ink); -webkit-font-smoothing: 
 
   <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/draw), data-mark, data-at, data-count, data-shatter -->
   <div id="world">
-    <!-- 1. Хук: 4 приёма пищи -->
+    <!-- 1. Хук -->
     <section class="sec" id="s1">
       <div class="layer A">
-        <div class="row" style="top:240px"><div class="h1" data-fx="punch" style="font-size:96px">ЧТО Я ЕМ<br><em>НА СУШКЕ</em></div></div>
-        <div class="row" style="top:520px"><div class="dots4">
-          <div class="d" data-fx="punch">1</div><div class="d" data-fx="punch">2</div><div class="d" data-fx="punch">3</div><div class="d" data-fx="punch">4</div></div></div>
-        <div class="row" style="top:760px"><div class="tag" data-fx="punch" id="h1t">4 раза в день — и не голодаю</div></div>
-        <div class="row" style="top:880px"><div class="tst" data-fx="punch" style="width:420px;height:420px"><img src="assets/nika/toon/10_cool.png" alt=""></div></div>
+        <div class="row" style="top:230px"><div class="h1" data-fx="punch" style="font-size:80px">ВЫКИНУЛА<br><em>ПОЛОВИНУ</em><br>«ПОЛЕЗНОЙ» ЕДЫ</div></div>
+        <div class="row" style="top:500px"><svg class="ul" data-fx="punch" width="560" height="40" viewBox="0 0 560 40"><path d="M10 28 C150 8 330 14 550 22" stroke="#c8102e" stroke-width="14" fill="none" stroke-linecap="round"/></svg></div>
+        <div class="row" style="top:640px"><svg class="prop" data-fx="punch" width="620" height="640" viewBox="0 0 620 640">
+          <g id="jar1"><rect x="40" y="140" width="170" height="230" rx="30" fill="#fff" stroke="#121212" stroke-width="8"/><rect x="60" y="110" width="130" height="40" rx="10" fill="#c8102e"/>
+            <rect x="56" y="220" width="138" height="135" rx="18" fill="#e7b46a"/><circle cx="90" cy="250" r="9" fill="#b9792e"/><circle cx="140" cy="280" r="10" fill="#c9893a"/><circle cx="165" cy="240" r="8" fill="#b9792e"/><circle cx="110" cy="320" r="9" fill="#c9893a"/></g>
+          <g><path d="M250 150 L380 150 L365 370 L265 370Z" fill="#fff" stroke="#121212" stroke-width="8"/><path d="M258 200 L372 200 L362 360 L268 360Z" fill="#ffa52b"/><circle cx="345" cy="160" r="26" fill="#ff8c1a" stroke="#121212" stroke-width="6"/></g>
+          <g><path d="M420 280 Q500 230 580 280 Q570 370 500 375 Q430 370 420 280Z" fill="#fff" stroke="#121212" stroke-width="8"/>
+            <ellipse cx="470" cy="270" rx="26" ry="18" fill="#c9893a"/><ellipse cx="520" cy="262" rx="24" ry="17" fill="#a86c2e"/><ellipse cx="500" cy="285" rx="22" ry="16" fill="#d79e55"/></g>
+          <path d="M150 420 H470 L440 620 H180Z" fill="#121212"/><rect x="130" y="400" width="360" height="34" rx="12" fill="#121212"/>
+          <path d="M240 470 V590 M310 470 V590 M380 470 V590" stroke="#555" stroke-width="10" stroke-linecap="round"/>
+        </svg></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:330px"><div class="h1" data-fx="zoom">ПОКАЗЫВАЮ<br><em>👇</em></div></div>
-        <div class="row" style="top:700px"><div class="tst" data-fx="up" data-at=".15" style="width:520px;height:520px"><img src="assets/nika/toon/03_wink.png" alt=""></div></div>
+        <div class="row" style="top:300px"><div class="h1" data-fx="kin">И ВОТ<br><em>ПОЧЕМУ</em></div></div>
+        <div class="row" style="top:560px"><div class="hand" data-fx="write" data-at=".5" style="transform:rotate(-6deg)">смотри до конца ↓</div></div>
+        <div class="row" style="top:700px"><div class="tst" data-fx="up" data-at=".2" style="width:520px;height:520px"><img src="assets/nika/toon/03_wink.png" alt=""></div></div>
       </div>
     </section>
 
-    <!-- 2. Завтрак -->
+    <!-- 2. Гранола -->
     <section class="sec" id="s2">
       <div class="layer A">
-        <div class="row" style="top:240px"><div class="meal" data-fx="left"><span>1/4</span>ЗАВТРАК</div></div>
-        <div class="row" style="top:400px"><div class="plate" data-fx="zoom" data-at=".1">
-          <svg viewBox="0 0 640 640"><circle cx="320" cy="320" r="300" fill="#fff"/><circle cx="320" cy="320" r="240" fill="none" stroke="#efe9e1" stroke-width="10"/>
-            <path d="M150 300 C150 210 260 175 330 190 C420 205 470 250 455 320 C440 390 340 410 260 395 C190 383 150 360 150 300Z" fill="#f7d75a"/>
-            <path d="M200 280 C215 240 270 225 310 232" stroke="#fbe9a4" stroke-width="18" fill="none" stroke-linecap="round"/>
-            <circle cx="380" cy="300" r="14" fill="#ecc244"/><circle cx="250" cy="330" r="10" fill="#ecc244"/><circle cx="330" cy="355" r="8" fill="#ecc244"/>
-            <path d="M262 300 l12 -14 l12 14z M360 255 l10 -12 l10 12z" fill="#5bb36a"/>
-          </svg>
-          <div class="lbl" style="left:-40px;top:40px" data-fx="pop" data-mark="a">омлет · 3 яйца</div>
-          <svg data-fx="up" data-mark="b" style="inset:auto;position:absolute;left:330px;top:390px;width:300px;height:250px" viewBox="0 0 300 250">
-            <path d="M20 90 Q150 70 280 90 Q270 220 150 230 Q30 220 20 90Z" fill="#fff" stroke="#e6dfd5" stroke-width="8"/>
-            <ellipse cx="150" cy="92" rx="128" ry="26" fill="#ead6b4"/>
-            <circle cx="105" cy="86" r="16" fill="#4a5bd6"/><circle cx="135" cy="80" r="16" fill="#c8102e"/><circle cx="168" cy="88" r="16" fill="#4a5bd6"/><circle cx="198" cy="80" r="14" fill="#e0405a"/><circle cx="150" cy="96" r="12" fill="#3d4bb8"/>
-          </svg>
-          <div class="lbl r" style="right:-60px;bottom:-30px" data-fx="pop" data-mark="b" data-at=".25">овсянка + ягоды</div>
-        </div></div>
+        <div class="row" style="top:230px"><div class="meal" data-fx="left"><span>№1</span>ГРАНОЛА</div></div>
+        <div class="row" style="top:380px"><svg class="prop" data-fx="drop" width="440" height="460" viewBox="0 0 440 460">
+          <path d="M20 170 Q220 130 420 170 Q400 430 220 440 Q40 430 20 170Z" fill="#fff" stroke="#121212" stroke-width="10"/>
+          <ellipse cx="220" cy="172" rx="190" ry="40" fill="#e7b46a"/>
+          <circle cx="140" cy="150" r="22" fill="#c9893a"/><circle cx="200" cy="135" r="24" fill="#b9792e"/><circle cx="265" cy="148" r="22" fill="#d79e55"/><circle cx="310" cy="160" r="18" fill="#c9893a"/><circle cx="170" cy="175" r="18" fill="#b9792e"/><circle cx="240" cy="175" r="20" fill="#c9893a"/>
+          <path class="glint" d="M60 200 L90 200 L70 400 L40 400Z" fill="#fff" opacity=".5"/>
+        </svg></div>
+        <div class="row" style="top:870px"><div class="eq">
+          <div class="chipf" data-fx="pop" data-mark="a">овсянка</div><div data-fx="pop" data-mark="b">+</div>
+          <div class="chipf r" data-fx="slam" data-mark="b" data-at=".15">масло</div><div data-fx="pop" data-mark="b" data-at=".45">+</div>
+          <div class="chipf r" data-fx="slam" data-mark="b" data-at=".6">сахар</div></div></div>
+        <div class="row" style="top:1010px"><div class="hand" data-fx="write" data-mark="b" data-at=".9" style="transform:rotate(-4deg)">обжарено! ↑</div></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:250px"><div class="h2" data-fx="zoom">СЫТОСТЬ<br>ДО <em>САМОГО ОБЕДА</em></div></div>
-        <div class="row" style="top:520px"><svg data-fx="draw" width="360" height="360" viewBox="0 0 360 360">
-          <circle cx="180" cy="180" r="150" fill="#fff" stroke="#121212" stroke-width="16" pathLength="1" class="dr"/>
-          <path d="M180 180 V90" stroke="#121212" stroke-width="16" stroke-linecap="round" pathLength="1" class="dr"/>
-          <path d="M180 180 L250 220" stroke="#c8102e" stroke-width="16" stroke-linecap="round" pathLength="1" class="dr"/></svg></div>
-        <div class="row" style="top:900px"><div class="tst" data-fx="up" data-at=".4" style="width:400px;height:400px"><img src="assets/nika/toon/07_love.png" alt=""></div></div>
+        <div class="row" style="top:250px"><div class="h2" data-fx="kin">ПОЧТИ</div></div>
+        <div class="row" style="top:380px"><div class="big500 red" data-fx="slam" data-mark="c" data-at="-.6"><span data-count="0,500">0</span><small>ккал на 100 г</small></div></div>
+        <div class="row" style="top:720px"><svg class="ul" data-fx="draw" data-mark="c" width="620" height="50" viewBox="0 0 620 50"><path d="M10 34 C180 6 420 16 610 26" stroke="#c8102e" stroke-width="16" fill="none" stroke-linecap="round" pathLength="1" class="dr"/></svg></div>
+        <div class="row" style="top:820px"><div class="tst" data-fx="up" data-mark="c" data-at=".3" style="width:440px;height:440px"><img src="assets/nika/toon/06_think.png" alt=""></div></div>
       </div>
     </section>
 
-    <!-- 3. Обед -->
+    <!-- 3. Сок -->
     <section class="sec" id="s3">
       <div class="layer A">
-        <div class="row" style="top:240px"><div class="meal" data-fx="left"><span>2/4</span>ОБЕД</div></div>
-        <div class="row" style="top:400px"><div class="plate" data-fx="zoom" data-at=".1">
-          <svg viewBox="0 0 640 640"><circle cx="320" cy="320" r="300" fill="#fff"/><circle cx="320" cy="320" r="240" fill="none" stroke="#efe9e1" stroke-width="10"/>
-            <g data-x="salad"><circle cx="230" cy="250" r="70" fill="#6cc46b"/><circle cx="290" cy="200" r="60" fill="#8fd57a"/><circle cx="190" cy="330" r="55" fill="#5bb36a"/><circle cx="270" cy="300" r="62" fill="#7fcf6f"/>
-              <circle cx="245" cy="230" r="22" fill="#e8413a"/><circle cx="300" cy="290" r="20" fill="#e8413a"/><circle cx="200" cy="300" r="18" fill="#f2d24a"/></g>
-            <path d="M330 330 C330 290 420 270 470 300 C500 320 490 380 440 395 C390 410 330 380 330 330Z" fill="#c98b4a"/><path d="M350 330 C370 305 430 300 455 318" stroke="#e2ae6d" stroke-width="14" fill="none" stroke-linecap="round"/>
-            <path d="M210 420 C230 380 330 380 360 420 C380 460 330 490 280 488 C230 486 195 455 210 420Z" fill="#8a5a33"/>
-            <circle cx="250" cy="430" r="5" fill="#6b4224"/><circle cx="290" cy="420" r="5" fill="#6b4224"/><circle cx="320" cy="445" r="5" fill="#6b4224"/><circle cx="270" cy="460" r="5" fill="#6b4224"/><circle cx="305" cy="470" r="5" fill="#6b4224"/>
+        <div class="row" style="top:230px"><div class="meal" data-fx="left"><span>№2</span>СОК</div></div>
+        <div class="row" style="top:380px"><div style="position:relative;width:700px;height:620px">
+          <svg class="prop" data-fx="zoom" data-at=".1" style="position:absolute;left:180px;top:120px" width="340" height="480" viewBox="0 0 340 480">
+            <path d="M30 20 L310 20 L280 460 L60 460Z" fill="#fff" stroke="#121212" stroke-width="10"/>
+            <path d="M44 120 L296 120 L278 450 L62 450Z" fill="#ffa52b"/>
+            <circle class="bub" cx="120" cy="300" r="9" fill="#ffd28a"/><circle class="bub" cx="180" cy="300" r="7" fill="#ffd28a"/><circle class="bub" cx="220" cy="300" r="10" fill="#ffd28a"/><circle class="bub" cx="150" cy="300" r="6" fill="#ffd28a"/><circle class="bub" cx="200" cy="300" r="8" fill="#ffd28a"/>
+            <path class="glint" d="M70 130 L95 130 L85 440 L60 440Z" fill="#fff" opacity=".45"/>
           </svg>
-          <div class="lbl" style="right:-40px;top:200px" data-fx="pop" data-mark="a">курица</div>
-          <div class="lbl" style="left:-30px;bottom:40px" data-fx="pop" data-mark="a" data-at=".3">гречка</div>
-          <div class="lbl r" style="left:-50px;top:40px" data-fx="pop" data-mark="a" data-at=".6">огромный салат</div>
+          <div data-fx="drop" data-mark="a" data-at="0" style="position:absolute;left:250px;top:200px"><svg width="120" height="120" viewBox="0 0 120 120"><ellipse cx="60" cy="40" rx="40" ry="28" fill="#fff" stroke="#121212" stroke-width="7"/><path d="M60 68 V115" stroke="#121212" stroke-width="10" stroke-linecap="round"/><ellipse cx="60" cy="38" rx="28" ry="16" fill="#f1ede6"/></svg></div>
+          <div data-fx="drop" data-mark="a" data-at=".18" style="position:absolute;left:340px;top:240px"><svg width="120" height="120" viewBox="0 0 120 120"><ellipse cx="60" cy="40" rx="40" ry="28" fill="#fff" stroke="#121212" stroke-width="7"/><path d="M60 68 V115" stroke="#121212" stroke-width="10" stroke-linecap="round"/><ellipse cx="60" cy="38" rx="28" ry="16" fill="#f1ede6"/></svg></div>
+          <div data-fx="drop" data-mark="a" data-at=".36" style="position:absolute;left:270px;top:330px"><svg width="120" height="120" viewBox="0 0 120 120"><ellipse cx="60" cy="40" rx="40" ry="28" fill="#fff" stroke="#121212" stroke-width="7"/><path d="M60 68 V115" stroke="#121212" stroke-width="10" stroke-linecap="round"/><ellipse cx="60" cy="38" rx="28" ry="16" fill="#f1ede6"/></svg></div>
+          <div data-fx="drop" data-mark="a" data-at=".54" style="position:absolute;left:350px;top:380px"><svg width="120" height="120" viewBox="0 0 120 120"><ellipse cx="60" cy="40" rx="40" ry="28" fill="#fff" stroke="#121212" stroke-width="7"/><path d="M60 68 V115" stroke="#121212" stroke-width="10" stroke-linecap="round"/><ellipse cx="60" cy="38" rx="28" ry="16" fill="#f1ede6"/></svg></div>
+          <div data-fx="drop" data-mark="a" data-at=".72" style="position:absolute;left:300px;top:420px"><svg width="120" height="120" viewBox="0 0 120 120"><ellipse cx="60" cy="40" rx="40" ry="28" fill="#fff" stroke="#121212" stroke-width="7"/><path d="M60 68 V115" stroke="#121212" stroke-width="10" stroke-linecap="round"/><ellipse cx="60" cy="38" rx="28" ry="16" fill="#f1ede6"/></svg></div>
         </div></div>
+        <div class="row" style="top:1040px"><div class="tag" data-fx="slam" data-mark="a" data-at="1.1">5 чайных ложек сахара</div></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:250px"><div class="h2" data-fx="zoom">ОВОЩИ =<br><em>ОБЪЁМ</em></div></div>
-        <div class="row" style="top:520px"><svg data-fx="up" data-at=".15" width="620" height="460" viewBox="0 0 620 460">
-          <path d="M40 160 Q310 130 580 160 Q560 430 310 440 Q60 430 40 160Z" fill="#fff" stroke="#e6dfd5" stroke-width="10"/>
-          <circle cx="160" cy="150" r="80" fill="#6cc46b"/><circle cx="260" cy="110" r="90" fill="#8fd57a"/><circle cx="370" cy="120" r="85" fill="#5bb36a"/><circle cx="470" cy="150" r="75" fill="#7fcf6f"/>
-          <circle cx="210" cy="120" r="26" fill="#e8413a"/><circle cx="410" cy="110" r="24" fill="#e8413a"/><circle cx="320" cy="150" r="22" fill="#f2d24a"/></svg></div>
-        <div class="row" style="top:1040px"><div class="tag" data-fx="slam" data-mark="b">а калорий — почти нет</div></div>
+        <div class="row" style="top:260px"><div class="big500" data-fx="slam">0</div></div>
+        <div class="row" style="top:500px"><div class="h2" data-fx="kin">СЫТОСТИ</div></div>
+        <div class="row" style="top:640px"><svg class="prop" data-fx="zoom" data-mark="b" width="300" height="300" viewBox="0 0 300 300"><circle cx="150" cy="160" r="120" fill="#ff8c1a"/><circle cx="110" cy="120" r="30" fill="#ffb15c" opacity=".7"/><path d="M150 40 Q160 10 195 12 Q180 40 150 40Z" fill="#5bb36a"/><path d="M150 40 V20" stroke="#6b4224" stroke-width="8" stroke-linecap="round"/></svg></div>
+        <div class="row" style="top:960px"><div class="tag dark" data-fx="pop" data-mark="b" data-at=".2">ешь фрукт целиком ✓</div></div>
+        <div class="row" style="top:1080px"><div class="hand" data-fx="write" data-mark="b" data-at=".6" style="transform:rotate(-5deg)">там клетчатка!</div></div>
       </div>
     </section>
 
-    <!-- 4. Перекус → ужин → вечером можно -->
+    <!-- 4. Орехи -->
     <section class="sec" id="s4">
       <div class="layer A">
-        <div class="row" style="top:240px"><div class="meal" data-fx="left"><span>3/4</span>ПЕРЕКУС</div></div>
-        <div class="row" style="top:400px"><svg data-fx="zoom" data-at=".1" width="520" height="420" viewBox="0 0 520 420">
-          <path d="M30 150 Q260 120 490 150 Q470 400 260 410 Q50 400 30 150Z" fill="#fff" stroke="#e6dfd5" stroke-width="10"/>
-          <ellipse cx="260" cy="152" rx="226" ry="40" fill="#fbf7ef"/>
-          <circle cx="180" cy="135" r="34" fill="#fffdf8" stroke="#eee5d6" stroke-width="4"/><circle cx="250" cy="120" r="40" fill="#fffdf8" stroke="#eee5d6" stroke-width="4"/><circle cx="320" cy="132" r="36" fill="#fffdf8" stroke="#eee5d6" stroke-width="4"/><circle cx="215" cy="160" r="30" fill="#fffdf8" stroke="#eee5d6" stroke-width="4"/><circle cx="290" cy="162" r="30" fill="#fffdf8" stroke="#eee5d6" stroke-width="4"/></svg></div>
-        <div class="row" style="top:850px"><div class="lbl" data-fx="pop" data-mark="a" style="position:static">творог</div></div>
-        <div class="row" style="top:950px"><div style="position:relative;width:380px;height:380px">
-          <div class="tst" data-fx="up" data-mark="a" data-at=".2" style="width:380px;height:380px"><img src="assets/nika/toon/08_sad.png" alt=""></div>
-          <svg data-fx="draw" data-mark="a" data-at=".7" style="position:absolute;inset:0" viewBox="0 0 380 380"><path d="M40 40 L340 340 M340 40 L40 340" stroke="#c8102e" stroke-width="22" stroke-linecap="round" pathLength="1" class="dr"/></svg>
-        </div></div>
+        <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:100px">ЛОВУШКА<br><em>№3</em></div></div>
+        <div class="row" style="top:520px"><div class="hand" data-fx="write" data-mark="a" style="transform:rotate(-4deg)">советуют все…</div></div>
+        <div class="row" style="top:640px"><svg class="prop" data-fx="drop" data-mark="a" data-at=".3" width="560" height="440" viewBox="0 0 560 440">
+          <path d="M20 160 Q280 120 540 160 Q520 420 280 430 Q40 420 20 160Z" fill="#fff" stroke="#121212" stroke-width="10"/>
+          <ellipse cx="150" cy="150" rx="46" ry="30" fill="#c9893a"/><ellipse cx="240" cy="128" rx="44" ry="30" fill="#a86c2e"/><ellipse cx="330" cy="140" rx="46" ry="30" fill="#d79e55"/><ellipse cx="410" cy="158" rx="40" ry="28" fill="#b9792e"/><ellipse cx="200" cy="172" rx="40" ry="26" fill="#d79e55"/><ellipse cx="290" cy="170" rx="42" ry="26" fill="#a86c2e"/><ellipse cx="370" cy="178" rx="36" ry="24" fill="#c9893a"/>
+          <path class="glint" d="M60 200 L88 200 L72 380 L44 380Z" fill="#fff" opacity=".5"/></svg></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:240px"><div class="meal" data-fx="left"><span>4/4</span>УЖИН</div></div>
-        <div class="row" style="top:400px"><div class="plate" data-fx="zoom" data-at=".1">
-          <svg viewBox="0 0 640 640"><circle cx="320" cy="320" r="300" fill="#fff"/><circle cx="320" cy="320" r="240" fill="none" stroke="#efe9e1" stroke-width="10"/>
-            <path d="M140 300 C150 230 300 200 420 230 C470 245 480 300 450 330 C380 380 200 390 150 350 Z" fill="#f59a6b"/>
-            <path d="M200 260 Q215 300 205 345 M260 245 Q278 295 268 360 M320 240 Q340 295 330 362 M380 248 Q398 295 388 345" stroke="#fde1cf" stroke-width="9" fill="none" stroke-linecap="round"/>
-            <circle cx="230" cy="440" r="40" fill="#5bb36a"/><circle cx="300" cy="460" r="44" fill="#6cc46b"/><circle cx="380" cy="440" r="40" fill="#8fd57a"/><rect x="420" y="380" width="110" height="26" rx="13" fill="#f28c38" transform="rotate(30 475 393)"/><rect x="410" y="420" width="100" height="24" rx="12" fill="#f28c38" transform="rotate(20 460 432)"/>
-          </svg>
-          <div class="lbl" style="right:-30px;top:100px" data-fx="pop" data-at=".5">рыба</div>
-          <div class="lbl r" style="left:-30px;bottom:30px" data-fx="pop" data-at=".75">овощи</div>
-        </div></div>
+        <div class="row" style="top:250px"><div class="h2" data-fx="kin">ПОЛЕЗНО, НО</div></div>
+        <div class="row" style="top:380px"><div class="big500 red" data-fx="slam" data-mark="b" data-at="-.3"><span data-count="0,600">0</span><small>ккал на 100 г</small></div></div>
+        <div class="row" style="top:720px"><svg class="ul" data-fx="draw" data-mark="b" width="620" height="50" viewBox="0 0 620 50"><path d="M10 30 C200 8 420 20 610 28" stroke="#c8102e" stroke-width="16" fill="none" stroke-linecap="round" pathLength="1" class="dr"/></svg></div>
+        <div class="row" style="top:830px"><div class="tst" data-fx="up" data-mark="b" data-at=".3" style="width:440px;height:440px"><img src="assets/nika/toon/01_shock.png" alt=""></div></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:260px"><svg data-fx="zoom" width="260" height="260" viewBox="0 0 260 260"><path d="M180 30 A110 110 0 1 0 230 170 A90 90 0 1 1 180 30Z" fill="#121212"/><circle cx="200" cy="70" r="8" fill="#ffc83d"/><circle cx="230" cy="110" r="6" fill="#ffc83d"/></svg></div>
-        <div class="row" style="top:580px"><div class="h1" data-fx="slam" data-mark="b" style="font-size:100px">ЕСТЬ ВЕЧЕРОМ<br><em>МОЖНО</em></div></div>
-        <div class="row" style="top:880px"><div class="tst" data-fx="up" data-mark="b" data-at=".3" style="width:420px;height:420px"><img src="assets/nika/toon/09_laugh.png" alt=""></div></div>
+        <div class="row" style="top:240px"><div class="h2" data-fx="kin">ГОРСТЬ НА ПЕРЕКУС</div></div>
+        <div class="row" style="top:400px"><div style="position:relative;width:620px;height:620px">
+          <div class="seg"><svg viewBox="0 0 640 640"><circle cx="320" cy="320" r="300" fill="#fff"/><circle cx="320" cy="320" r="240" fill="none" stroke="#efe9e1" stroke-width="10"/>
+            <path d="M320 80 A240 240 0 0 0 320 560Z" fill="#f59a6b" opacity=".9"/><circle cx="230" cy="250" r="40" fill="#6cc46b"/><circle cx="210" cy="400" r="46" fill="#8a5a33"/></svg></div>
+          <div class="seg" data-fx="pop" data-mark="c"><svg viewBox="0 0 640 640"><path d="M326 80 A240 240 0 0 1 326 560Z" fill="#e9e3da"/><path d="M360 200 L520 360 M520 200 L360 360" stroke="#c8102e" stroke-width="22" stroke-linecap="round"/></svg></div>
+          <div class="lbl r" style="right:-40px;top:60px" data-fx="pop" data-mark="c" data-at=".3">½ ужина уже съедена</div>
+        </div></div>
+        <div class="row" style="top:1080px"><div class="hand" data-fx="write" data-mark="c" data-at=".6" style="transform:rotate(-4deg)">отмеряй порцию!</div></div>
       </div>
     </section>
 
-    <!-- 5. Схема тарелки -->
+    <!-- 5. Призыв -->
     <section class="sec" id="s5">
       <div class="layer A">
-        <div class="row" style="top:300px"><div class="h1" data-fx="slam" data-mark="a" style="font-size:110px">МОЙ<br><em>СЕКРЕТ</em></div></div>
-        <div class="row" style="top:620px"><div class="tst" data-fx="up" data-at=".2" style="width:520px;height:520px"><img src="assets/nika/toon/06_think.png" alt=""></div></div>
-      </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:230px"><div class="h2" data-fx="zoom">СХЕМА ТАРЕЛКИ</div></div>
-        <div class="row" style="top:380px"><div class="plate" style="width:620px;height:620px">
-          <svg class="seg" viewBox="0 0 640 640"><circle cx="320" cy="320" r="310" fill="#fff"/></svg>
-          <div class="seg" data-fx="pop" data-at=".15"><svg viewBox="0 0 640 640"><path d="M320 40 A280 280 0 0 0 320 600 Z" fill="#6cc46b"/></svg></div>
-          <div class="seg" data-fx="pop" data-mark="b"><svg viewBox="0 0 640 640"><path d="M326 40 A280 280 0 0 1 606 320 L326 320 Z" fill="#c8102e"/></svg></div>
-          <div class="seg" data-fx="pop" data-mark="c"><svg viewBox="0 0 640 640"><path d="M326 326 L606 326 A280 280 0 0 1 326 600 Z" fill="#e2c08c"/></svg></div>
-          <div class="lbl" style="left:20px;top:280px" data-fx="pop" data-at=".3">½ овощи</div>
-          <div class="lbl r" style="right:10px;top:150px" data-fx="pop" data-mark="b" data-at=".15">¼ белок</div>
-          <div class="lbl" style="right:10px;top:420px" data-fx="pop" data-mark="c" data-at=".15">¼ крупа</div>
-        </div></div>
-      </div>
-    </section>
-
-    <!-- 6. Призыв -->
-    <section class="sec" id="s6">
-      <div class="layer A">
-        <div class="row" style="top:250px"><div class="h2" data-fx="zoom">ПИШИ В<br>КОММЕНТАРИИ</div></div>
+        <div class="row" style="top:250px"><div class="h2" data-fx="kin">ПИШИ В КОММЕНТАРИИ</div></div>
         <div class="row" style="top:520px"><div class="card cmt" data-fx="up" data-at=".15"><img src="assets/nika/gym.jpg" alt="">
           <div><div class="who">ты · только что</div><div class="txt">
             <span data-fx="pop" data-mark="a" data-at="0">Д</span><span data-fx="pop" data-mark="a" data-at=".07">Е</span><span data-fx="pop" data-mark="a" data-at=".14">С</span><span data-fx="pop" data-mark="a" data-at=".21">Е</span><span data-fx="pop" data-mark="a" data-at=".28">Р</span><span data-fx="pop" data-mark="a" data-at=".35">Т</span>
@@ -282,20 +280,22 @@ body { font-family: Man, sans-serif; color: var(--ink); -webkit-font-smoothing: 
         <div class="row" style="top:800px"><div class="tst" data-fx="up" data-at=".4" style="width:460px;height:460px"><img src="assets/nika/toon/02_happy.png" alt=""></div></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:240px"><div class="guide" data-fx="zoom" id="guide">
+        <div class="row" style="top:220px"><div class="guide" data-fx="zoom" id="guide" style="height:720px">
           <div class="k">ГАЙД ОТ НИКИ</div>
-          <div class="t" style="font-size:60px;line-height:1.08">СУШКА<br><em>БЕЗ ОТКАЗА</em><br>ОТ СЛАДКОГО</div>
+          <div class="t">СУШКА<br><em>БЕЗ</em><br>ИСТЕРИК</div>
           <div class="b"><img src="assets/nika/face.jpg" alt="">пришлю тебе</div>
         </div></div>
-        <div class="row" style="top:1110px"><div class="tag" data-fx="slam" data-mark="b" id="cta">пиши «ДЕСЕРТ» 👇</div></div>
+        <div class="row" style="top:990px"><div class="tag" data-fx="slam" data-mark="b" id="cta">пиши «ДЕСЕРТ» 👇</div></div>
+        <div class="row" style="top:1110px"><div class="sign" data-fx="write" data-mark="b" data-at=".5">— Ника</div></div>
       </div>
     </section>
   </div>
 
   <div id="vig"></div>
   <canvas id="fx" width="1080" height="1920"></canvas>
-  <div id="story"><div id="bars"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+  <div id="story"><div id="bars"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
     <div id="prof"><img src="assets/nika/face.jpg" alt=""><div><div class="n">Я Ника</div><div class="s">Фитнес | Питание</div></div></div></div>
+  <canvas id="grain" width="360" height="640"></canvas>
   <div id="flash"></div>
   <div id="subs"></div>
   <div id="fade"></div>

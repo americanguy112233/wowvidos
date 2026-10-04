@@ -11,7 +11,7 @@ const sfx = (t, type, o = {}) => SFX.push({ t: +t.toFixed(3), type, ...o });
 const mk = (i, k, def) => SC[i].marks?.[k] ?? SC[i].start + def;   // метка из озвучки или запасное время
 
 const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
-const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0 };
+const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, zs: 1, zx: 540, zy: 960, sm: 0, sm2: 0 };
 
 const W = 1080;
 document.querySelectorAll('.sec').forEach((s, i) => { s.style.left = i * W + 'px'; s.style.top = '0px'; });
@@ -79,17 +79,40 @@ const glow = (el, t) => tl.fromTo(el, { boxShadow: '0 0 0 0px rgba(79,227,178,0)
   { boxShadow: '0 0 0 7px rgba(79,227,178,1), 0 18px 0 rgba(30,0,60,.18), 0 26px 60px rgba(40,230,160,.45)', duration: .35 }, t);
 const ticks = (t0, d, n, f0 = 1, f1 = 1.6) => { for (let k = 0; k < n; k++) sfx(t0 + d * k / n, 'tick', { f: f0 + (f1 - f0) * k / n, g: .7 }); };
 
-// камера: быстрый переход (0.5 с) со вспышкой и линиями скорости
+// переходы между сценами (0.5 с, конец — на долю бита). У сцены data-trans: swipe (по умолчанию) | zoom | smear
+//   zoom  — камера «влетает» в элемент прошлой сцены с data-zoomto и выходит из элемента новой сцены с data-zoomfrom
+//   smear — экран закрашивает красный мазок «помадой», под ним меняется сцена
+const secCenter = (sec, sel) => { const el = sec.querySelector(sel); if (!el) return null;
+  const r = el.getBoundingClientRect(), s0 = sec.getBoundingClientRect(); return { x: r.left - s0.left + r.width / 2, y: r.top - s0.top + r.height / 2 }; };
+const SECS0 = [...document.querySelectorAll('.sec')];
 for (let i = 1; i < SC.length; i++) {
-  const t = snap(SC[i].start) - .5;          // свайп заканчивается ровно на доле
-  tl.fromTo(P, { cam: (i - 1) * H }, { cam: i * H, duration: .5, ease: 'power3.inOut', immediateRender: false }, t);
-  tl.fromTo(P, { mb: 0 }, { mb: 34, duration: .25, ease: 'power2.in', immediateRender: false }, t);
-  tl.to(P, { mb: 0, duration: .25, ease: 'power2.out' }, t + .25);
-  tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .05);
-  tl.fromTo(P, { flash: .3 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .45);
+  const t = snap(SC[i].start) - .5, tr = SECS0[i]?.dataset.trans || 'swipe';
+  if (tr === 'zoom') {
+    const a = secCenter(SECS0[i - 1], '[data-zoomto]') || { x: 540, y: 900 }, b = secCenter(SECS0[i], '[data-zoomfrom]') || { x: 540, y: 960 };
+    tl.set(P, { zx: a.x, zy: a.y }, t);
+    tl.fromTo(P, { zs: 1 }, { zs: 4, duration: .27, ease: 'power3.in', immediateRender: false }, t);
+    tl.set(P, { cam: i * H, zx: b.x, zy: b.y, zs: 2.4 }, t + .27);
+    tl.to(P, { zs: 1, duration: .33, ease: 'power3.out' }, t + .27);
+    tl.set(P, { zx: 540, zy: 960 }, t + .62);
+    tl.fromTo(P, { flash: .7 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .22);
+    tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .1);
+    sfx(t, 'riser', { d: .3 }); sfx(t + .27, 'impact', { g: .5 });
+  } else if (tr === 'smear') {
+    tl.fromTo(P, { sm: 0 }, { sm: 1, duration: .28, ease: 'power2.in', immediateRender: false }, t);
+    tl.set(P, { cam: i * H }, t + .28);
+    tl.fromTo(P, { sm2: 0 }, { sm2: 1, duration: .3, ease: 'power2.out', immediateRender: false }, t + .3);
+    tl.set(P, { sm: 0, sm2: 0 }, t + .61);
+    sfx(t, 'swoosh', { f: .8 }); sfx(t + .3, 'swish');
+  } else {
+    tl.fromTo(P, { cam: (i - 1) * H }, { cam: i * H, duration: .5, ease: 'power3.inOut', immediateRender: false }, t);
+    tl.fromTo(P, { mb: 0 }, { mb: 34, duration: .25, ease: 'power2.in', immediateRender: false }, t);
+    tl.to(P, { mb: 0, duration: .25, ease: 'power2.out' }, t + .25);
+    tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .05);
+    tl.fromTo(P, { flash: .3 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .45);
+    sfx(t, 'whoosh', { d: .5 }); sfx(t + .45, 'thump', { g: .55 });
+  }
   const c = CONN[i - 1];
   tl.fromTo(c.el, { height: 0, opacity: 0 }, { height: c.len, opacity: 1, duration: .45, ease: 'power2.inOut', immediateRender: false }, t + .05);
-  sfx(t, 'whoosh', { d: .5 }); sfx(t + .45, 'thump', { g: .55 });
 }
 const hdr = (i, el) => { pop(el, SC[i].start + .02, { s: .7, d: .5 }); sfx(SC[i].start + .02, 'thump', { g: .8 }); };
 
@@ -132,9 +155,23 @@ const FX = {
   grow:  (el, t) => { const [k, v] = el.dataset.h ? ['height', el.dataset.h] : ['width', el.dataset.w || '0,100'], [a, b] = v.split(',');   // столбики/полоски растут
                       tl.fromTo(el, { [k]: a + '%' }, { [k]: b + '%', duration: .8, ease: 'power3.out', immediateRender: true }, t); sfx(t, 'swoosh', { f: 1.2, g: .5 }); },
   kin:   (el, t) => { const ws = [...el.querySelectorAll('.kw')];
-                      tl.fromTo(ws, { y: 110, scale: .2, opacity: 0, rotation: k => (k % 2 ? 14 : -14) }, { y: 0, scale: 1, opacity: 1, rotation: 0, duration: .5, ease: 'back.out(2.6)', stagger: .09 }, t);
-                      ws.forEach((w, k) => k % 2 || sfx(t + k * .09, 'pop', { f: 1 + k * .06, g: .55 }));
+                      // строки влетают по очереди (раньше слова разных строк налезали друг на друга)
+                      const tops = [...new Set(ws.map(w => w.offsetTop))].sort((a, b) => a - b);
+                      const dl = ws.map(w => { const row = ws.filter(v => v.offsetTop === w.offsetTop); return tops.indexOf(w.offsetTop) * .26 + row.indexOf(w) * .08; });
+                      ws.forEach((w, k) => tl.fromTo(w, { y: 90, scale: .2, opacity: 0, rotation: k % 2 ? 12 : -12 }, { y: 0, scale: 1, opacity: 1, rotation: 0, duration: .45, ease: 'back.out(2.4)' }, t + dl[k]));
+                      ws.forEach((w, k) => k % 2 || sfx(t + dl[k], 'pop', { f: 1 + k * .06, g: .55 }));
                       KINS.push({ ws, t }); },
+  // стикер-персонаж: падает и «плюхается» с пружинкой (сплющивается и отскакивает)
+  plop:  (el, t) => { tl.set(el, { opacity: 0 }, 0); tl.set(el, { opacity: 1 }, t);
+                      tl.fromTo(el, { y: -900 }, { y: 0, duration: .4, ease: 'power2.in', immediateRender: true }, t);
+                      tl.fromTo(el, { scaleX: 1, scaleY: 1 }, { keyframes: { scaleX: [1, 1.22, .9, 1.04, 1], scaleY: [1, .76, 1.1, .97, 1] }, duration: .55, ease: 'none', transformOrigin: '50% 100%', immediateRender: false }, t + .4);
+                      sfx(t + .4, 'thump', { g: .7 }); sfx(t + .45, 'bonk'); },
+  // выглядывает из-за края экрана (data-from="left|right|bottom", data-rot — наклон в конце)
+  peek:  (el, t) => { const f = el.dataset.from || 'right', r = +(el.dataset.rot || 0);
+                      tl.fromTo(el, { x: f === 'left' ? -650 : f === 'right' ? 650 : 0, y: f === 'bottom' ? 700 : 0, rotation: r + (f === 'left' ? -25 : 25), opacity: 1 },
+                        { x: 0, y: 0, rotation: r, duration: .55, ease: 'back.out(1.6)', immediateRender: true }, t); sfx(t, 'swoosh', { f: .9 }); },
+  // облачко-реплика: раздувается из хвостика (transform-origin задан в CSS у .bubble)
+  bub:   (el, t) => { tl.fromTo(el, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(2.2)', immediateRender: true }, t); sfx(t, 'blip', { f: 1.1 }); },
   write: (el, t) => { tl.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'power1.inOut', immediateRender: true }, t); sfx(t, 'zip', { d: .8 }); },
   slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
@@ -160,6 +197,8 @@ function layerFx(layer, i, t0, t1) {
       tl.fromTo(el, { scale: 1.28 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, .04 + k * .03);
     } else (FX[el.dataset.fx] || FX.pop)(el, t);
     startCount(el, t);
+    (el.dataset.react || '').split(',').filter(Boolean).forEach(k => { const m = SC[i].marks?.[k]; if (m == null || m < t0 || m > t1) return;
+      tl.to(el, { keyframes: { rotation: [0, -9, 8, -4, 0], scale: [1, 1.12, .98, 1.04, 1] }, duration: .5, ease: 'none' }, m - .05); sfx(m - .05, 'bonk'); });
   });
   // «рассыпание» вещей на метке
   [...layer.querySelectorAll('[data-shatter]')].forEach((el, k) => {
@@ -198,7 +237,8 @@ SECS.forEach((sec, i) => {
     flashAt(c, .45, .25); speedAt(c, .45); BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
-  L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? s + .02 : 0), cuts[n] ?? e));
+  // первый кадр сцены начинает оживать, когда камера приезжает (переход кончается на доле бита, иногда раньше начала реплики)
+  L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? Math.min(s, snap(s)) - .15 : 0), cuts[n] ?? e));
 });
 
 // хук: удар в первые 0.05 с; элементы .hk по очереди «щёлкают», .hkx трясёт (2-й удар), заголовок пульсирует (3-й)
@@ -207,7 +247,7 @@ SECS.forEach((sec, i) => {
   flashAt(.04, .6, .4); speedAt(.04, .7); shake(A, .04); sfx(.04, 'impact', { g: .8 }); sfx(.04, 'thump');
   A.querySelectorAll('.hk').forEach((o, k) => { const t = .3 + k * .14; pulse(o, t, 1.12); sfx(t, 'tick', { f: 1 + k * .12, g: .5 }); });
   A.querySelectorAll('.hkx').forEach(d => { pulse(d, .95, 1.12); shake(d, .95); }); sfx(.95, 'impact', { g: .6 });
-  pulse(A.querySelector('.h1'), 1.45, 1.06); sfx(1.45, 'bonk');
+  pulse(A.querySelector('.h1') || A.querySelector('.card'), 1.45, 1.05); sfx(1.45, 'bonk');
 }
 // финал: гайд пульсирует, кнопка-призыв качается
 {
@@ -362,7 +402,7 @@ function subs(t) {
 
 // ---------------------------------------------------------------- микродвижение, зерно, фон
 const rnd = (k, n) => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
-const MICRO = [...document.querySelectorAll('.card,.tst,.plate,.lbl,.tag,.prop,.h1,.h2,.ul')].map((el, k) => ({ el, k, br: el.classList.contains('tst') }));
+const MICRO = [...document.querySelectorAll('.card,.tst,.plate,.lbl,.tag,.prop,.h1,.h2,.ul:not(.spin),.clay,.bubble')].map((el, k) => ({ el, k, br: el.classList.contains('tst') }));
 function micro(t) {
   for (const m of MICRO) {
     const a = 2 * Math.PI * (.12 + rnd(m.k, 1) * .1), ph = rnd(m.k, 2) * 6.28, amp = m.el.classList.contains('h1') || m.el.classList.contains('h2') ? 4 : 9;
@@ -370,6 +410,7 @@ function micro(t) {
     m.el.style.rotate = `${(Math.sin(t * a * .8 + ph * 1.3) * (m.br ? 3 : .8)).toFixed(2)}deg`;
     if (m.br) m.el.style.scale = (1 + .035 * Math.sin(t * 2.6 + ph)).toFixed(4);   // стикеры «дышат»
   }
+  document.querySelectorAll('.spin').forEach(el => (el.style.rotate = `${(-t * 30).toFixed(2)}deg`));   // круг медленно крутится
   // пузырьки в стакане и блик
   document.querySelectorAll('.bub').forEach((b, k) => {
     const sp = 60 + rnd(k, 3) * 60, y = 330 - ((t * sp + rnd(k, 4) * 300) % 300);
@@ -395,8 +436,10 @@ function blobs(t) { document.querySelectorAll('.blob').forEach((b, k) => {
 let lastFilter = '';
 function apply(t) {
   const camX = P.cam / H * W, fr0 = (P.cam / H) % 1, sw = Math.sin(Math.PI * fr0);
-  $('world').style.transformOrigin = `${(camX + 540).toFixed(1)}px 960px`;
-  $('world').style.transform = `translate3d(${(-camX).toFixed(1)}px,0,0) scale(${(1 - .08 * sw).toFixed(4)})`;
+  $('world').style.transformOrigin = `${(camX + P.zx).toFixed(1)}px ${P.zy.toFixed(1)}px`;
+  $('world').style.transform = `translate3d(${(-camX).toFixed(1)}px,0,0) scale(${((1 - .08 * sw) * P.zs).toFixed(4)})`;
+  // мазок помадой: рисуется (sm) и стирается с начала (sm2)
+  const smp = $('smearp'); if (smp) { const len = Math.max(0, P.sm - P.sm2); smp.style.strokeDasharray = `${len.toFixed(4)} 3`; smp.style.strokeDashoffset = (-P.sm2).toFixed(4); smp.style.opacity = len > 0 ? 1 : 0; }
   micro(t); grain(t); blobs(t);
   $('grid').style.transform = `translate3d(0,${-(P.cam % 108)}px,0)`;
   $('star').style.transform = `rotate(${(t * 3 + P.cam * .012).toFixed(2)}deg) scale(${1 + .03 * Math.sin(t * .8)})`;

@@ -168,7 +168,8 @@ const FX = {
                       sfx(t + .4, 'thump', { g: .7 }); sfx(t + .45, 'bonk'); },
   // выглядывает из-за края экрана (data-from="left|right|bottom", data-rot — наклон в конце)
   peek:  (el, t) => { const f = el.dataset.from || 'right', r = +(el.dataset.rot || 0);
-                      tl.fromTo(el, { x: f === 'left' ? -650 : f === 'right' ? 650 : 0, y: f === 'bottom' ? 700 : 0, rotation: r + (f === 'left' ? -25 : 25), opacity: 1 },
+                      tl.set(el, { opacity: 0 }, 0); tl.set(el, { opacity: 1 }, t);   // до выезда скрыт, иначе виден на соседней сцене
+                      tl.fromTo(el, { x: f === 'left' ? -650 : f === 'right' ? 650 : 0, y: f === 'bottom' ? 700 : 0, rotation: r + (f === 'left' ? -25 : 25) },
                         { x: 0, y: 0, rotation: r, duration: .55, ease: 'back.out(1.6)', immediateRender: true }, t); sfx(t, 'swoosh', { f: .9 }); },
   // облачко-реплика: раздувается из хвостика (transform-origin задан в CSS у .bubble)
   bub:   (el, t) => { tl.fromTo(el, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(2.2)', immediateRender: true }, t); sfx(t, 'blip', { f: 1.1 }); },
@@ -387,7 +388,7 @@ function subs(t) {
     let fs = Math.max(66, Math.min(100, 860 / Math.max(chars * .6, longest * .7)));   // вся фраза — максимум в 2 строки
     el.innerHTML = `<div class="ln" style="font-size:${fs.toFixed(0)}px">` + c.words.map(w => `<span class="w">${(/^[—–]$/.test(w.w) ? '' : w.w)}</span>`).join('') + '</div>';
     // подгон по реальной ширине: у Unbounded широкие заглавные, оценка по буквам ошибалась и текст вылезал за край
-    const ln0 = el.firstChild, fits = () => [...ln0.children].every(sp => sp.offsetWidth <= 820) && ln0.offsetHeight <= fs * 1.15 * 2 + 4;
+    const ln0 = el.firstChild, fits = () => [...ln0.children].every(sp => sp.offsetWidth <= 840) && ln0.offsetHeight <= fs * 1.36 * 2 + 14;
     while (!fits() && fs > 40) { fs -= 3; ln0.style.fontSize = fs + 'px'; }
     lastChunk = c;
   }

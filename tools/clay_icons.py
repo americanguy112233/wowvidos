@@ -96,6 +96,23 @@ SV.update({
   +HL(78,190,18,46,.8,15)+HL(94,110,8,16,.7,25)),
 })
 
+SV.update({
+'BUCKWHEAT':('0 0 380 280', '<ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/>'
+  '<path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/>'
+  '<path d="M44 124 Q90 60 190 58 Q290 60 336 124Z" fill="url(#cBread)"/>'
+  '<g fill="#8a4f1e" opacity=".55"><circle cx="110" cy="104" r="6"/><circle cx="150" cy="86" r="6"/><circle cx="200" cy="78" r="6"/><circle cx="240" cy="92" r="6"/><circle cx="280" cy="106" r="6"/><circle cx="180" cy="104" r="6"/><circle cx="220" cy="112" r="6"/><circle cx="130" cy="114" r="5"/></g>'
+  '<path d="M250 70 q16 -26 34 -10 q-12 18 -34 10Z" fill="url(#cGreen)"/>'
+  +HL(70,170,16,40,.75,20)+HL(160,70,40,8,.6,-6)),
+'POTATO':('0 0 320 240', '<ellipse cx="160" cy="226" rx="120" ry="12" fill="url(#cShade)"/>'
+  '<path d="M30 130 Q20 50 120 40 Q220 26 280 80 Q320 130 270 180 Q210 220 120 206 Q40 196 30 130Z" fill="url(#cOat)"/>'
+  '<g fill="#b98444" opacity=".6"><circle cx="110" cy="100" r="7"/><circle cx="190" cy="80" r="6"/><circle cx="230" cy="150" r="7"/><circle cx="140" cy="170" r="6"/></g>'
+  '<path d="M200 50 q20 -30 44 -14 q-16 22 -44 14Z" fill="url(#cGreen)"/>'
+  +HL(110,70,50,12,.65,-10)),
+'MOON':('0 0 300 300', '<path d="M190 20 A130 130 0 1 0 280 220 A110 110 0 0 1 190 20Z" fill="url(#cYellow)"/>'
+  '<circle cx="110" cy="170" r="14" fill="#e9b94a" opacity=".6"/><circle cx="150" cy="230" r="9" fill="#e9b94a" opacity=".6"/>'
+  +HL(80,120,14,40,.75,20)),
+})
+
 def svg(name,w,extra=''):
     vb,body=SV[name]; _,_,vw,vh=map(float,vb.split()); h=round(w*vh/vw)
     return f'<svg class="clay"{extra} width="{w}" height="{h}" viewBox="{vb}" overflow="visible">{body}</svg>'

@@ -498,7 +498,7 @@ window.renderAt = t => { PENDING = []; tl.seek(Math.min(t, DUR), false); apply(t
 window.DUR = DUR;
 window.CUTS = CUTS;
 window.SFX = SFX.sort((a, b) => a.t - b.t);
-window.TIMELINE = { dur: DUR, drop: SC[4].start, scenes: SC };
+window.TIMELINE = { dur: DUR, drop: SC[Math.min(4, SC.length - 1)].start, scenes: SC };
 window.STAGE = 'старт';
 window.READY = (async () => {
   window.STAGE = 'шрифты';

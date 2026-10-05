@@ -33,11 +33,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # 4-е число (необязательно) — «досмотр» после реплики, с: если последний кадр сцены появляется на последних словах,
 # без него он виден < 1 с (свайп начинается за 0.5 с до следующей сцены). На экране в это время идёт анимация.
 CUES = [
-    (2.5, 0.05, "Минус 3 кило за неделю, без углеводов. |x|Звучит как мечта? |y|Сейчас расскажу, что было дальше!"),
-    (2.5, 0.10, "Я убрала хлеб, |a|крупы, |b|и фрукты. |x|Весы падали каждое утро, |y|я была счастлива!"),
-    (2.5, 0.10, "А через месяц, |x|я съела одну тарелку пасты. |y|И увидела на весах то, |a|что меня шокировало."),
-    (2.5, 0.10, "Плюс 2 кило за ночь! |x|Потому что первые килограммы на безуглеводке, |y|это вода и запасы гликогена, |b|а не жир. |z|Вернулись углеводы, |c|вернулась вода. |u|Жир уходит медленнее, |v|и уходит на обычной еде, |d|с дефицитом.", 0.6),
-    (6.0, 0.10, "Пиши |a|ДЕСЕРТ, |x|скину гайд с 3 вещами, которые я перестала делать, |b|и вес наконец пошёл!", 2.5),
+    (2.5, 0.05, "Минус 3 кило за неделю, без углеводов. |x|Звучит как мечта? Сейчас расскажу, что было дальше!"),
+    (2.5, 0.10, "Я убрала хлеб, |a|крупы, |b|и фрукты. |x|Весы падали каждое утро, я была счастлива!"),
+    (2.5, 0.10, "А через месяц, я съела одну тарелку пасты. |x|И увидела на весах то, |a|что меня шокировало."),
+    (2.5, 0.10, "Плюс 2 кило за ночь! Потому что первые килограммы |x|на безуглеводке, это вода и запасы гликогена, |b|а не жир. |y|Вернулись углеводы, |c|вернулась вода. |z|Жир уходит медленнее, |u|и уходит на обычной еде, |d|с дефицитом.", 0.6),
+    (6.0, 0.10, "Пиши |a|ДЕСЕРТ, скину гайд |x|с 3 вещами, которые я перестала делать, |b|и вес наконец пошёл!", 2.5),
 ]
 TAIL = float(os.environ.get('TAIL', '0.2'))            # воздух после реплики до смены сцены
 STEP = 0.05
@@ -415,15 +415,6 @@ def process(x):
     return x / np.max(np.abs(x)) * .75
 
 texts = [parse(c[2]) for c in CUES]
-MIN_LAYER = float(os.environ.get('MIN_LAYER', '2.4'))   # секунд на один кадр (требование владельца: ~2.4 с)
-lastcut = []
-CUTKEYS = 'xyzuvw'   # метки склеек (кадр A → B → C …); остальные буквы — метки появления элементов
-def quiet_point(x, t, win=.45):
-    """Самое тихое место (30 мс) рядом с моментом t — туда безопасно вставить паузу, не разрезав слово."""
-    n = len(x); a, b = int(max(.05, t - win) * SR), int(min(n / SR - .05, t + win) * SR)
-    if b - a < int(.06 * SR): return t
-    e = np.convolve(np.abs(x[a:b]), np.ones(int(.03 * SR)) / int(.03 * SR), mode='same')
-    return (a + int(np.argmin(e))) / SR
 clips, marks, words_all = [], [], []
 for i, (clean, mk) in enumerate(texts):
     prev = texts[i - 1][0] if i else ''
@@ -439,29 +430,12 @@ for i, (clean, mk) in enumerate(texts):
     m = {k: tm(idx) for k, idx in mk.items()}
     # слова для субтитров: каждое слово (с прилипшей пунктуацией) и время его начала
     ws = [(tm(mt.start()), mt.group()) for mt in re.finditer(r'\S+', clean) if re.search(r'\w', mt.group())]
-    # каждый кадр (слой между склейками |x| |y| |z|) должен быть на экране не меньше MIN_LAYER секунд:
-    # если фраза короче — вставляем паузу в голос в ближайшем тихом месте (точка/запятая) перед склейкой
-    lead = CUES[i][1]; prevb = -lead
-    for k in sorted([k for k in m if k in CUTKEYS], key=lambda k: m[k]):
-        seg = m[k] - prevb
-        if seg < MIN_LAYER:
-            g = MIN_LAYER - seg
-            q = quiet_point(x, m[k])
-            n0 = int(q * SR); x = np.concatenate([x[:n0], np.zeros(int(g * SR)), x[n0:]])
-            for kk in m:
-                if m[kk] >= q - 1e-3 or kk == k: m[kk] = max(m[kk], q) + g if m[kk] >= q - 1e-3 else q + g
-            ws = [(t + g if t >= q - 1e-3 else t, w) for t, w in ws]
-            print(f'  реплика {i + 1}: пауза {g:.2f} с перед склейкой |{k}|, чтобы кадр держался {MIN_LAYER} с')
-        prevb = m[k]
-    lastcut.append(prevb)
     clips.append(process(x)); marks.append(m); words_all.append(ws)
 
 scenes, t = [], 0.0
-for ci, (cue, c, m, ws) in enumerate(zip(CUES, clips, marks, words_all)):
+for cue, c, m, ws in zip(CUES, clips, marks, words_all):
     mind, lead = cue[0], cue[1]; hold = cue[3] if len(cue) > 3 else TAIL
     L = len(c) / SR
-    # последний кадр сцены тоже держится MIN_LAYER (свайп к следующей сцене начинается за 0.5 с до её начала)
-    hold = max(hold, lastcut[ci] + .5 + MIN_LAYER - L)
     dur = max(mind, math.ceil((lead + L + hold) / STEP) * STEP)
     scenes.append({'start': round(t, 3), 'dur': dur, 'vo': [round(t + lead, 3), round(t + lead + L, 3)],
                    'marks': {k: round(t + lead + max(0, v), 3) for k, v in m.items()},

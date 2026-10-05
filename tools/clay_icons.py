@@ -147,6 +147,11 @@ SV.update({
 'CHOCOSQ':('0 0 260 180', '<ellipse cx="130" cy="168" rx="100" ry="10" fill="url(#cShade)"/><g transform="rotate(-10 70 90)"><rect x="20" y="40" width="96" height="96" rx="14" fill="url(#cChoc)"/><rect x="32" y="50" width="70" height="16" rx="8" fill="#b77a52" opacity=".55"/></g><g transform="rotate(12 180 90)"><rect x="140" y="30" width="96" height="96" rx="14" fill="url(#cChoc)"/><rect x="152" y="40" width="70" height="16" rx="8" fill="#b77a52" opacity=".55"/></g>'),
 })
 
+SV.update({
+'SUITCASE':('0 0 300 340', '<ellipse cx="150" cy="326" rx="110" ry="12" fill="url(#cShade)"/><path d="M110 70 V40 Q110 24 126 24 H174 Q190 24 190 40 V70" stroke="#2b2b33" stroke-width="16" fill="none"/><rect x="40" y="66" width="220" height="246" rx="34" fill="url(#cRed)"/><rect x="88" y="66" width="18" height="246" fill="#ff8a98" opacity=".7"/><rect x="194" y="66" width="18" height="246" fill="#ff8a98" opacity=".7"/><circle cx="80" cy="318" r="12" fill="#2b2b33"/><circle cx="220" cy="318" r="12" fill="#2b2b33"/><rect x="120" y="150" width="60" height="60" rx="14" fill="url(#cYellow)"/>'+HL(70,120,12,40,.6,0)),
+'SUN':('0 0 300 300', '<rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(0 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(45 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(90 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(135 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(180 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(225 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(270 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(315 150 150)"/><circle cx="150" cy="150" r="78" fill="url(#cYellow)"/>'+HL(120,120,22,12,.7,-30)),
+})
+
 def svg(name,w,extra=''):
     vb,body=SV[name]; _,_,vw,vh=map(float,vb.split()); h=round(w*vh/vw)
     return f'<svg class="clay"{extra} width="{w}" height="{h}" viewBox="{vb}" overflow="visible">{body}</svg>'

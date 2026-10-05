@@ -250,6 +250,9 @@ SECS.forEach((sec, i) => {
   A.querySelectorAll('.hkx').forEach(d => { pulse(d, .95, 1.12); shake(d, .95); }); sfx(.95, 'impact', { g: .6 });
   pulse(A.querySelector('.h1') || A.querySelector('.card'), 1.45, 1.05); sfx(1.45, 'bonk');
 }
+// «отодвинула тарелку»: элемент .slide уезжает в сторону на своей метке
+document.querySelectorAll('.slide').forEach(el => { const i = SECS.indexOf(el.closest('.sec')), m = SC[i]?.marks?.[el.dataset.mark];
+  if (m != null) { tl.to(el, { x: 380, rotation: 8, opacity: .35, duration: .6, ease: 'power2.inOut' }, m + .1); sfx(m + .1, 'swoosh', { f: .8 }); } });
 // финал: гайд пульсирует, кнопка-призыв качается
 {
   const i = SECS.length - 1, s = CUTS.at(-1) ?? SC[i].start, b = mk(i, 'b', SC[i].dur - 1.5);

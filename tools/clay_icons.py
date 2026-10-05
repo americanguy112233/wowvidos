@@ -157,6 +157,10 @@ SV.update({
 'JEANS':('0 0 300 380', '<ellipse cx="150" cy="366" rx="110" ry="12" fill="url(#cShade)"/><path d="M40 40 H260 L276 356 H170 L150 150 L130 356 H24Z" fill="url(#cDenim)"/><rect x="36" y="30" width="228" height="44" rx="10" fill="#4a78c4"/><path d="M150 74 V150" stroke="#e8b04a" stroke-width="5" stroke-dasharray="10 7"/><path d="M70 74 Q86 120 128 116" stroke="#e8b04a" stroke-width="5" fill="none" stroke-dasharray="10 7"/><path d="M230 74 Q214 120 172 116" stroke="#e8b04a" stroke-width="5" fill="none" stroke-dasharray="10 7"/><circle cx="150" cy="52" r="14" fill="url(#cGold)"/><circle cx="150" cy="52" r="5" fill="#a86a1e"/>'+HL(70,180,10,60,.45,0)),
 })
 
+SV.update({
+'CHEESECAKE':('0 0 340 280', '<ellipse cx="170" cy="264" rx="150" ry="12" fill="url(#cShade)"/><path d="M24 196 L306 70 Q320 66 320 82 V236 Q320 252 304 252 H38 Q24 252 24 238Z" fill="#fff6e2"/><path d="M24 222 H320 V236 Q320 252 304 252 H38 Q24 252 24 238Z" fill="url(#cBread)"/><path d="M22 192 L304 64 Q324 58 324 80 V98 L24 214Z" fill="url(#cRed)"/><path d="M100 172 q5 30 13 0 M190 132 q6 34 14 0 M262 100 q5 26 12 0" fill="url(#cRed)" stroke="#b20a26" stroke-width="9" stroke-linecap="round"/><circle cx="280" cy="60" r="24" fill="url(#cRed)"/><path d="M282 36 q8 -20 26 -18" stroke="#3f8f45" stroke-width="6" fill="none" stroke-linecap="round"/>'+HL(240,170,40,16,.55,-10)),
+})
+
 def svg(name,w,extra=''):
     vb,body=SV[name]; _,_,vw,vh=map(float,vb.split()); h=round(w*vh/vw)
     return f'<svg class="clay"{extra} width="{w}" height="{h}" viewBox="{vb}" overflow="visible">{body}</svg>'

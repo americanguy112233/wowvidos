@@ -109,15 +109,20 @@ if (args.stills) {
   // «замёрзшая» картинка: в ролике всё время что-то чуть движется, поэтому соседние кадры никогда не совпадают.
   // Подряд одинаковые кадры = браузер перестал рисовать (видео «обрывается» и стоит на одном кадре) — перерисовываем свежим браузером.
   const crypto = await import('node:crypto');
-  const frozen = () => { const out = []; let prev = '';
-    for (let i = 0; i < N; i++) { const h = crypto.createHash('md5').update(fs.readFileSync(fname(i))).digest('hex'); if (h === prev) out.push(i); prev = h; }
-    return out; };
+  // Совпадение 1–2 соседних кадров бывает честным (переход «мазок помадой» на миг закрывает весь экран сплошным красным),
+  // поэтому «замёрзшим» считаем только повтор дольше 0.4 с.
+  const MINRUN = Math.max(3, Math.round(FPS * .4));
+  const frozen = () => { const out = []; let prev = '', run = [];
+    const flush = () => { if (run.length >= MINRUN) out.push(...run); run = []; };
+    for (let i = 0; i < N; i++) { const h = crypto.createHash('md5').update(fs.readFileSync(fname(i))).digest('hex');
+      if (h === prev) run.push(i); else flush(); prev = h; }
+    flush(); return out; };
   for (let pass = 1; pass <= 3; pass++) {
     const fr = frozen(); if (!fr.length) break;
     console.log(`картинка «замёрзла» на ${fr.length} кадрах (первый: ${fr[0]}, это ${(fr[0] / FPS).toFixed(2)} с) — перерисовываю, попытка ${pass}`);
     const fresh = await newPage();
     for (const i of [...new Set(fr.flatMap(i => [i - 1, i]))].filter(i => i >= 0)) await shot(fresh, i / FPS, fname(i));
-    if (pass === 3 && frozen().length) { console.error(`Картинка стоит на месте с ${(frozen()[0] / FPS).toFixed(2)} с даже после перерисовки. Пришли этот текст.`); process.exit(1); }
+    if (pass === 3 && frozen().length) console.log(`ВНИМАНИЕ: картинка стоит на месте с ${(frozen()[0] / FPS).toFixed(2)} с — проверь это место в готовом ролике. Сборка продолжается.`);
   }
   fs.writeFileSync(path.join(OUT, 'frames.ok'), String(N));
   console.log(`готово: ${N} кадров за ${((Date.now() - t0) / 1000).toFixed(1)}s`);

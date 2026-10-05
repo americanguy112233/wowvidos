@@ -16,6 +16,7 @@ DEFS='''<svg width="0" height="0" style="position:absolute"><defs>
 <linearGradient id="cAqua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9efff"/><stop offset="1" stop-color="#2f97dc"/></linearGradient>
 <linearGradient id="cBread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4c27a"/><stop offset="1" stop-color="#b8692a"/></linearGradient>
 <linearGradient id="cSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2cf"/><stop offset="1" stop-color="#e6a585"/></linearGradient>
+<linearGradient id="cChoc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5f3c"/><stop offset="1" stop-color="#4a2615"/></linearGradient>
 <radialGradient id="cShade" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
 <filter id="hl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
 </defs></svg>'''
@@ -139,6 +140,11 @@ SV.update({
   '<path d="M60 100 Q60 90 76 90 H124 Q140 90 140 100 L166 170 V300 Q166 320 146 320 H54 Q34 320 34 300 V170Z" fill="url(#cYellow)"/>'
   '<rect x="50" y="190" width="100" height="80" rx="16" fill="#fff"/><path d="M100 210 q16 18 0 40 q-16 -22 0 -40Z" fill="url(#cGreen)"/>'
   +HL(56,150,10,40,.7,10)),
+})
+
+SV.update({
+'CHOCO':('0 0 420 260', '<ellipse cx="210" cy="246" rx="180" ry="12" fill="url(#cShade)"/><rect x="22" y="32" width="208" height="208" rx="16" fill="#3d1f10"/><rect x="30" y="40" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="38" y="46" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="94" y="40" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="102" y="46" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="158" y="40" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="166" y="46" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="30" y="104" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="38" y="110" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="94" y="104" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="102" y="110" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="158" y="104" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="166" y="110" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="30" y="168" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="38" y="174" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="94" y="168" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="102" y="174" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><rect x="158" y="168" width="58" height="58" rx="10" fill="url(#cChoc)"/><rect x="166" y="174" width="42" height="10" rx="5" fill="#b77a52" opacity=".55"/><path d="M222 26 H392 Q404 26 404 38 V230 Q404 242 392 242 H222 L236 210 L220 180 L238 150 L220 120 L236 90 L220 60 Z" fill="url(#cRed)"/><rect x="260" y="104" width="120" height="64" rx="14" fill="#fff"/><text x="320" y="148" text-anchor="middle" font-family="Unb" font-weight="900" font-size="28" fill="#c8102e">шоко</text>'+HL(310,60,60,8,.6,0)),
+'CHOCOSQ':('0 0 260 180', '<ellipse cx="130" cy="168" rx="100" ry="10" fill="url(#cShade)"/><g transform="rotate(-10 70 90)"><rect x="20" y="40" width="96" height="96" rx="14" fill="url(#cChoc)"/><rect x="32" y="50" width="70" height="16" rx="8" fill="#b77a52" opacity=".55"/></g><g transform="rotate(12 180 90)"><rect x="140" y="30" width="96" height="96" rx="14" fill="url(#cChoc)"/><rect x="152" y="40" width="70" height="16" rx="8" fill="#b77a52" opacity=".55"/></g>'),
 })
 
 def svg(name,w,extra=''):

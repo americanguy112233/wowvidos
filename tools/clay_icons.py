@@ -17,6 +17,7 @@ DEFS='''<svg width="0" height="0" style="position:absolute"><defs>
 <linearGradient id="cBread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4c27a"/><stop offset="1" stop-color="#b8692a"/></linearGradient>
 <linearGradient id="cSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2cf"/><stop offset="1" stop-color="#e6a585"/></linearGradient>
 <linearGradient id="cChoc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5f3c"/><stop offset="1" stop-color="#4a2615"/></linearGradient>
+<linearGradient id="cDenim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb3e8"/><stop offset="1" stop-color="#2d5aa8"/></linearGradient>
 <radialGradient id="cShade" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
 <filter id="hl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
 </defs></svg>'''
@@ -150,6 +151,10 @@ SV.update({
 SV.update({
 'SUITCASE':('0 0 300 340', '<ellipse cx="150" cy="326" rx="110" ry="12" fill="url(#cShade)"/><path d="M110 70 V40 Q110 24 126 24 H174 Q190 24 190 40 V70" stroke="#2b2b33" stroke-width="16" fill="none"/><rect x="40" y="66" width="220" height="246" rx="34" fill="url(#cRed)"/><rect x="88" y="66" width="18" height="246" fill="#ff8a98" opacity=".7"/><rect x="194" y="66" width="18" height="246" fill="#ff8a98" opacity=".7"/><circle cx="80" cy="318" r="12" fill="#2b2b33"/><circle cx="220" cy="318" r="12" fill="#2b2b33"/><rect x="120" y="150" width="60" height="60" rx="14" fill="url(#cYellow)"/>'+HL(70,120,12,40,.6,0)),
 'SUN':('0 0 300 300', '<rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(0 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(45 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(90 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(135 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(180 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(225 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(270 150 150)"/><rect x="141" y="10" width="18" height="50" rx="9" fill="url(#cYellow)" transform="rotate(315 150 150)"/><circle cx="150" cy="150" r="78" fill="url(#cYellow)"/>'+HL(120,120,22,12,.7,-30)),
+})
+
+SV.update({
+'JEANS':('0 0 300 380', '<ellipse cx="150" cy="366" rx="110" ry="12" fill="url(#cShade)"/><path d="M40 40 H260 L276 356 H170 L150 150 L130 356 H24Z" fill="url(#cDenim)"/><rect x="36" y="30" width="228" height="44" rx="10" fill="#4a78c4"/><path d="M150 74 V150" stroke="#e8b04a" stroke-width="5" stroke-dasharray="10 7"/><path d="M70 74 Q86 120 128 116" stroke="#e8b04a" stroke-width="5" fill="none" stroke-dasharray="10 7"/><path d="M230 74 Q214 120 172 116" stroke="#e8b04a" stroke-width="5" fill="none" stroke-dasharray="10 7"/><circle cx="150" cy="52" r="14" fill="url(#cGold)"/><circle cx="150" cy="52" r="5" fill="#a86a1e"/>'+HL(70,180,10,60,.45,0)),
 })
 
 def svg(name,w,extra=''):

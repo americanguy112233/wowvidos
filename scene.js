@@ -225,12 +225,12 @@ SECS.forEach((sec, i) => {
   const L = [...sec.querySelectorAll(':scope > .layer')];
   const cuts = [];
   L.slice(1).forEach((layer, n) => {
-    const key = ['x', 'y', 'z'][n], m = SC[i].marks?.[key];
+    const key = ['x', 'y', 'z', 'u', 'v', 'w'][n], m = SC[i].marks?.[key];
     let c = m != null ? m - .12 : s + SC[i].dur * (n + 1) / L.length;
-    const prev = cuts.at(-1) ?? s;
-    // каждый кадр держится ≥ 2.5 с (голос сам делает паузу перед склейкой — см. MIN_LAYER в voice.py)
-    c = Math.max(prev + 2.5, Math.min(e - 2.5 * (L.length - 1 - n), c));
-    c = Math.max(prev + 2.5, snap(c));                              // склейка — на долю бита
+    const prev = cuts.at(-1) ?? (i ? Math.max(s, snap(s)) : 0);   // первый кадр начинается, когда камера приехала
+    // каждый кадр ≈ 2.4 с, не короче 2.2 с (голос сам делает паузу перед склейкой — см. MIN_LAYER в voice.py)
+    c = Math.max(prev + 2.2, Math.min(e - 2.2 * (L.length - 1 - n), c));
+    c = Math.max(prev + 2.2, snap(c));                              // склейка — на долю бита
     cuts.push(c); CUTS.push(c);
     if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);

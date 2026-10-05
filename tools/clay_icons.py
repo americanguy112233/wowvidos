@@ -12,6 +12,9 @@ DEFS='''<svg width="0" height="0" style="position:absolute"><defs>
 <linearGradient id="cGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6e89a"/><stop offset="1" stop-color="#2f9a52"/></linearGradient>
 <linearGradient id="cOat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8e3bd"/><stop offset="1" stop-color="#d9a866"/></linearGradient>
 <linearGradient id="cBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb2ff"/><stop offset="1" stop-color="#3f52c9"/></linearGradient>
+<linearGradient id="cYellow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff09a"/><stop offset="1" stop-color="#f2b705"/></linearGradient>
+<linearGradient id="cAqua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9efff"/><stop offset="1" stop-color="#2f97dc"/></linearGradient>
+<linearGradient id="cBread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4c27a"/><stop offset="1" stop-color="#b8692a"/></linearGradient>
 <radialGradient id="cShade" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
 <filter id="hl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
 </defs></svg>'''
@@ -71,6 +74,26 @@ SV.update({
 'BALLOON':('0 0 200 340', '<path d="M100 236 Q90 280 110 300 Q130 320 100 340" stroke="#cfc4b6" stroke-width="5" fill="none"/>'
   '<ellipse cx="100" cy="116" rx="90" ry="112" fill="url(#cPink)"/><path d="M88 226 L112 226 L100 242Z" fill="#ef6a8a"/>'
   +HL(66,66,18,36,.8,-25)),
+})
+
+SV.update({
+'BREAD':('0 0 380 240', '<ellipse cx="190" cy="226" rx="160" ry="12" fill="url(#cShade)"/>'
+  '<path d="M30 200 Q14 90 100 60 Q190 20 280 60 Q366 90 350 200 Q350 214 334 214 H46 Q30 214 30 200Z" fill="url(#cBread)"/>'
+  '<path d="M110 86 Q130 120 116 150 M180 70 Q200 110 186 146 M250 84 Q270 118 256 150" stroke="#f9dcae" stroke-width="12" fill="none" stroke-linecap="round"/>'
+  +HL(120,70,60,10,.6,-12)),
+'PASTA':('0 0 380 280', '<ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/>'
+  '<path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/>'
+  '<path d="M40 122 Q70 70 120 96 Q150 50 200 84 Q250 46 290 88 Q330 76 344 120Z" fill="#f6d06b"/>'
+  '<g stroke="#e9b94a" stroke-width="7" fill="none" stroke-linecap="round"><path d="M70 112 q20 -30 40 0 t40 0"/><path d="M160 104 q20 -30 40 0 t40 0"/><path d="M230 112 q20 -26 40 0"/></g>'
+  '<path d="M150 80 Q190 56 232 82 Q214 108 176 106 Q150 100 150 80Z" fill="url(#cRed)"/><path d="M196 62 q14 -22 30 -10 q-10 18 -30 10Z" fill="url(#cGreen)"/>'
+  +HL(70,170,16,40,.75,20)+HL(180,72,14,5,.8)),
+'BANANA':('0 0 340 260', '<ellipse cx="170" cy="246" rx="130" ry="12" fill="url(#cShade)"/>'
+  '<path d="M30 70 Q60 210 190 220 Q290 224 320 150 Q300 176 200 176 Q90 170 64 60Z" fill="url(#cYellow)"/>'
+  '<path d="M24 74 L38 48 L66 58 L62 76Z" fill="#8a6a2e"/><path d="M318 150 L332 140" stroke="#5a4520" stroke-width="10" stroke-linecap="round"/>'
+  +HL(150,196,60,8,.7,8)),
+'DROP':('0 0 240 320', '<ellipse cx="120" cy="306" rx="86" ry="12" fill="url(#cShade)"/>'
+  '<path d="M120 10 Q210 140 214 196 Q218 290 120 292 Q22 290 26 196 Q30 140 120 10Z" fill="url(#cAqua)"/>'
+  +HL(78,190,18,46,.8,15)+HL(94,110,8,16,.7,25)),
 })
 
 def svg(name,w,extra=''):

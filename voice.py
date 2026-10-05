@@ -413,6 +413,14 @@ def process(x):
     return x / np.max(np.abs(x)) * .75
 
 texts = [parse(c[2]) for c in CUES]
+MIN_LAYER = float(os.environ.get('MIN_LAYER', '2.8'))   # минимум секунд на один кадр (требование владельца: 2.5–3 с)
+lastcut = []
+def quiet_point(x, t, win=.45):
+    """Самое тихое место (30 мс) рядом с моментом t — туда безопасно вставить паузу, не разрезав слово."""
+    n = len(x); a, b = int(max(.05, t - win) * SR), int(min(n / SR - .05, t + win) * SR)
+    if b - a < int(.06 * SR): return t
+    e = np.convolve(np.abs(x[a:b]), np.ones(int(.03 * SR)) / int(.03 * SR), mode='same')
+    return (a + int(np.argmin(e))) / SR
 clips, marks, words_all = [], [], []
 for i, (clean, mk) in enumerate(texts):
     prev = texts[i - 1][0] if i else ''
@@ -428,12 +436,29 @@ for i, (clean, mk) in enumerate(texts):
     m = {k: tm(idx) for k, idx in mk.items()}
     # слова для субтитров: каждое слово (с прилипшей пунктуацией) и время его начала
     ws = [(tm(mt.start()), mt.group()) for mt in re.finditer(r'\S+', clean) if re.search(r'\w', mt.group())]
+    # каждый кадр (слой между склейками |x| |y| |z|) должен быть на экране не меньше MIN_LAYER секунд:
+    # если фраза короче — вставляем паузу в голос в ближайшем тихом месте (точка/запятая) перед склейкой
+    lead = CUES[i][1]; prevb = -lead
+    for k in sorted([k for k in m if k in 'xyz'], key=lambda k: m[k]):
+        seg = m[k] - prevb
+        if seg < MIN_LAYER:
+            g = MIN_LAYER - seg
+            q = quiet_point(x, m[k])
+            n0 = int(q * SR); x = np.concatenate([x[:n0], np.zeros(int(g * SR)), x[n0:]])
+            for kk in m:
+                if m[kk] >= q - 1e-3 or kk == k: m[kk] = max(m[kk], q) + g if m[kk] >= q - 1e-3 else q + g
+            ws = [(t + g if t >= q - 1e-3 else t, w) for t, w in ws]
+            print(f'  реплика {i + 1}: пауза {g:.2f} с перед склейкой |{k}|, чтобы кадр держался {MIN_LAYER} с')
+        prevb = m[k]
+    lastcut.append(prevb)
     clips.append(process(x)); marks.append(m); words_all.append(ws)
 
 scenes, t = [], 0.0
-for cue, c, m, ws in zip(CUES, clips, marks, words_all):
+for ci, (cue, c, m, ws) in enumerate(zip(CUES, clips, marks, words_all)):
     mind, lead = cue[0], cue[1]; hold = cue[3] if len(cue) > 3 else TAIL
     L = len(c) / SR
+    # последний кадр сцены тоже держится MIN_LAYER (свайп к следующей сцене начинается за 0.5 с до её начала)
+    hold = max(hold, lastcut[ci] + .5 + MIN_LAYER - L)
     dur = max(mind, math.ceil((lead + L + hold) / STEP) * STEP)
     scenes.append({'start': round(t, 3), 'dur': dur, 'vo': [round(t + lead, 3), round(t + lead + L, 3)],
                    'marks': {k: round(t + lead + max(0, v), 3) for k, v in m.items()},

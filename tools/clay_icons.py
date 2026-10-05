@@ -161,6 +161,10 @@ SV.update({
 'CHEESECAKE':('0 0 340 280', '<ellipse cx="170" cy="264" rx="150" ry="12" fill="url(#cShade)"/><path d="M24 196 L306 70 Q320 66 320 82 V236 Q320 252 304 252 H38 Q24 252 24 238Z" fill="#fff6e2"/><path d="M24 222 H320 V236 Q320 252 304 252 H38 Q24 252 24 238Z" fill="url(#cBread)"/><path d="M22 192 L304 64 Q324 58 324 80 V98 L24 214Z" fill="url(#cRed)"/><path d="M100 172 q5 30 13 0 M190 132 q6 34 14 0 M262 100 q5 26 12 0" fill="url(#cRed)" stroke="#b20a26" stroke-width="9" stroke-linecap="round"/><circle cx="280" cy="60" r="24" fill="url(#cRed)"/><path d="M282 36 q8 -20 26 -18" stroke="#3f8f45" stroke-width="6" fill="none" stroke-linecap="round"/>'+HL(240,170,40,16,.55,-10)),
 })
 
+SV.update({
+'LAPTOP':('0 0 380 280', '<ellipse cx="190" cy="266" rx="170" ry="12" fill="url(#cShade)"/><rect x="60" y="20" width="260" height="180" rx="18" fill="url(#cSteel)"/><rect x="76" y="36" width="228" height="148" rx="8" fill="url(#cBlue)"/><rect x="96" y="60" width="120" height="14" rx="7" fill="#fff" opacity=".8"/><rect x="96" y="86" width="170" height="10" rx="5" fill="#fff" opacity=".5"/><rect x="96" y="106" width="150" height="10" rx="5" fill="#fff" opacity=".5"/><rect x="96" y="126" width="90" height="10" rx="5" fill="#fff" opacity=".5"/><path d="M20 206 H360 L340 246 Q336 254 326 254 H54 Q44 254 40 246Z" fill="url(#cBar)"/><rect x="160" y="210" width="60" height="10" rx="5" fill="#8d8d99"/>'+HL(110,46,50,6,.5,0)),
+})
+
 def svg(name,w,extra=''):
     vb,body=SV[name]; _,_,vw,vh=map(float,vb.split()); h=round(w*vh/vw)
     return f'<svg class="clay"{extra} width="{w}" height="{h}" viewBox="{vb}" overflow="visible">{body}</svg>'

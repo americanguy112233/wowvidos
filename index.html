@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Ника — углеводы после шести</title>
+<title>Ника — порции рукой</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -269,6 +269,12 @@ em .kw.hot { color: var(--ink); }
 .dwin { display: flex; gap: 26px; }
 .dw { width: 440px; height: 200px; display: flex; align-items: center; gap: 20px; padding: 0 26px; }
 .dw b { font: 800 36px/1.15 Unb; }
+.notes .ni b.g { margin-left: auto; font: 900 40px/1 Unb; color: var(--red); }
+.kscale { white-space: nowrap; position: absolute; left: 50%; bottom: -70px; translate: -50% 0; background: #121212; color: #7dff9a; font: 900 52px/1 Unb; padding: 18px 34px; border-radius: 22px; box-shadow: 0 14px 30px rgba(0,0,0,.25); }
+.eqrow { display: flex; align-items: center; gap: 30px; }
+.eqs { font: 900 130px/1 Unb; color: var(--red); }
+.phone { width: 280px; height: 380px; border-radius: 48px; border: 10px solid #121212; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.phone b { font: 800 34px/1 Unb; color: var(--muted); } .phone span { font: 900 64px/1 Unb; }
 </style>
 </head>
 <body>
@@ -283,80 +289,97 @@ em .kw.hot { color: var(--ink); }
 
   <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/draw), data-mark, data-at, data-count, data-shatter -->
   <div id="world">
-    <!-- 1. Хук: не ешь углеводы после шести? → 3 года → зря -->
+    <!-- 1. Хук: взвешивать каждую гречку? → я тоже → худею без подсчёта -->
     <section class="sec" id="s1">
       <div class="layer A">
-        <div class="row" style="top:190px"><div class="h1" data-fx="punch" style="font-size:92px">УГЛЕВОДЫ<br><em>ПОСЛЕ 18:00</em></div></div>
-        <div class="row" style="top:500px"><div class="carbs">
-          <div class="cb hk"><svg class="clay" width="250" height="158" viewBox="0 0 380 240" overflow="visible"><ellipse cx="190" cy="226" rx="160" ry="12" fill="url(#cShade)"/><path d="M30 200 Q14 90 100 60 Q190 20 280 60 Q366 90 350 200 Q350 214 334 214 H46 Q30 214 30 200Z" fill="url(#cBread)"/><path d="M110 86 Q130 120 116 150 M180 70 Q200 110 186 146 M250 84 Q270 118 256 150" stroke="#f9dcae" stroke-width="12" fill="none" stroke-linecap="round"/><ellipse cx="120" cy="70" rx="60" ry="10" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-12 120 70)"/></svg><i>✕</i></div><div class="cb hk"><svg class="clay" width="250" height="184" viewBox="0 0 380 280" overflow="visible"><ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/><path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/><path d="M40 122 Q70 70 120 96 Q150 50 200 84 Q250 46 290 88 Q330 76 344 120Z" fill="#f6d06b"/><g stroke="#e9b94a" stroke-width="7" fill="none" stroke-linecap="round"><path d="M70 112 q20 -30 40 0 t40 0"/><path d="M160 104 q20 -30 40 0 t40 0"/><path d="M230 112 q20 -26 40 0"/></g><path d="M150 80 Q190 56 232 82 Q214 108 176 106 Q150 100 150 80Z" fill="url(#cRed)"/><path d="M196 62 q14 -22 30 -10 q-10 18 -30 10Z" fill="url(#cGreen)"/><ellipse cx="70" cy="170" rx="16" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 70 170)"/><ellipse cx="180" cy="72" rx="14" ry="5" fill="#fff" opacity="0.8" filter="url(#hl)" transform="rotate(-20 180 72)"/></svg><i>✕</i></div><div class="cb hk"><svg class="clay" width="240" height="180" viewBox="0 0 320 240" overflow="visible"><ellipse cx="160" cy="226" rx="120" ry="12" fill="url(#cShade)"/><path d="M30 130 Q20 50 120 40 Q220 26 280 80 Q320 130 270 180 Q210 220 120 206 Q40 196 30 130Z" fill="url(#cOat)"/><g fill="#b98444" opacity=".6"><circle cx="110" cy="100" r="7"/><circle cx="190" cy="80" r="6"/><circle cx="230" cy="150" r="7"/><circle cx="140" cy="170" r="6"/></g><path d="M200 50 q20 -30 44 -14 q-16 22 -44 14Z" fill="url(#cGreen)"/><ellipse cx="110" cy="70" rx="50" ry="12" fill="#fff" opacity="0.65" filter="url(#hl)" transform="rotate(-10 110 70)"/></svg><i>✕</i></div></div></div>
-        <div class="hkx" data-fx="punch" style="position:absolute;left:90px;top:870px"><svg class="clay" width="340" height="361" viewBox="0 0 320 340" overflow="visible"><ellipse cx="160" cy="326" rx="120" ry="12" fill="url(#cShade)"/><circle cx="66" cy="66" r="44" fill="url(#cRed)"/><circle cx="254" cy="66" r="44" fill="url(#cRed)"/><path d="M84 290 L60 322 M236 290 L260 322" stroke="#8a0a20" stroke-width="16" stroke-linecap="round"/><circle cx="160" cy="186" r="140" fill="url(#cRed)"/><circle cx="160" cy="186" r="116" fill="url(#cWhite)"/><path d="M160 186 V108 M160 186 L222 216" stroke="#2b2b33" stroke-width="15" stroke-linecap="round"/><circle cx="160" cy="186" r="14" fill="url(#cRed)"/><g fill="#cfc4b6"><circle cx="160" cy="88" r="7"/><circle cx="160" cy="284" r="7"/><circle cx="62" cy="186" r="7"/><circle cx="258" cy="186" r="7"/></g><ellipse cx="54" cy="52" rx="14" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-20 54 52)"/><ellipse cx="98" cy="104" rx="40" ry="12" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-40 98 104)"/></svg></div>
-        <div class="tst" data-fx="punch" style="position:absolute;right:-60px;top:860px;width:470px;height:470px;transform:rotate(-10deg)"><img src="assets/nika/toon/06_think.png" alt=""></div>
+        <div class="row" style="top:190px"><div class="h1" data-fx="punch" style="font-size:78px">ВЗВЕШИВАТЬ<br><em>КАЖДУЮ ГРЕЧКУ?</em></div></div>
+        <div class="row" style="top:440px"><div class="card notes" data-fx="punch" style="width:860px;padding:34px 44px">
+          <div class="nh" style="font-size:44px">Дневник питания</div>
+          <div class="ni hk" style="font-size:40px">гречка <b class="g">37 г</b></div>
+          <div class="ni hk" style="font-size:40px">масло <b class="g">4 г</b></div>
+          <div class="ni hk" style="font-size:40px">курица <b class="g">112 г</b></div></div></div>
+        <div class="hkx" data-fx="punch" style="position:absolute;left:90px;top:960px"><div style="position:relative"><svg class="clay" width="340" height="251" viewBox="0 0 380 280" overflow="visible"><ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/><path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/><path d="M44 124 Q90 60 190 58 Q290 60 336 124Z" fill="url(#cBread)"/><g fill="#8a4f1e" opacity=".55"><circle cx="110" cy="104" r="6"/><circle cx="150" cy="86" r="6"/><circle cx="200" cy="78" r="6"/><circle cx="240" cy="92" r="6"/><circle cx="280" cy="106" r="6"/><circle cx="180" cy="104" r="6"/><circle cx="220" cy="112" r="6"/><circle cx="130" cy="114" r="5"/></g><path d="M250 70 q16 -26 34 -10 q-12 18 -34 10Z" fill="url(#cGreen)"/><ellipse cx="70" cy="170" rx="16" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 70 170)"/><ellipse cx="160" cy="70" rx="40" ry="8" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-6 160 70)"/></svg><div class="kscale">37 г</div></div></div>
+        <div class="tst" data-fx="punch" style="position:absolute;right:-60px;top:900px;width:460px;height:460px;transform:rotate(-10deg)"><img src="assets/nika/toon/05_tired.png" alt=""></div>
       </div>
-      <div class="layer B redbg" style="opacity:0">
-        <div class="ghost" style="top:220px">3</div>
-        <div class="row" style="top:320px"><div class="h1 wt" data-fx="kin" style="font-size:104px">3 ГОДА<br>Я ТАК<br>ДЕЛАЛА</div></div>
-        <div class="row" style="top:800px"><div class="tag" data-fx="slam" data-mark="a" data-at="-.05" style="background:#121212;font-size:110px;padding:30px 70px 36px;transform:rotate(-6deg)">ЗРЯ</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="6" data-at=".4" style="position:absolute;left:280px;top:1000px;width:520px;height:520px"><img src="assets/nika/toon/08_sad.png" alt=""></div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:300px"><div class="bubble down" data-fx="bub" data-at=".1"><div class="h1" style="font-size:96px">Я <em>ТОЖЕ</em></div></div></div>
+        <div class="row" style="top:560px"><div class="tst" data-fx="plop" data-at=".02" style="width:520px;height:520px"><img src="assets/nika/toon/03_wink.png" alt=""></div></div>
+        <div class="row" style="top:1120px"><div class="tag" data-fx="slam" data-mark="a" data-at=".1" style="font-size:48px">худею без подсчёта ✓</div></div>
       </div>
     </section>
 
-    <!-- 2. Ужин: курица с огурцом → не могла уснуть от голода -->
+    <!-- 2. Считать полезно в начале → всю жизнь невозможно -->
     <section class="sec" id="s2">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:40px">МОЙ УЖИН</div></div>
-        <div class="row" style="top:300px"><div class="h1" data-fx="kin" style="font-size:84px">КУРИЦА<br>С <em>ОГУРЦОМ</em></div></div>
-        <div class="row" style="top:560px"><div data-fx="zoom" data-at=".2"><svg class="clay" width="640" height="416" viewBox="0 0 400 260" overflow="visible"><ellipse cx="200" cy="246" rx="170" ry="12" fill="url(#cShade)"/><ellipse cx="200" cy="140" rx="190" ry="100" fill="url(#cWhite)"/><ellipse cx="200" cy="134" rx="140" ry="70" fill="#f7f2ea"/><path d="M96 140 Q120 84 176 100 Q190 140 160 164 Q118 176 96 140Z" fill="url(#cCream)"/><ellipse cx="250" cy="122" rx="62" ry="38" fill="url(#cGold)"/><path d="M216 112 L284 104 M222 132 L282 126" stroke="#c4782a" stroke-width="6" stroke-linecap="round" opacity=".6"/><circle cx="190" cy="178" r="22" fill="url(#cGreen)"/><circle cx="226" cy="186" r="18" fill="url(#cGreen)"/><circle cx="160" cy="184" r="16" fill="url(#cGreen)"/><ellipse cx="250" cy="108" rx="24" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-8 250 108)"/><ellipse cx="110" cy="80" rx="40" ry="10" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-15 110 80)"/></svg></div></div>
-        <div class="row" style="top:1000px"><div class="hand" data-fx="write" data-at=".9" style="transform:rotate(-4deg)">и больше ничего</div></div>
-      </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:280px"><div class="bubble down" data-fx="bub" data-at=".2"><div class="h1" style="font-size:76px">НЕ МОГЛА УСНУТЬ<br>ОТ <em>ГОЛОДА</em></div></div></div>
-        <div class="row" style="top:660px"><div class="tst" data-fx="plop" data-at=".02" style="width:600px;height:600px"><img src="assets/nika/toon/05_tired.png" alt=""></div></div>
-        <div data-fx="peek" data-from="left" data-rot="-10" data-at=".5" style="position:absolute;left:-60px;top:980px"><svg class="clay" width="300" height="300" viewBox="0 0 300 300" overflow="visible"><path d="M190 20 A130 130 0 1 0 280 220 A110 110 0 0 1 190 20Z" fill="url(#cYellow)"/><circle cx="110" cy="170" r="14" fill="#e9b94a" opacity=".6"/><circle cx="150" cy="230" r="9" fill="#e9b94a" opacity=".6"/><ellipse cx="80" cy="120" rx="14" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 80 120)"/></svg></div>
-        <div data-fx="peek" data-from="right" data-rot="10" data-at=".7" style="position:absolute;right:-40px;top:1000px"><svg class="clay" width="260" height="276" viewBox="0 0 320 340" overflow="visible"><ellipse cx="160" cy="326" rx="120" ry="12" fill="url(#cShade)"/><circle cx="66" cy="66" r="44" fill="url(#cRed)"/><circle cx="254" cy="66" r="44" fill="url(#cRed)"/><path d="M84 290 L60 322 M236 290 L260 322" stroke="#8a0a20" stroke-width="16" stroke-linecap="round"/><circle cx="160" cy="186" r="140" fill="url(#cRed)"/><circle cx="160" cy="186" r="116" fill="url(#cWhite)"/><path d="M160 186 V108 M160 186 L222 216" stroke="#2b2b33" stroke-width="15" stroke-linecap="round"/><circle cx="160" cy="186" r="14" fill="url(#cRed)"/><g fill="#cfc4b6"><circle cx="160" cy="88" r="7"/><circle cx="160" cy="284" r="7"/><circle cx="62" cy="186" r="7"/><circle cx="258" cy="186" r="7"/></g><ellipse cx="54" cy="52" rx="14" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-20 54 52)"/><ellipse cx="98" cy="104" rx="40" ry="12" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-40 98 104)"/></svg></div>
-      </div>
-    </section>
-
-    <!-- 3. Время еды почти не влияет → влияет другое (переход — мазок) -->
-    <section class="sec" id="s3" data-trans="smear">
-      <div class="layer A">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:96px">ВРЕМЯ ЕДЫ</div></div>
-        <div class="row" style="top:420px"><div style="position:relative"><svg class="clay" width="420" height="446" viewBox="0 0 320 340" overflow="visible"><ellipse cx="160" cy="326" rx="120" ry="12" fill="url(#cShade)"/><circle cx="66" cy="66" r="44" fill="url(#cRed)"/><circle cx="254" cy="66" r="44" fill="url(#cRed)"/><path d="M84 290 L60 322 M236 290 L260 322" stroke="#8a0a20" stroke-width="16" stroke-linecap="round"/><circle cx="160" cy="186" r="140" fill="url(#cRed)"/><circle cx="160" cy="186" r="116" fill="url(#cWhite)"/><path d="M160 186 V108 M160 186 L222 216" stroke="#2b2b33" stroke-width="15" stroke-linecap="round"/><circle cx="160" cy="186" r="14" fill="url(#cRed)"/><g fill="#cfc4b6"><circle cx="160" cy="88" r="7"/><circle cx="160" cy="284" r="7"/><circle cx="62" cy="186" r="7"/><circle cx="258" cy="186" r="7"/></g><ellipse cx="54" cy="52" rx="14" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-20 54 52)"/><ellipse cx="98" cy="104" rx="40" ry="12" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-40 98 104)"/></svg>
-          <svg class="ul" data-fx="draw" data-at=".7" style="position:absolute;left:-30px;top:0" width="480" height="450" viewBox="0 0 480 450"><path class="dr" pathLength="1" d="M30 50 L450 400 M450 50 L30 400" stroke="#c8102e" stroke-width="28" fill="none" stroke-linecap="round"/></svg></div></div>
-        <div class="row" style="top:960px"><div class="tag dark" data-fx="pop" data-at="1.1" style="font-size:46px">почти не влияет на похудение</div></div>
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:80px">СЧИТАТЬ<br><em>КАЛОРИИ</em></div></div>
+        <div class="row" style="top:470px"><div class="tag" data-fx="slam" data-at=".5" style="background:var(--green);font-size:50px">полезно в начале ✓</div></div>
+        <div class="row" style="top:640px"><div class="bubble down" data-fx="bub" data-mark="a" data-at="-.1" style="padding:34px 50px"><div class="h1" style="font-size:60px">ЧТОБЫ ПОНЯТЬ<br><em>ПОРЦИИ</em></div></div></div>
+        <div class="row" style="top:930px"><div class="tst" data-fx="plop" data-at=".3" style="width:440px;height:440px"><img src="assets/nika/toon/06_think.png" alt=""></div></div>
       </div>
       <div class="layer B redbg" style="opacity:0">
-        <div class="ghost" style="top:240px" data-zoomto>?</div>
-        <div class="row" style="top:420px"><div class="h1 wt" data-fx="kin" style="font-size:112px">ВЛИЯЕТ<br>СОВСЕМ<br>ДРУГОЕ</div></div>
+        <div class="ghost" style="top:240px;font-size:900px">∞</div>
+        <div class="row" style="top:380px"><div class="h1 wt" data-fx="kin" style="font-size:108px">ВСЮ<br>ЖИЗНЬ?</div></div>
+        <div class="row" style="top:760px"><div class="tag" data-fx="slam" data-mark="b" data-at="-.05" style="background:#121212;font-size:76px;padding:28px 56px 32px;transform:rotate(-5deg)">НЕВОЗМОЖНО</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="6" data-at=".3" style="position:absolute;left:280px;top:960px;width:520px;height:520px"><img src="assets/nika/toon/08_sad.png" alt=""></div>
       </div>
     </section>
 
-    <!-- 4. Сколько за день, а не во сколько → гречка/картошка на ужин → вес уходит (переход — зум) -->
-    <section class="sec" id="s4" data-trans="zoom">
+    <!-- 3. Способ: нужна только рука (переход — мазок) -->
+    <section class="sec" id="s3" data-trans="smear">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:80px" data-zoomfrom>ВАЖНО <em>СКОЛЬКО</em>,<br>А НЕ ВО СКОЛЬКО</div></div>
-        <div class="row" style="top:470px"><div class="card vs" data-fx="up" data-at=".1">
-          <div class="vrow"><div class="l">ужин<small>в 18:00</small></div><div class="tr"><div class="fl" data-fx="grow" data-w="0,72" data-at=".4" style="background:var(--green)"></div></div></div>
-          <div class="vrow"><div class="l">ужин<small>в 20:00</small></div><div class="tr"><div class="fl" data-fx="grow" data-w="0,72" data-at=".6" style="background:var(--green)"></div></div></div>
-          <div class="sl" style="margin-top:6px;font:700 30px/1 Man;color:var(--muted);text-align:center">калории за весь день — одинаковые</div></div></div>
-        <div class="row" style="top:860px"><div class="tag" data-fx="slam" data-mark="a" data-at=".1" style="font-size:52px">= тот же результат</div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-10" data-at=".8" style="position:absolute;right:-60px;top:990px;width:400px;height:400px"><img src="assets/nika/toon/03_wink.png" alt=""></div>
+        <div class="row" style="top:300px"><div class="bubble down" data-fx="bub" data-at=".2"><div class="h1" style="font-size:84px">МНЕ ПОМОГ<br><em>ОДИН СПОСОБ</em></div></div></div>
+        <div class="row" style="top:680px"><div class="tst" data-fx="plop" data-at=".02" style="width:580px;height:580px"><img src="assets/nika/toon/03_wink.png" alt=""></div></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:80px">НЕМНОГО <em>УГЛЕВОДОВ</em><br>НА УЖИН</div></div>
-        <div class="row" style="top:460px"><div style="display:flex;gap:30px;align-items:flex-end"><div data-fx="drop" data-at=".1"><svg class="clay" width="400" height="295" viewBox="0 0 380 280" overflow="visible"><ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/><path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/><path d="M44 124 Q90 60 190 58 Q290 60 336 124Z" fill="url(#cBread)"/><g fill="#8a4f1e" opacity=".55"><circle cx="110" cy="104" r="6"/><circle cx="150" cy="86" r="6"/><circle cx="200" cy="78" r="6"/><circle cx="240" cy="92" r="6"/><circle cx="280" cy="106" r="6"/><circle cx="180" cy="104" r="6"/><circle cx="220" cy="112" r="6"/><circle cx="130" cy="114" r="5"/></g><path d="M250 70 q16 -26 34 -10 q-12 18 -34 10Z" fill="url(#cGreen)"/><ellipse cx="70" cy="170" rx="16" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 70 170)"/><ellipse cx="160" cy="70" rx="40" ry="8" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-6 160 70)"/></svg></div><div data-fx="drop" data-at=".3"><svg class="clay" width="330" height="248" viewBox="0 0 320 240" overflow="visible"><ellipse cx="160" cy="226" rx="120" ry="12" fill="url(#cShade)"/><path d="M30 130 Q20 50 120 40 Q220 26 280 80 Q320 130 270 180 Q210 220 120 206 Q40 196 30 130Z" fill="url(#cOat)"/><g fill="#b98444" opacity=".6"><circle cx="110" cy="100" r="7"/><circle cx="190" cy="80" r="6"/><circle cx="230" cy="150" r="7"/><circle cx="140" cy="170" r="6"/></g><path d="M200 50 q20 -30 44 -14 q-16 22 -44 14Z" fill="url(#cGreen)"/><ellipse cx="110" cy="70" rx="50" ry="12" fill="#fff" opacity="0.65" filter="url(#hl)" transform="rotate(-10 110 70)"/></svg></div></div></div>
-        <div class="row" style="top:800px"><div class="dwin">
-          <div class="card dw" data-fx="pop" data-mark="b" data-at="-.1"><svg class="clay" width="120" height="120" viewBox="0 0 300 300" overflow="visible"><path d="M190 20 A130 130 0 1 0 280 220 A110 110 0 0 1 190 20Z" fill="url(#cYellow)"/><circle cx="110" cy="170" r="14" fill="#e9b94a" opacity=".6"/><circle cx="150" cy="230" r="9" fill="#e9b94a" opacity=".6"/><ellipse cx="80" cy="120" rx="14" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 80 120)"/></svg><b>лучше сон</b></div>
-          <div class="card dw" data-fx="pop" data-mark="c" data-at="-.1"><svg class="clay" width="120" height="120" viewBox="0 0 260 260" overflow="visible"><ellipse cx="130" cy="244" rx="104" ry="12" fill="url(#cShade)"/><circle cx="130" cy="124" r="108" fill="url(#cGold)"/><path d="M38 116 Q40 40 130 28 Q220 40 222 116 Q224 150 196 158 Q172 140 150 162 Q128 144 104 164 Q84 146 62 160 Q36 152 38 116Z" fill="url(#cPink)"/><circle cx="130" cy="120" r="32" fill="#f4f1ec"/><circle cx="130" cy="120" r="32" fill="none" stroke="#e4a54e" stroke-width="8"/><g stroke-width="9" stroke-linecap="round"><path d="M74 86 l14 -6" stroke="#fff"/><path d="M170 66 l10 10" stroke="#ffd166"/><path d="M186 124 l14 4" stroke="#7fd6ff"/><path d="M96 56 l8 12" stroke="#7bd88f"/><path d="M138 54 l14 -2" stroke="#fff"/><path d="M70 138 l12 6" stroke="#ffd166"/></g><ellipse cx="90" cy="56" rx="26" ry="10" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-30 90 56)"/></svg><b>меньше тяги<br>к сладкому</b></div></div></div>
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:80px">НУЖНА ТОЛЬКО<br><em>ТВОЯ РУКА</em></div></div>
+        <div class="row" style="top:470px"><div data-fx="zoom" data-at=".2" data-zoomto><svg class="clay" width="440" height="557" viewBox="0 0 300 380" overflow="visible"><ellipse cx="150" cy="366" rx="100" ry="12" fill="url(#cShade)"/><rect x="78" y="40" width="40" height="170" rx="20" fill="url(#cSkin)"/><rect x="122" y="20" width="40" height="190" rx="20" fill="url(#cSkin)"/><rect x="166" y="32" width="40" height="178" rx="20" fill="url(#cSkin)"/><rect x="210" y="64" width="36" height="150" rx="18" fill="url(#cSkin)"/><path d="M74 170 Q70 330 150 340 Q236 340 248 250 L248 170Z" fill="url(#cSkin)"/><path d="M84 230 Q40 200 28 160 Q22 136 44 134 Q66 136 92 190Z" fill="url(#cSkin)"/><path d="M120 260 Q160 280 210 250" stroke="#d99272" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/><ellipse cx="136" cy="70" rx="8" ry="40" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(0 136 70)"/><ellipse cx="180" cy="80" rx="7" ry="36" fill="#fff" opacity="0.5" filter="url(#hl)" transform="rotate(0 180 80)"/><ellipse cx="130" cy="230" rx="30" ry="10" fill="#fff" opacity="0.5" filter="url(#hl)" transform="rotate(-10 130 230)"/></svg></div></div>
+        <div class="row" style="top:1060px"><div class="hand" data-fx="write" data-at=".8" style="transform:rotate(-4deg)">она всегда с тобой</div></div>
+      </div>
+    </section>
+
+    <!-- 4. Ладонь / кулак / палец / два кулака → тарелка → без весов (переход — зум в ладонь) -->
+    <section class="sec" id="s4" data-trans="zoom">
+      <div class="layer A">
+        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:40px">БЕЛОК</div></div>
+        <div class="row" style="top:290px"><div class="h1" data-fx="kin" style="font-size:92px">= ЛАДОНЬ</div></div>
+        <div class="row" style="top:470px"><div class="eqrow"><div data-fx="left" data-at=".05" data-zoomfrom><svg class="clay" width="330" height="418" viewBox="0 0 300 380" overflow="visible"><ellipse cx="150" cy="366" rx="100" ry="12" fill="url(#cShade)"/><rect x="78" y="40" width="40" height="170" rx="20" fill="url(#cSkin)"/><rect x="122" y="20" width="40" height="190" rx="20" fill="url(#cSkin)"/><rect x="166" y="32" width="40" height="178" rx="20" fill="url(#cSkin)"/><rect x="210" y="64" width="36" height="150" rx="18" fill="url(#cSkin)"/><path d="M74 170 Q70 330 150 340 Q236 340 248 250 L248 170Z" fill="url(#cSkin)"/><path d="M84 230 Q40 200 28 160 Q22 136 44 134 Q66 136 92 190Z" fill="url(#cSkin)"/><path d="M120 260 Q160 280 210 250" stroke="#d99272" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/><ellipse cx="136" cy="70" rx="8" ry="40" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(0 136 70)"/><ellipse cx="180" cy="80" rx="7" ry="36" fill="#fff" opacity="0.5" filter="url(#hl)" transform="rotate(0 180 80)"/><ellipse cx="130" cy="230" rx="30" ry="10" fill="#fff" opacity="0.5" filter="url(#hl)" transform="rotate(-10 130 230)"/></svg></div><div class="eqs" data-fx="pop" data-at=".3">=</div><div data-fx="right" data-at=".4"><svg class="clay" width="400" height="260" viewBox="0 0 400 260" overflow="visible"><ellipse cx="200" cy="246" rx="170" ry="12" fill="url(#cShade)"/><ellipse cx="200" cy="140" rx="190" ry="100" fill="url(#cWhite)"/><ellipse cx="200" cy="134" rx="140" ry="70" fill="#f7f2ea"/><path d="M96 140 Q120 84 176 100 Q190 140 160 164 Q118 176 96 140Z" fill="url(#cCream)"/><ellipse cx="250" cy="122" rx="62" ry="38" fill="url(#cGold)"/><path d="M216 112 L284 104 M222 132 L282 126" stroke="#c4782a" stroke-width="6" stroke-linecap="round" opacity=".6"/><circle cx="190" cy="178" r="22" fill="url(#cGreen)"/><circle cx="226" cy="186" r="18" fill="url(#cGreen)"/><circle cx="160" cy="184" r="16" fill="url(#cGreen)"/><ellipse cx="250" cy="108" rx="24" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-8 250 108)"/><ellipse cx="110" cy="80" rx="40" ry="10" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-15 110 80)"/></svg></div></div></div>
+        <div class="row" style="top:960px"><div class="tag dark" data-fx="pop" data-at=".7" style="font-size:40px">мясо · рыба · яйца · творог</div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:40px">КРУПА</div></div>
+        <div class="row" style="top:290px"><div class="h1" data-fx="kin" style="font-size:92px">= КУЛАК</div></div>
+        <div class="row" style="top:470px"><div class="eqrow"><div data-fx="left" data-at=".05"><svg class="clay" width="330" height="309" viewBox="0 0 320 300" overflow="visible"><ellipse cx="160" cy="286" rx="120" ry="12" fill="url(#cShade)"/><path d="M40 110 Q40 60 90 60 H250 Q290 60 290 110 V200 Q290 262 220 266 H110 Q40 262 40 200Z" fill="url(#cSkin)"/><g fill="url(#cSkin)" stroke="#e0997a" stroke-width="4"><circle cx="90" cy="76" r="34"/><circle cx="150" cy="70" r="36"/><circle cx="210" cy="72" r="35"/><circle cx="262" cy="86" r="30"/></g><path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="#e0997a" stroke-width="22" fill="none" stroke-linecap="round"/><path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="url(#cSkin)" stroke-width="14" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="56" rx="20" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(0 150 56)"/><ellipse cx="90" cy="62" rx="16" ry="6" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(0 90 62)"/></svg></div><div class="eqs" data-fx="pop" data-at=".3">=</div><div data-fx="right" data-at=".4"><svg class="clay" width="380" height="280" viewBox="0 0 380 280" overflow="visible"><ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/><path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/><path d="M44 124 Q90 60 190 58 Q290 60 336 124Z" fill="url(#cBread)"/><g fill="#8a4f1e" opacity=".55"><circle cx="110" cy="104" r="6"/><circle cx="150" cy="86" r="6"/><circle cx="200" cy="78" r="6"/><circle cx="240" cy="92" r="6"/><circle cx="280" cy="106" r="6"/><circle cx="180" cy="104" r="6"/><circle cx="220" cy="112" r="6"/><circle cx="130" cy="114" r="5"/></g><path d="M250 70 q16 -26 34 -10 q-12 18 -34 10Z" fill="url(#cGreen)"/><ellipse cx="70" cy="170" rx="16" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 70 170)"/><ellipse cx="160" cy="70" rx="40" ry="8" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-6 160 70)"/></svg></div></div></div>
+        <div class="row" style="top:960px"><div class="tag dark" data-fx="pop" data-at=".6" style="font-size:40px">гречка · рис · картошка</div></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:80px">ВЕРНУЛА УГЛЕВОДЫ<br><em>ВЕЧЕРОМ</em></div></div>
-        <div class="row" style="top:470px"><div class="card fatchart" data-fx="up" data-at=".05">
-          <svg width="860" height="380" viewBox="0 0 860 380"><path d="M40 340 H830 M40 340 V20" stroke="#e9e3da" stroke-width="6"/>
-            <path class="dr" pathLength="1" d="M60 60 C200 90 300 130 430 170 C560 210 700 250 820 280" stroke="#1aa36b" stroke-width="18" fill="none" stroke-linecap="round"/>
-            <text x="800" y="372" text-anchor="end" font-family="Man" font-weight="700" font-size="28" fill="#8b857e">недели →</text>
-            <text x="80" y="48" font-family="Unb" font-weight="900" font-size="34" fill="#1aa36b">вес</text></svg></div></div>
-        <div class="row" style="top:930px"><div class="tag" data-fx="slam" data-mark="d" data-at=".1" style="background:var(--green);font-size:48px">вес продолжил уходить ✓</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="4" data-at=".5" style="position:absolute;left:320px;top:1060px;width:440px;height:440px"><img src="assets/nika/toon/10_cool.png" alt=""></div>
+        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:40px">ЖИРЫ</div></div>
+        <div class="row" style="top:290px"><div class="h1" data-fx="kin" style="font-size:80px">= БОЛЬШОЙ ПАЛЕЦ</div></div>
+        <div class="row" style="top:470px"><div class="eqrow"><div data-fx="left" data-at=".05"><svg class="clay" width="300" height="320" viewBox="0 0 300 320" overflow="visible"><ellipse cx="160" cy="306" rx="110" ry="12" fill="url(#cShade)"/><path d="M70 150 Q48 70 70 26 Q84 6 104 16 Q122 28 116 80 L112 150Z" fill="url(#cSkin)"/><path d="M60 160 Q60 132 96 132 H200 Q230 132 230 160 V260 Q230 296 192 296 H104 Q60 296 60 256Z" fill="url(#cSkin)"/><g fill="url(#cSkin)" stroke="#e0997a" stroke-width="4"><rect x="180" y="134" width="96" height="40" rx="20"/><rect x="186" y="174" width="92" height="40" rx="20"/><rect x="186" y="214" width="88" height="40" rx="20"/><rect x="180" y="254" width="80" height="38" rx="19"/></g><path d="M80 40 Q90 26 104 30" stroke="#ffeee2" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="84" cy="90" rx="8" ry="34" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-12 84 90)"/><ellipse cx="120" cy="170" rx="30" ry="10" fill="#fff" opacity="0.5" filter="url(#hl)" transform="rotate(0 120 170)"/></svg></div><div class="eqs" data-fx="pop" data-at=".3">=</div><div data-fx="right" data-at=".4"><svg class="clay" width="220" height="374" viewBox="0 0 200 340" overflow="visible"><ellipse cx="100" cy="326" rx="76" ry="12" fill="url(#cShade)"/><rect x="78" y="10" width="44" height="40" rx="10" fill="url(#cGreen)"/><path d="M84 50 H116 L124 96 H76Z" fill="#fff4c8"/><path d="M60 100 Q60 90 76 90 H124 Q140 90 140 100 L166 170 V300 Q166 320 146 320 H54 Q34 320 34 300 V170Z" fill="url(#cYellow)"/><rect x="50" y="190" width="100" height="80" rx="16" fill="#fff"/><path d="M100 210 q16 18 0 40 q-16 -22 0 -40Z" fill="url(#cGreen)"/><ellipse cx="56" cy="150" rx="10" ry="40" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(10 56 150)"/></svg></div></div></div>
+        <div class="row" style="top:960px"><div class="tag dark" data-fx="pop" data-at=".6" style="font-size:40px">масло · орехи · сыр</div></div>
+      </div>
+      <div class="layer D" style="opacity:0">
+        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:40px">ОВОЩИ</div></div>
+        <div class="row" style="top:290px"><div class="h1" data-fx="kin" style="font-size:92px">= 2 КУЛАКА</div></div>
+        <div class="row" style="top:470px"><div class="eqrow"><div style="display:flex;gap:6px"><div data-fx="left" data-at=".05"><svg class="clay" width="220" height="206" viewBox="0 0 320 300" overflow="visible"><ellipse cx="160" cy="286" rx="120" ry="12" fill="url(#cShade)"/><path d="M40 110 Q40 60 90 60 H250 Q290 60 290 110 V200 Q290 262 220 266 H110 Q40 262 40 200Z" fill="url(#cSkin)"/><g fill="url(#cSkin)" stroke="#e0997a" stroke-width="4"><circle cx="90" cy="76" r="34"/><circle cx="150" cy="70" r="36"/><circle cx="210" cy="72" r="35"/><circle cx="262" cy="86" r="30"/></g><path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="#e0997a" stroke-width="22" fill="none" stroke-linecap="round"/><path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="url(#cSkin)" stroke-width="14" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="56" rx="20" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(0 150 56)"/><ellipse cx="90" cy="62" rx="16" ry="6" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(0 90 62)"/></svg></div><div data-fx="left" data-at=".15"><svg class="clay" width="220" height="206" viewBox="0 0 320 300" overflow="visible"><ellipse cx="160" cy="286" rx="120" ry="12" fill="url(#cShade)"/><path d="M40 110 Q40 60 90 60 H250 Q290 60 290 110 V200 Q290 262 220 266 H110 Q40 262 40 200Z" fill="url(#cSkin)"/><g fill="url(#cSkin)" stroke="#e0997a" stroke-width="4"><circle cx="90" cy="76" r="34"/><circle cx="150" cy="70" r="36"/><circle cx="210" cy="72" r="35"/><circle cx="262" cy="86" r="30"/></g><path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="#e0997a" stroke-width="22" fill="none" stroke-linecap="round"/><path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="url(#cSkin)" stroke-width="14" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="56" rx="20" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(0 150 56)"/><ellipse cx="90" cy="62" rx="16" ry="6" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(0 90 62)"/></svg></div></div><div class="eqs" data-fx="pop" data-at=".3">=</div><div data-fx="right" data-at=".4"><svg class="clay" width="340" height="251" viewBox="0 0 380 280" overflow="visible"><ellipse cx="190" cy="264" rx="150" ry="14" fill="url(#cShade)"/><path d="M20 120 H360 Q356 250 190 254 Q24 250 20 120Z" fill="url(#cWhite)"/><path d="M40 122 Q60 60 110 80 Q130 40 180 64 Q220 30 260 66 Q310 50 336 100 Q350 112 344 124Z" fill="url(#cGreen)"/><circle cx="140" cy="96" r="24" fill="url(#cRed)"/><circle cx="236" cy="90" r="20" fill="url(#cRed)"/><ellipse cx="190" cy="108" rx="30" ry="14" fill="#fff4c8"/><circle cx="290" cy="104" r="14" fill="#2b2b33"/><ellipse cx="70" cy="160" rx="16" ry="40" fill="#fff" opacity="0.75" filter="url(#hl)" transform="rotate(20 70 160)"/><ellipse cx="136" cy="86" rx="7" ry="4" fill="#fff" opacity="0.8" filter="url(#hl)" transform="rotate(-20 136 86)"/><ellipse cx="232" cy="82" rx="6" ry="4" fill="#fff" opacity="0.8" filter="url(#hl)" transform="rotate(-20 232 82)"/></svg></div></div></div>
+      </div>
+      <div class="layer E" style="opacity:0">
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:76px">КАЖДЫЙ<br><em>ПРИЁМ ПИЩИ</em></div></div>
+        <div class="row" style="top:430px"><div style="position:relative;width:900px;height:640px">
+          <div data-fx="zoom" data-at=".1" style="position:absolute;left:110px;top:120px"><svg class="clay" width="680" height="442" viewBox="0 0 400 260" overflow="visible"><ellipse cx="200" cy="246" rx="170" ry="12" fill="url(#cShade)"/><ellipse cx="200" cy="140" rx="190" ry="100" fill="url(#cWhite)"/><ellipse cx="200" cy="134" rx="140" ry="70" fill="#f7f2ea"/><path d="M96 140 Q120 84 176 100 Q190 140 160 164 Q118 176 96 140Z" fill="url(#cCream)"/><ellipse cx="250" cy="122" rx="62" ry="38" fill="url(#cGold)"/><path d="M216 112 L284 104 M222 132 L282 126" stroke="#c4782a" stroke-width="6" stroke-linecap="round" opacity=".6"/><circle cx="190" cy="178" r="22" fill="url(#cGreen)"/><circle cx="226" cy="186" r="18" fill="url(#cGreen)"/><circle cx="160" cy="184" r="16" fill="url(#cGreen)"/><ellipse cx="250" cy="108" rx="24" ry="8" fill="#fff" opacity="0.7" filter="url(#hl)" transform="rotate(-8 250 108)"/><ellipse cx="110" cy="80" rx="40" ry="10" fill="#fff" opacity="0.6" filter="url(#hl)" transform="rotate(-15 110 80)"/></svg></div>
+          <div class="lbl" data-fx="pop" data-at=".4" style="left:20px;top:40px">🖐 белок</div>
+          <div class="lbl" data-fx="pop" data-at=".55" style="right:20px;top:40px">✊ крупа</div>
+          <div class="lbl" data-fx="pop" data-at=".7" style="left:0;top:520px">👍 жиры</div>
+          <div class="lbl" data-fx="pop" data-at=".85" style="right:0;top:520px">✊✊ овощи</div></div></div>
+        <div class="row" style="top:1150px"><div class="hand" data-fx="write" data-mark="a" data-at=".1" style="transform:rotate(-3deg);font-size:58px">порция подстраивается под тебя сама</div></div>
+      </div>
+      <div class="layer F" style="opacity:0">
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:80px">НИКАКИХ<br><em>ВЕСОВ</em> И ПРИЛОЖЕНИЙ</div></div>
+        <div class="row" style="top:520px"><div style="display:flex;gap:40px;align-items:center">
+          <div style="position:relative" data-fx="pop" data-at=".2"><div class="scale card" style="width:380px;height:220px"><div class="lcd" style="font-size:100px">0 г</div></div>
+            <svg class="ul" data-fx="draw" data-at=".6" style="position:absolute;left:-10px;top:-10px" width="400" height="240" viewBox="0 0 400 240"><path class="dr" pathLength="1" d="M20 20 L380 220 M380 20 L20 220" stroke="#c8102e" stroke-width="22" fill="none" stroke-linecap="round"/></svg></div>
+          <div style="position:relative" data-fx="pop" data-at=".4"><div class="card phone"><b>ккал</b><span>1540</span></div>
+            <svg class="ul" data-fx="draw" data-at=".8" style="position:absolute;left:-10px;top:-10px" width="300" height="400" viewBox="0 0 300 400"><path class="dr" pathLength="1" d="M20 20 L280 380 M280 20 L20 380" stroke="#c8102e" stroke-width="22" fill="none" stroke-linecap="round"/></svg></div></div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="4" data-at=".5" style="position:absolute;left:320px;top:980px;width:440px;height:440px"><img src="assets/nika/toon/10_cool.png" alt=""></div>
       </div>
     </section>
 
@@ -368,21 +391,20 @@ em .kw.hot { color: var(--ink); }
             <span data-fx="pop" data-mark="a" data-at="0">Д</span><span data-fx="pop" data-mark="a" data-at=".07">Е</span><span data-fx="pop" data-mark="a" data-at=".14">С</span><span data-fx="pop" data-mark="a" data-at=".21">Е</span><span data-fx="pop" data-mark="a" data-at=".28">Р</span><span data-fx="pop" data-mark="a" data-at=".35">Т</span>
           </div></div><div class="heart" data-fx="slam" data-mark="a" data-at=".55">♥</div></div></div>
         <div class="row" style="top:500px"><div class="card poll" data-fx="zoom" data-at=".3">
-          <div class="pq">Ешь углеводы вечером?</div>
-          <div class="po yes"><div class="pf" data-fx="grow" data-w="0,100" data-mark="a" data-at=".8"></div><span>нет, боюсь</span><b data-fx="pop" data-mark="a" data-at="1.1">✓</b></div>
-          <div class="po"><span>да, спокойно</span></div>
+          <div class="pq">Считаешь калории?</div>
+          <div class="po yes"><div class="pf" data-fx="grow" data-w="0,100" data-mark="a" data-at=".8"></div><span>да, и устала</span><b data-fx="pop" data-mark="a" data-at="1.1">✓</b></div>
+          <div class="po"><span>нет, на глаз</span></div>
           <div class="po"><span>иногда</span></div></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".7" style="position:absolute;right:-70px;top:1010px;width:380px;height:380px"><img src="assets/nika/toon/06_think.png" alt=""></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".7" style="position:absolute;right:-70px;top:1010px;width:380px;height:380px"><img src="assets/nika/toon/02_happy.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
         <div class="row" style="top:200px"><div class="guide" data-fx="zoom" id="guide" style="height:600px">
           <div class="k">ГАЙД ОТ НИКИ</div>
-          <div class="t" style="font-size:58px">ЧТО МНЕ<br><em>НЕ&nbsp;СКАЗАЛИ</em><br>НА СУШКЕ</div>
+          <div class="t" style="font-size:60px">СУШКА<br><em>БЕЗ ПОДСЧЁТА</em><br>КАЛОРИЙ</div>
           <div class="b"><img src="assets/nika/face.jpg" alt="">пришлю тебе</div>
         </div></div>
         <div class="row" style="top:860px"><div class="tag" data-fx="slam" data-at=".35" id="cta" style="font-size:52px;line-height:1.2;padding:28px 56px 30px;border-radius:48px;white-space:normal;text-align:center">пиши «ДЕСЕРТ»<br>в комментарии 👇</div></div>
-        <div class="row" style="top:1070px"><div class="hand" data-fx="write" data-mark="b" style="transform:rotate(-4deg)">сэкономила бы полгода</div></div>
-        <div class="row" style="top:1180px"><div class="sign" data-fx="write" data-mark="b" data-at=".9" style="font-size:96px">— Ника</div></div>
+        <div class="row" style="top:1090px"><div class="sign" data-fx="write" data-mark="b" data-at=".4">— Ника</div></div>
       </div>
     </section>
   </div>
@@ -411,6 +433,7 @@ em .kw.hot { color: var(--ink); }
 <linearGradient id="cYellow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff09a"/><stop offset="1" stop-color="#f2b705"/></linearGradient>
 <linearGradient id="cAqua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9efff"/><stop offset="1" stop-color="#2f97dc"/></linearGradient>
 <linearGradient id="cBread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4c27a"/><stop offset="1" stop-color="#b8692a"/></linearGradient>
+<linearGradient id="cSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2cf"/><stop offset="1" stop-color="#e6a585"/></linearGradient>
 <radialGradient id="cShade" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
 <filter id="hl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
 </defs></svg>

@@ -15,6 +15,7 @@ DEFS='''<svg width="0" height="0" style="position:absolute"><defs>
 <linearGradient id="cYellow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff09a"/><stop offset="1" stop-color="#f2b705"/></linearGradient>
 <linearGradient id="cAqua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9efff"/><stop offset="1" stop-color="#2f97dc"/></linearGradient>
 <linearGradient id="cBread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4c27a"/><stop offset="1" stop-color="#b8692a"/></linearGradient>
+<linearGradient id="cSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2cf"/><stop offset="1" stop-color="#e6a585"/></linearGradient>
 <radialGradient id="cShade" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
 <filter id="hl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
 </defs></svg>'''
@@ -111,6 +112,33 @@ SV.update({
 'MOON':('0 0 300 300', '<path d="M190 20 A130 130 0 1 0 280 220 A110 110 0 0 1 190 20Z" fill="url(#cYellow)"/>'
   '<circle cx="110" cy="170" r="14" fill="#e9b94a" opacity=".6"/><circle cx="150" cy="230" r="9" fill="#e9b94a" opacity=".6"/>'
   +HL(80,120,14,40,.75,20)),
+})
+
+SV.update({
+'PALM':('0 0 300 380', '<ellipse cx="150" cy="366" rx="100" ry="12" fill="url(#cShade)"/>'
+  '<rect x="78" y="40" width="40" height="170" rx="20" fill="url(#cSkin)"/><rect x="122" y="20" width="40" height="190" rx="20" fill="url(#cSkin)"/>'
+  '<rect x="166" y="32" width="40" height="178" rx="20" fill="url(#cSkin)"/><rect x="210" y="64" width="36" height="150" rx="18" fill="url(#cSkin)"/>'
+  '<path d="M74 170 Q70 330 150 340 Q236 340 248 250 L248 170Z" fill="url(#cSkin)"/>'
+  '<path d="M84 230 Q40 200 28 160 Q22 136 44 134 Q66 136 92 190Z" fill="url(#cSkin)"/>'
+  '<path d="M120 260 Q160 280 210 250" stroke="#d99272" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>'
+  +HL(136,70,8,40,.6,0)+HL(180,80,7,36,.5,0)+HL(130,230,30,10,.5,-10)),
+'FIST':('0 0 320 300', '<ellipse cx="160" cy="286" rx="120" ry="12" fill="url(#cShade)"/>'
+  '<path d="M40 110 Q40 60 90 60 H250 Q290 60 290 110 V200 Q290 262 220 266 H110 Q40 262 40 200Z" fill="url(#cSkin)"/>'
+  '<g fill="url(#cSkin)" stroke="#e0997a" stroke-width="4"><circle cx="90" cy="76" r="34"/><circle cx="150" cy="70" r="36"/><circle cx="210" cy="72" r="35"/><circle cx="262" cy="86" r="30"/></g>'
+  '<path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="#e0997a" stroke-width="22" fill="none" stroke-linecap="round"/>'
+  '<path d="M60 170 Q120 140 200 160 Q230 168 236 190" stroke="url(#cSkin)" stroke-width="14" fill="none" stroke-linecap="round"/>'
+  +HL(150,56,20,8,.7,0)+HL(90,62,16,6,.6,0)),
+'THUMB':('0 0 300 320', '<ellipse cx="160" cy="306" rx="110" ry="12" fill="url(#cShade)"/>'
+  '<path d="M70 150 Q48 70 70 26 Q84 6 104 16 Q122 28 116 80 L112 150Z" fill="url(#cSkin)"/>'
+  '<path d="M60 160 Q60 132 96 132 H200 Q230 132 230 160 V260 Q230 296 192 296 H104 Q60 296 60 256Z" fill="url(#cSkin)"/>'
+  '<g fill="url(#cSkin)" stroke="#e0997a" stroke-width="4"><rect x="180" y="134" width="96" height="40" rx="20"/><rect x="186" y="174" width="92" height="40" rx="20"/><rect x="186" y="214" width="88" height="40" rx="20"/><rect x="180" y="254" width="80" height="38" rx="19"/></g>'
+  '<path d="M80 40 Q90 26 104 30" stroke="#ffeee2" stroke-width="9" fill="none" stroke-linecap="round"/>'
+  +HL(84,90,8,34,.6,-12)+HL(120,170,30,10,.5,0)),
+'OIL':('0 0 200 340', '<ellipse cx="100" cy="326" rx="76" ry="12" fill="url(#cShade)"/>'
+  '<rect x="78" y="10" width="44" height="40" rx="10" fill="url(#cGreen)"/><path d="M84 50 H116 L124 96 H76Z" fill="#fff4c8"/>'
+  '<path d="M60 100 Q60 90 76 90 H124 Q140 90 140 100 L166 170 V300 Q166 320 146 320 H54 Q34 320 34 300 V170Z" fill="url(#cYellow)"/>'
+  '<rect x="50" y="190" width="100" height="80" rx="16" fill="#fff"/><path d="M100 210 q16 18 0 40 q-16 -22 0 -40Z" fill="url(#cGreen)"/>'
+  +HL(56,150,10,40,.7,10)),
 })
 
 def svg(name,w,extra=''):

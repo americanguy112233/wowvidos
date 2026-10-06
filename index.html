@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>Ника — его лицо изменилось</title>
+<title>Ника — ты себя запустила</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -322,107 +322,105 @@ em .kw.hot { color: var(--ink); }
 
   <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/draw), data-mark, data-at, data-count, data-shatter -->
   <div id="world">
-    <!-- 1. Хук: первое свидание, 😊 → 😐 → помню эту секунду -->
+    <!-- 1. Хук: «Ты себя запустила» → последнее, что сказал бывший → через месяц с худой девушкой -->
     <section class="sec" id="s1">
       <div class="layer A">
-        <div class="row" style="top:230px"><div class="kicker hk">ПЕРВОЕ СВИДАНИЕ</div></div>
-        <div class="row" style="top:360px"><div style="display:flex;align-items:center;gap:30px;font-size:260px;line-height:1">
-          <span class="hk">😊</span><span class="hkx" data-fx="punch" style="font:900 120px/1 Unb;color:var(--red)">→</span><span class="hk">😐</span></div></div>
-        <div class="row" style="top:720px"><div class="tag dark hk" data-fx="punch" style="font-size:52px">его лицо изменилось</div></div>
+        <div class="row" style="top:230px"><div class="kicker hk">БЫВШИЙ, НАПОСЛЕДОК:</div></div>
+        <div class="row" style="top:320px"><div class="bubble down hkx" data-fx="punch"><div class="h1" style="font-size:84px;line-height:1.2">«ТЫ СЕБЯ<br><em>ЗАПУСТИЛА»</em></div></div></div>
+        <div class="row" style="top:760px"><div class="hk" style="font-size:200px;line-height:1">💔</div></div>
       </div>
       <div class="layer B redbg" style="opacity:0">
-        <div class="ghost" style="top:220px">1</div>
-        <div class="row" style="top:300px"><div class="h1 wt" data-fx="kin" style="font-size:62px;line-height:1.5">ДО СИХ ПОР<br>ПОМНЮ<br>ЭТУ СЕКУНДУ</div></div>
+        <div class="row" style="top:300px"><div class="h1 wt" data-fx="kin" style="font-size:60px;line-height:1.65">ПОСЛЕДНЕЕ,<br>ЧТО СКАЗАЛ<br>МНЕ БЫВШИЙ</div></div>
         <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:300px;top:800px;width:480px;height:480px"><img src="assets/nika/toon/20_hurt.png" alt=""></div>
       </div>
+      <div class="layer C" style="opacity:0">
+        <div class="row" style="top:230px"><div class="kicker" data-fx="pop">ЧЕРЕЗ МЕСЯЦ</div></div>
+        <div class="row" style="top:300px"><div class="h1" data-fx="kin" style="font-size:66px;line-height:1.35">ОН —<br><em>С ХУДОЙ ДЕВУШКОЙ</em></div></div>
+        <div class="row" style="top:640px"><div class="tst" data-fx="plop" data-at=".3" style="width:600px;height:600px"><img src="assets/nika/toon/19_jealous.png" alt=""></div></div>
+      </div>
     </section>
 
-    <!-- 2. Три недели переписки, фото сверху → кафе → 40 минут, «рано вставать» → плакала в такси -->
+    <!-- 2. 5 лет → собирала вещи → их фото → листала до утра и ела -->
     <section class="sec" id="s2">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="chat card" data-fx="up" data-at=".05" style="width:940px">
-          <div class="ch"><img src="assets/nika/gym.jpg" alt=""><div><b>Он</b><span>3 недели переписки</span></div></div>
-          <div class="msg her" data-fx="pop" data-at=".3" style="font-size:44px">ты такая красивая на фото 😍</div>
-          <div class="msg me" data-fx="pop" data-mark="a" data-at="-.05" style="font-size:44px">📸 фото (только сверху)</div></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-10" data-mark="a" data-at=".3" style="position:absolute;right:-50px;top:900px;width:420px;height:420px"><img src="assets/nika/toon/16_secret.png" alt=""></div>
+        <div class="row" style="top:240px"><div class="big500" data-fx="slam" data-at=".05"><span data-count="0,5">0</span><small>лет вместе</small></div></div>
+        <div class="row" style="top:640px"><div data-fx="zoom" data-at=".4" style="font-size:200px;line-height:1">📦</div></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="shotz vid full" data-video="drink_coffe" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/drink_coffe/f_0001.jpg" alt=""></div>
+        <div class="shotz vid full" data-video="sad_with_boyfriend" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/sad_with_boyfriend/f_0001.jpg" alt=""></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:220px"><div class="big500" data-fx="slam" data-at=".05" style="font-size:200px"><span data-count="0,40">0</span><small>минут</small></div></div>
-        <div class="row" style="top:560px"><div class="chat card" data-fx="up" data-at=".4" style="width:860px">
-          <div class="msg her" style="font-size:46px">мне завтра рано вставать 😅</div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".7" style="position:absolute;left:330px;top:820px;width:440px;height:440px"><img src="assets/nika/toon/13_facepalm.png" alt=""></div>
+        <div class="row" style="top:210px"><div class="card" data-fx="up" data-at=".05" style="width:720px;padding:22px">
+          <div style="display:flex;align-items:center;gap:16px;font:800 32px/1 Man;margin:4px 6px 18px"><img src="assets/nika/gym.jpg" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover">он</div>
+          <div style="height:520px;border-radius:26px;background:linear-gradient(160deg,#f2c0c8,#d98aa0 60%,#b9607e);display:flex;align-items:center;justify-content:center;font-size:200px">👫</div>
+          <div style="margin:18px 6px 4px;font:800 38px/1 Man">❤️ 214</div></div></div>
+        <div class="row" style="top:880px"><div class="tag dark" data-fx="pop" data-mark="a" data-at="-.05" style="font-size:44px">обтягивающее платье</div></div>
+        <div class="row" style="top:980px"><div class="tag" data-fx="pop" data-mark="b" data-at="-.05" style="font-size:44px">тонкая талия</div></div>
       </div>
       <div class="layer D" style="opacity:0">
-        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:62px;line-height:1.35">ПЛАКАЛА В ТАКСИ<br><em>ВСЮ ДОРОГУ</em></div></div>
-        <div class="row" style="top:500px"><div data-fx="zoom" data-at=".2" style="font-size:220px;line-height:1">🚕</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:310px;top:800px;width:480px;height:480px"><img src="assets/nika/toon/18_cry.png" alt=""></div>
+        <div class="shotz vid full" data-video="eat_cake" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/eat_cake/f_0001.jpg" alt=""></div>
       </div>
     </section>
 
-    <!-- 3. Неделю не ела → потом не могла остановиться → ранил не он (мазок) -->
+    <!-- 3. Похудею назло → голод, срыв, голод → он был прав, но не в том (мазок) -->
     <section class="sec" id="s3" data-trans="smear">
       <div class="layer A">
-        <div class="shotz vid full" data-video="sad_burger" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/sad_burger/f_0001.jpg" alt=""></div>
+        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:76px;line-height:1.3">ПОХУДЕЮ<br><em>НАЗЛО</em></div></div>
+        <div class="row" style="top:520px"><div class="tag dark" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:52px">пусть пожалеет 😤</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="a" data-at=".25" style="position:absolute;left:310px;top:740px;width:480px;height:480px"><img src="assets/nika/toon/04_power.png" alt=""></div>
       </div>
-      <div class="layer B redbg" style="opacity:0">
-        <div class="row" style="top:240px"><div class="kicker" data-fx="pop" style="color:#fff">ЧЕРЕЗ МЕСЯЦ ПОНЯЛА</div></div>
-        <div class="row" style="top:330px" data-zoomto><div class="h1 wt" data-fx="kin" style="font-size:70px;line-height:1.45">МЕНЯ РАНИЛ<br>НЕ ОН</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="a" data-at=".1" style="position:absolute;left:300px;top:760px;width:500px;height:500px"><img src="assets/nika/toon/21_detective.png" alt=""></div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full" data-video="move_food_to_trash" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/move_food_to_trash/f_0001.jpg" alt=""></div>
+      </div>
+      <div class="layer C redbg" style="opacity:0">
+        <div class="row" style="top:300px" data-zoomto><div class="h1 wt" data-fx="kin" style="font-size:76px;line-height:1.4">ОН БЫЛ<br>ПРАВ</div></div>
+        <div class="row" style="top:600px"><div class="tag" data-fx="slam" data-mark="b" data-at="-.05" style="font-size:44px;background:#fff;color:var(--ink)">но не в том, что имел в виду</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="b" data-at=".25" style="position:absolute;left:310px;top:800px;width:460px;height:460px"><img src="assets/nika/toon/16_secret.png" alt=""></div>
       </div>
     </section>
 
-    <!-- 4. Сама в себя не верила → прятала тело → менялась не ради мужчин → еда/прогулки/сон → фото в полный рост (зум) -->
+    <!-- 4. Запустила себя, не тело → 5 лет чужой жизни → начала с себя → сон, прогулки, еда, спорт (зум) -->
     <section class="sec" id="s4" data-trans="zoom">
       <div class="layer A">
-        <div class="row" style="top:240px" data-zoomfrom><div class="h1" data-fx="kin" style="font-size:64px;line-height:1.35">Я САМА<br><em>В СЕБЯ НЕ ВЕРИЛА</em></div></div>
-        <div class="row" style="top:560px"><div class="tst" data-fx="plop" data-at=".2" style="width:620px;height:620px"><img src="assets/nika/toon/01_shock.png" alt=""></div></div>
+        <div class="row" style="top:240px" data-zoomfrom><div class="h1" data-fx="kin" style="font-size:64px;line-height:1.35">Я ПРАВДА<br><em>СЕБЯ ЗАПУСТИЛА</em></div></div>
+        <div class="row" style="top:520px"><div class="tag" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:54px">не тело, а себя</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="a" data-at=".25" style="position:absolute;left:310px;top:740px;width:480px;height:480px"><img src="assets/nika/toon/21_detective.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:220px"><div class="card" data-fx="up" data-at=".05" style="width:640px;padding:22px;position:relative">
-          <img src="assets/nika/face.jpg" alt="" style="width:596px;height:520px;object-fit:cover;object-position:50% 15%;border-radius:28px;display:block">
-          <div class="tag dark" style="position:absolute;left:30px;top:440px;font-size:34px">только сверху 📐</div></div></div>
-        <div class="row" style="top:830px"><div class="hand" data-fx="write" data-at=".6" style="transform:rotate(-3deg)">стыдилась своего тела</div></div>
+        <div class="row" style="top:220px"><div class="notes" data-fx="up" data-at=".05">
+          <div class="nh">5 ЛЕТ Я…</div>
+          <div class="ni" style="font-size:48px">жила его жизнью</div>
+          <div class="ni" style="font-size:48px" data-fx="left" data-mark="c" data-at="-.1">спала по 5 часов</div>
+          <div class="ni" style="font-size:48px" data-fx="left" data-mark="d" data-at="-.1">заедала стресс</div>
+          <div class="ni" style="font-size:48px;color:var(--red)" data-fx="left" data-mark="e" data-at="-.1">не спросила, чего хочу я</div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-10" data-mark="e" data-at=".3" style="position:absolute;right:-50px;top:980px;width:380px;height:380px"><img src="assets/nika/toon/05_tired.png" alt=""></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:66px;line-height:1.35">НАЧАЛА<br><em>МЕНЯТЬСЯ</em></div></div>
-        <div class="row" style="top:500px"><div class="tag" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:56px">НЕ РАДИ МУЖЧИН ✗</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="a" data-at=".25" style="position:absolute;left:310px;top:720px;width:480px;height:480px"><img src="assets/nika/toon/07_love.png" alt=""></div>
+        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:64px;line-height:1.35">НЕ С ДИЕТЫ,<br><em>А С СЕБЯ</em></div></div>
+        <div class="row" style="top:540px"><div class="tst" data-fx="plop" data-at=".2" style="width:620px;height:620px"><img src="assets/nika/toon/17_proud.png" alt=""></div></div>
       </div>
       <div class="layer D" style="opacity:0">
         <div class="shotz vid full" data-video="training" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/training/f_0001.jpg" alt=""></div>
       </div>
-      <div class="layer E" style="opacity:0">
-        <div class="row" style="top:210px"><div class="card" data-fx="up" data-at=".05" style="width:620px;padding:22px;position:relative">
-          <img src="assets/nika/photo_after.jpg" alt="" style="width:576px;height:760px;object-fit:cover;border-radius:28px;display:block">
-          <div class="tag" style="position:absolute;left:30px;top:30px;font-size:34px">в полный рост</div>
-          <div class="tag dark" data-fx="slam" data-mark="b" data-at="-.05" style="position:absolute;right:-20px;bottom:40px;font-size:60px;transform:rotate(-6deg)">ЧЕСТНОЕ</div></div></div>
-        <div class="tst" data-fx="peek" data-from="left" data-rot="10" data-mark="b" data-at=".2" style="position:absolute;left:-60px;top:1000px;width:360px;height:360px"><img src="assets/nika/toon/17_proud.png" alt=""></div>
-      </div>
     </section>
 
-    <!-- 5. Тот, кто увидел фото и позвал → смотрел по-другому -->
+    <!-- 5. Пожалел ли он? → мне всё равно -->
     <section class="sec" id="s5">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="chat card" data-fx="up" data-at=".05" style="width:940px">
-          <div class="ch"><img src="assets/nika/gym.jpg" alt=""><div><b>Новый</b><span>в сети</span></div></div>
-          <div class="msg her" data-fx="pop" data-at=".4" style="font-size:44px">увидел твоё фото 🔥</div>
-          <div class="msg her" data-fx="pop" data-at="1.0" style="font-size:44px">может, кофе на выходных? ☕</div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at="1.2" style="position:absolute;left:330px;top:860px;width:420px;height:420px"><img src="assets/nika/toon/02_happy.png" alt=""></div>
+        <div class="row" style="top:300px"><div class="bubble down" data-fx="bub" data-at=".1"><div class="h1" style="font-size:64px;line-height:1.2">ПОЖАЛЕЛ<br><em>ЛИ ОН?</em></div></div></div>
+        <div class="row" style="top:680px"><div class="tst" data-fx="plop" data-at=".1" style="width:600px;height:600px"><img src="assets/nika/toon/06_think.png" alt=""></div></div>
       </div>
       <div class="layer B" style="opacity:0">
         <div class="shotz vid full" data-video="look_camera" data-from="0" data-rate="1" data-frames="121" data-audio="0"><img src="assets/video/look_camera/f_0001.jpg" alt=""></div>
       </div>
     </section>
 
-    <!-- 6. Прячешься за ракурсами? → ДЕСЕРТ → гайд -->
+    <!-- 6. Бросили со словами про тело? → ДЕСЕРТ → гайд -->
     <section class="sec" id="s6">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:60px;line-height:1.35">ПРЯЧЕШЬСЯ<br><em>ЗА УДАЧНЫМИ РАКУРСАМИ?</em></div></div>
-        <div class="row" style="top:520px"><div class="tst" data-fx="plop" data-at=".3" style="width:560px;height:560px"><img src="assets/nika/toon/23_hug.png" alt=""></div></div>
-        <div class="row" style="top:1120px"><div class="tag" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:56px">пиши «ДЕСЕРТ» 👇</div></div>
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:56px;line-height:1.35">ТЕБЯ БРОСИЛИ<br><em>СО СЛОВАМИ<br>ПРО ТВОЁ ТЕЛО?</em></div></div>
+        <div class="row" style="top:580px"><div class="tst" data-fx="plop" data-at=".3" style="width:540px;height:540px"><img src="assets/nika/toon/23_hug.png" alt=""></div></div>
+        <div class="row" style="top:1130px"><div class="tag" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:56px">пиши «ДЕСЕРТ» 👇</div></div>
       </div>
       <div class="layer B" style="opacity:0">
         <div class="row" style="top:200px"><div class="guide" data-fx="zoom" id="guide" style="height:600px">

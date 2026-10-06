@@ -20,3 +20,21 @@ __pycache__/
 Thumbs.db
 desktop.ini
 voice_samples/
+
+# кадры клипов Ники нарезает build.ps1 из assets/video/src/*.mp4
+assets/video/drink_coffe/
+assets/video/drink_coffe.wav
+assets/video/eat_cake/
+assets/video/eat_cake.wav
+assets/video/look_camera/
+assets/video/look_camera.wav
+assets/video/move_food_to_trash/
+assets/video/move_food_to_trash.wav
+assets/video/roar_near_fridge/
+assets/video/roar_near_fridge.wav
+assets/video/sad_burger/
+assets/video/sad_burger.wav
+assets/video/sad_with_boyfriend/
+assets/video/sad_with_boyfriend.wav
+assets/video/training/
+assets/video/training.wav

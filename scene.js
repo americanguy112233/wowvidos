@@ -174,7 +174,7 @@ const FX = {
   // облачко-реплика: раздувается из хвостика (transform-origin задан в CSS у .bubble)
   bub:   (el, t) => { tl.fromTo(el, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(2.2)', immediateRender: true }, t); sfx(t, 'blip', { f: 1.1 }); },
   write: (el, t) => { tl.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'power1.inOut', immediateRender: true }, t); sfx(t, 'zip', { d: .8 }); },
-  slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
+  slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); if (!el.closest('.layer')?.querySelector('.vid.full')) burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
 function startCount(el, t) {
   el.querySelectorAll('[data-count]').forEach(c => {
@@ -235,7 +235,7 @@ SECS.forEach((sec, i) => {
     if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
     tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .45, .25); speedAt(c, .45); BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });
+    flashAt(c, .45, .25); speedAt(c, .45); if (!layer.querySelector('.vid.full')) BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });   // на клипе брызги выглядят как пятна на лице
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
   // первый кадр сцены начинает оживать, когда камера приезжает (переход кончается на доле бита, иногда раньше начала реплики)

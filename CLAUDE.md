@@ -26,7 +26,7 @@
 - Число сцен = число блоков в сценарии владельца (бывает 6): тогда в `#bars` 6 полосок `<i><b></b></i>` и 6 `<section>`.
 - Хук: элементы `.hk` в первом кадре по очереди «щёлкают», `.hkx` трясётся на 0.95 с (движок в `scene.js`, блок «хук»).
 - Финал: призыв написать кодовое слово в комментарии (не QR/бот WoW). Плашка `#cta` «пиши «ДЕСЕРТ» в комментарии» — крупная, в 2 строки, появляется сразу с гайдом и висит до конца (4-е число в последней CUE ≈ 2.5 с), мягко пульсирует. Нутрициологические цифры — только проверяемые (1 ст. л. масла ≈ 120 ккал); личные истории — как её опыт.
-- Сборка: `build.ps1` → `nika-reel.mp4`. Ролики Ники тоже сохранять в ветки `nika-<тема>` перед новым (уже есть: `nika-dry-no-loss`, `nika-food-day`, `nika-useful-food`, `nika-protein`, `nika-weekend`, `nika-sleep`, `nika-drinks`, `nika-second-mistake`, `nika-birthday`, `nika-fasting`, `nika-lowcarb`, `nika-carbs-six`, `nika-hand`, `nika-stress`, `nika-vacation`, `nika-mom`, `nika-bf`, `nika-friend`, `nika-office`, `nika-burger`). В роликах использовать мультяшные стикеры из `assets/nika/toon` (элемент `.tst`); еда и иконки — векторные SVG прямо в вёрстке.
+- Сборка: `build.ps1` → `nika-reel.mp4`. Ролики Ники тоже сохранять в ветки `nika-<тема>` перед новым (уже есть: `nika-dry-no-loss`, `nika-food-day`, `nika-useful-food`, `nika-protein`, `nika-weekend`, `nika-sleep`, `nika-drinks`, `nika-second-mistake`, `nika-birthday`, `nika-fasting`, `nika-lowcarb`, `nika-carbs-six`, `nika-hand`, `nika-stress`, `nika-vacation`, `nika-mom`, `nika-bf`, `nika-friend`, `nika-office`, `nika-burger`, `nika-know-pp`). В роликах использовать мультяшные стикеры из `assets/nika/toon` (элемент `.tst`); еда и иконки — векторные SVG прямо в вёрстке.
 
 ---
 

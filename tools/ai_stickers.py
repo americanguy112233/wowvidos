@@ -1,5 +1,5 @@
 # Черновые 3D-«пластилиновые» стикеры автора ИИ-блога (персонаж условный, без сходства).
-# python tools/ai_stickers.py  → assets/ai/toon/NN_name.png (800×800, прозрачный фон) + preview
+# python tools/ai_stickers.py [от-до, напр. 21-40]  → assets/ai/toon/NN_name.png (800×800, прозрачный фон) + preview
 import sys, os, asyncio, math
 from playwright.async_api import async_playwright
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -210,13 +210,101 @@ st(20, 'course', 'КУРС ГОТОВ', 'happy', 'grin', 'up',
    front='<rect x="250" y="470" width="300" height="200" rx="18" fill="url(#red)"/><rect x="262" y="482" width="276" height="176" rx="12" fill="none" stroke="#ffd3d8" stroke-width="4"/>' + txt(400, 560, 'КУРС', 58)
          + '<g transform="rotate(-14 400 620)"><rect x="300" y="590" width="200" height="56" rx="10" fill="none" stroke="#fff" stroke-width="6"/>' + txt(400, 630, 'БЕЗ ВОДЫ', 30) + '</g>')
 
+# ── вторая пачка: ИИ и заработок на ИИ (21–40) ──
+bulb = lambda x, y, s=1: (f'<g transform="translate({x} {y}) scale({s})"><circle cx="0" cy="0" r="70" fill="url(#gold)"/><rect x="-32" y="56" width="64" height="44" rx="10" fill="url(#bot)"/>'
+    '<path d="M-22 70 L22 70 M-22 86 L22 86" stroke="#6b7fae" stroke-width="6"/><path d="M-20 10 Q0 -30 20 10" stroke="#fff6c0" stroke-width="10" fill="none" stroke-linecap="round"/>'
+    + ''.join(f'<path d="M{math.cos(a)*92:.0f} {math.sin(a)*92:.0f} L{math.cos(a)*120:.0f} {math.sin(a)*120:.0f}" stroke="#ffb31a" stroke-width="12" stroke-linecap="round"/>' for a in [math.pi*(1+i/6) for i in range(7)])
+    + HL(-24, -26, 18, 12, .8) + '</g>')
+rocket = lambda x, y, r=30: (f'<g transform="rotate({r} {x} {y})"><path d="M{x} {y-130} Q{x+56} {y-60} {x+46} {y+40} L{x-46} {y+40} Q{x-56} {y-60} {x} {y-130}Z" fill="url(#white)"/>'
+    f'<circle cx="{x}" cy="{y-40}" r="24" fill="url(#bot)"/><circle cx="{x}" cy="{y-40}" r="14" fill="url(#screen)"/>'
+    f'<path d="M{x-46} {y+10} L{x-80} {y+60} L{x-40} {y+40}Z M{x+46} {y+10} L{x+80} {y+60} L{x+40} {y+40}Z" fill="url(#red)"/>'
+    f'<path d="M{x-28} {y+46} Q{x} {y+150} {x+28} {y+46}Z" fill="url(#gold)"/><path d="M{x-14} {y+46} Q{x} {y+110} {x+14} {y+46}Z" fill="#fff6c0"/></g>')
+def bar(x, y, w, pct, c='url(#green)', label=''):
+    return (f'<rect x="{x-w/2}" y="{y-28}" width="{w}" height="56" rx="28" fill="url(#dark)"/><rect x="{x-w/2+8}" y="{y-20}" width="{(w-16)*pct}" height="40" rx="20" fill="{c}"/>'
+            + (txt(x, y + 13, label, 34) if label else ''))
+piggy = lambda x, y: (f'<g><ellipse cx="{x}" cy="{y}" rx="130" ry="100" fill="url(#red)" opacity="0"/><ellipse cx="{x}" cy="{y}" rx="130" ry="100" fill="#ff9fb4"/><ellipse cx="{x}" cy="{y}" rx="130" ry="100" fill="url(#hlpig)" opacity="0"/>'
+    f'<ellipse cx="{x+118}" cy="{y+6}" rx="34" ry="28" fill="#ff7f9c"/><circle cx="{x+110}" cy="{y+2}" r="6" fill="#b84a66"/><circle cx="{x+128}" cy="{y+2}" r="6" fill="#b84a66"/>'
+    f'<circle cx="{x+62}" cy="{y-30}" r="10" fill="#3a2416"/><path d="M{x+20} {y-96} L{x+44} {y-130} L{x+60} {y-90}Z" fill="#ff7f9c"/>'
+    f'<rect x="{x-80}" y="{y+80}" width="34" height="44" rx="12" fill="#ff7f9c"/><rect x="{x+40}" y="{y+80}" width="34" height="44" rx="12" fill="#ff7f9c"/>'
+    f'<rect x="{x-30}" y="{y-104}" width="60" height="12" rx="6" fill="#b84a66"/>' + HL(x - 50, y - 50, 40, 20, .6) + '</g>')
+trophy = lambda x, y: (f'<path d="M{x-90} {y-120} L{x+90} {y-120} Q{x+90} {y+10} {x} {y+30} Q{x-90} {y+10} {x-90} {y-120}Z" fill="url(#gold)"/>'
+    f'<path d="M{x-90} {y-100} Q{x-150} {y-90} {x-120} {y-20} Q{x-100} {y+6} {x-70} {y-10}" stroke="#e09a12" stroke-width="16" fill="none"/>'
+    f'<path d="M{x+90} {y-100} Q{x+150} {y-90} {x+120} {y-20} Q{x+100} {y+6} {x+70} {y-10}" stroke="#e09a12" stroke-width="16" fill="none"/>'
+    f'<rect x="{x-18}" y="{y+26}" width="36" height="50" fill="#e09a12"/><rect x="{x-70}" y="{y+70}" width="140" height="40" rx="10" fill="url(#wood)"/>'
+    + txt(x, y - 34, '1', 80, '#b4730a') + HL(x - 40, y - 90, 20, 30, .7, 0))
+heart = lambda x, y, s=1, c='url(#red)': f'<path transform="translate({x} {y}) scale({s})" d="M0 30 C-60 -10 -50 -70 0 -40 C50 -70 60 -10 0 30Z" fill="{c}"/>'
+bag = lambda x, y: (f'<path d="M{x-80} {y-60} L{x+80} {y-60} L{x+96} {y+90} L{x-96} {y+90}Z" fill="url(#red)"/><path d="M{x-40} {y-60} Q{x-40} {y-130} {x} {y-130} Q{x+40} {y-130} {x+40} {y-60}" stroke="#a00a22" stroke-width="14" fill="none"/>'
+    + txt(x, y + 46, '₽', 90) + HL(x - 40, y - 30, 16, 30, .5, 0))
+funnel = lambda x, y: (f'<path d="M{x-150} {y-150} L{x+150} {y-150} L{x+30} {y} L{x+30} {y+80} L{x-30} {y+110} L{x-30} {y}Z" fill="url(#bot)"/>'
+    + ''.join(f'<circle cx="{x+dx}" cy="{y-190}" r="20" fill="#ffb38a"/><path d="M{x+dx-22} {y-150} Q{x+dx} {y-176} {x+dx+22} {y-150}" fill="#ffb38a"/>' for dx in (-110, -55, 0, 55, 110))
+    + coin(x, y + 150, 30))
+steam = '<path d="M300 140 q-20 -30 0 -60 q20 -30 0 -60 M400 120 q-20 -30 0 -60 q20 -30 0 -60 M500 140 q-20 -30 0 -60 q20 -30 0 -60" stroke="#c9d4e6" stroke-width="18" fill="none" stroke-linecap="round" opacity=".9"/>'
+clock = lambda x, y: (f'<circle cx="{x}" cy="{y}" r="90" fill="url(#white)"/><circle cx="{x}" cy="{y}" r="90" fill="none" stroke="url(#red)" stroke-width="14"/>'
+    f'<path d="M{x} {y} L{x} {y-60} M{x} {y} L{x+44} {y+20}" stroke="#121212" stroke-width="12" stroke-linecap="round"/><circle cx="{x}" cy="{y}" r="10" fill="#121212"/>')
+
+st(21, 'partner', 'МОЙ НАПАРНИК', 'happy', 'grin', 'up',
+   front=robot(640, 560, .75, True), arms=arm(RS, (560, 470), (600, 560)))
+st(22, 'idea', 'ИДЕЯ!', 'wide', 'o', 'up', front=bulb(640, 150, .85),
+   arms=arm(RS, (600, 330), (660, 450)))
+st(23, 'launch', 'ЗАПУСКАЮ', 'narrow', 'grin', 'angry', back=rocket(640, 250, 25),
+   arms=arm(LS, (220, 300), (150, 440), fist=True))
+st(24, 'loading', 'ГЕНЕРИРУЮ…', 'down', 'flat', 'normal',
+   arms=arm(LS, (330, 610), (250, 640)) + arm(RS, (470, 610), (550, 640)),
+   front=laptop(400, 690, 340, bar(400, 570, 240, .7, 'url(#green)', '70%')))
+st(25, 'ai_fail', 'ИИ ОШИБСЯ', 'wide', 'wavy', 'sad',
+   back=robot(630, 470, .85, False) + '<path d="M600 300 q-20 -30 0 -60 M650 300 q20 -30 0 -60" stroke="#9aa3b5" stroke-width="14" fill="none" stroke-linecap="round"/>' + txt(700, 250, '!', 90, '#c8102e'),
+   arms=arm(LS, (180, 380), (150, 500), palm=True))
+st(26, 'redo', 'ПЕРЕДЕЛАЙ', 'narrow', 'frown', 'angry',
+   arms=arm(LS, (330, 610), (250, 640), fist=True) + arm(RS, (470, 610), (550, 640), fist=True),
+   front=laptop(400, 690, 340, txt(400, 575, '↻', 90, '#ffb31a')),
+   back='<path d="M150 180 l40 30 M650 180 l-40 30" stroke="#c8102e" stroke-width="14" stroke-linecap="round"/>')
+st(27, 'lead', 'НОВАЯ ЗАЯВКА', 'wide', 'grin', 'up',
+   arms=arm(RS, (600, 300), (660, 450)),
+   front=phone(600, 220, 160, 250, 10, '<rect x="545" y="170" width="110" height="74" rx="10" fill="#fff"/><path d="M545 172 L600 214 L655 172" stroke="#c8102e" stroke-width="8" fill="none"/>' + txt(600, 300, '+1', 50, '#7cf29a')))
+st(28, 'sale', 'ПРОДАЖА!', 'happy', 'grin', 'up', back=bag(640, 300),
+   arms=arm(LS, (190, 220), (160, 380)) + coin(190, 160, 34))
+st(29, 'piggy', 'КОПЛЮ НА МЕЧТУ', 'happy', 'smile', 'normal',
+   arms=arm(LS, (300, 560), (210, 640)) + arm(RS, (500, 560), (590, 640)),
+   front=piggy(400, 560) + coin(400, 420, 30))
+st(30, 'office', 'МОЙ ОФИС', 'cool', 'smirk', 'smug',
+   back=palm_tree(110, 640, .95) + palm_tree(700, 640, .9, -1) + '<circle cx="640" cy="120" r="60" fill="url(#gold)" opacity=".9"/>',
+   front=laptop(400, 690, 320, txt(400, 580, 'AI', 70, '#7ff3ff')))
+st(31, 'saved', '−5 ЧАСОВ РАБОТЫ', 'happy', 'smile', 'up', back=clock(640, 230),
+   arms=arm(RS, (580, 360), (650, 460)))
+st(32, 'argue', 'СПОРИМ?', 'narrow', 'smirk', 'smug',
+   arms=arm(LS, (500, 560), (300, 640)) + arm(RS, (300, 580), (500, 660)))
+st(33, 'sub', 'ПОДПИСКА +1', 'happy', 'grin', 'up',
+   arms=arm(RS, (590, 340), (650, 460)),
+   front=phone(590, 260, 160, 250, 8, '<circle cx="590" cy="230" r="36" fill="#ff6b3d"/>' + txt(590, 244, 'B', 40) + txt(590, 320, '+1', 50, '#7cf29a')) + heart(470, 140, .9))
+st(34, 'overheat', 'МОЗГ КИПИТ', 'closed', 'wavy', 'sad', back=steam,
+   arms=arm(LS, (260, 300), (170, 440)) + arm(RS, (540, 300), (630, 440)))
+st(35, 'levelup', 'ЛЕВЕЛ АП', 'happy', 'grin', 'up',
+   front=bar(400, 70, 520, .86, 'url(#gold)', 'LVL 99') + '<path d="M680 40 l20 -36 l20 36" stroke="#2c9a52" stroke-width="14" fill="none" stroke-linecap="round"/>',
+   arms=arm(LS, (190, 300), (160, 430), fist=True) + arm(RS, (610, 300), (640, 430), fist=True))
+st(36, 'top1', 'ТОП-1 В НИШЕ', 'wink', 'grin', 'smug', back=trophy(640, 280),
+   arms=arm(RS, (560, 380), (630, 480)))
+st(37, 'funnel', 'ВОРОНКА', 'side', 'smile', 'up', back=funnel(640, 310),
+   arms=arm(LS, (190, 420), (160, 530), palm=True))
+st(38, 'million', 'ЦЕЛЬ: 1 МЛН', 'up', 'smile', 'up',
+   front='<path d="M640 420 L640 90" stroke="#a8692f" stroke-width="16" stroke-linecap="round"/><path d="M648 96 L780 140 L648 190Z" fill="url(#red)"/>' + txt(706, 156, '1М', 38),
+   arms=arm(RS, (630, 380), (680, 480)))
+st(39, 'nowater', 'БЕЗ ВОДЫ', 'narrow', 'flat', 'normal',
+   front='<path d="M250 470 Q250 400 330 400 L470 400 Q550 400 550 470 L550 560 L250 560Z" fill="url(#bot)" opacity="0"/>'
+         '<g transform="translate(660 330) scale(.85)"><path d="M0 -90 Q60 -10 60 30 A60 60 0 0 1 -60 30 Q-60 -10 0 -90Z" fill="url(#bot)"/><path d="M-80 -80 L80 110" stroke="#c8102e" stroke-width="20" stroke-linecap="round"/></g>',
+   arms=arm(LS, (230, 400), (150, 520), palm=True))
+st(40, 'thanks', 'СПАСИБО!', 'happy', 'grin', 'up',
+   arms=arm(LS, (360, 470), (240, 600)) + arm(RS, (440, 470), (560, 600)),
+   front=heart(400, 480, 1.5) + heart(170, 200, .8, 'url(#gold)') + heart(640, 170, .7) + heart(680, 330, .5, 'url(#gold)'))
+
 import base64
 FONT = '@font-face{font-family:Unb;src:url(data:font/ttf;base64,' + base64.b64encode(open(os.path.join(ROOT, 'assets/fonts/Unbounded-VF.ttf'), 'rb').read()).decode() + ');font-weight:200 900}'
 async def main():
     os.makedirs(OUT, exist_ok=True)
     async with async_playwright() as p:
         b = await p.chromium.launch(); pg = await b.new_page(viewport={'width': 800, 'height': 800})
+        lo, hi = (map(int, sys.argv[1].split('-')) if len(sys.argv) > 1 else (1, 99))
         for n, name, cap, body in S:
+            if not lo <= n <= hi: continue
             html = f'<html><head><style>{FONT}html,body{{margin:0;background:transparent}}</style></head><body><svg width="800" height="800" viewBox="0 0 800 800">{DEFS}{body}</svg></body></html>'
             await pg.set_content(html); await pg.evaluate('document.fonts.ready'); await pg.wait_for_timeout(80)
             await pg.screenshot(path=os.path.join(OUT, f'{n:02d}_{name}.png'), omit_background=True)

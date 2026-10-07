@@ -138,7 +138,7 @@ const POS = new Map();                               // центры элеме�
 document.querySelectorAll('[data-fx], [data-shatter]').forEach(el => {
   const r = el.getBoundingClientRect(); POS.set(el, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
 });
-const burstAt = (t, el, c = '200,16,46') => { const p = POS.get(el) || { x: 540, y: 800 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
+const burstAt = (t, el, c = '255,201,60') => { const p = POS.get(el) || { x: 540, y: 800 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
 let nsnd = 0;
 const FX = {
   pop:   (el, t) => { pop(el, t, { s: .5, d: .4 }); sfx(t, 'pop', { f: .9 + (nsnd++ % 5) * .08 }); },
@@ -205,7 +205,7 @@ function layerFx(layer, i, t0, t1) {
   [...layer.querySelectorAll('[data-shatter]')].forEach((el, k) => {
     const m = SC[i].marks?.[el.dataset.shatter], t = Math.min(t1 - .5, Math.max(t0 + .9, m != null ? m + .15 : t0 + 1.4)) + k * .06;
     tl.to(el, { scale: 0, rotation: k % 2 ? 40 : -40, opacity: 0, duration: .26, ease: 'back.in(2.2)', immediateRender: false }, t);
-    burstAt(t + .2, el, k % 2 ? '26,163,107' : '200,16,46'); if (k % 2 === 0) sfx(t + .2, 'impact', { g: .35 });
+    burstAt(t + .2, el, k % 2 ? '26,163,107' : '255,201,60'); if (k % 2 === 0) sfx(t + .2, 'impact', { g: .35 });
   });
   // видео: кадры из assets/video/<имя>/f_0001.jpg, 30 кадров/с; звук клипа — из assets/video/<имя>.wav
   layer.querySelectorAll('.vid').forEach(v => {
@@ -235,7 +235,7 @@ SECS.forEach((sec, i) => {
     if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
     tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .45, .25); speedAt(c, .45); if (!layer.querySelector('.vid.full')) BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '200,16,46' });   // на клипе брызги выглядят как пятна на лице
+    flashAt(c, .45, .25); speedAt(c, .45); if (!layer.querySelector('.vid.full')) BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '255,201,60' });   // на клипе брызги выглядят как пятна на лице
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
   // первый кадр сцены начинает оживать, когда камера приезжает (переход кончается на доле бита, иногда раньше начала реплики)
@@ -433,7 +433,8 @@ const gc = document.getElementById('grain')?.getContext('2d'), GT = [];
 // зерно — один неподвижный кадр, еле заметный: живая «рябь» 24 раза в секунду утомляла глаза
 if (gc) { const im = gc.createImageData(360, 640); for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (rnd(i, 1) - .5) * 160; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } gc.putImageData(im, 0, 0); }
 function grain(t) {}
-function blobs(t) { document.querySelectorAll('.blob').forEach((b, k) => {
+function blobs(t) { document.querySelectorAll('#isle .palm').forEach((p, k) => (p.style.rotate = `${(Math.sin(t * .7 + k * 2) * 2.2).toFixed(2)}deg`));
+  document.querySelectorAll('.blob').forEach((b, k) => {
   b.style.translate = `${(Math.sin(t * .12 + k * 2) * 50 - P.cam / H * 60).toFixed(1)}px ${(Math.cos(t * .1 + k) * 40).toFixed(1)}px`; }); }
 
 // ---------------------------------------------------------------- кадр

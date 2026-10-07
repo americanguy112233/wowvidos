@@ -2,7 +2,7 @@
 #   powershell -ExecutionPolicy Bypass -File .\build.ps1
 #   параметры: -Engine silero|edge|piper|rec|elevenlabs   -Out имя.mp4   -Music 0|1
 #   -Resume — не пересобирать голос, дорисовать только недостающие кадры и продолжить
-param([string]$Engine = 'silero', [string]$Out = 'nika-reel.mp4', [string]$Music = '0', [switch]$Resume)
+param([string]$Engine = 'silero', [string]$Out = 'ai-reel.mp4', [string]$Music = '0', [switch]$Resume)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 $PY = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'

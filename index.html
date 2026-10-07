@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>ИИ на острове — ошибка: продаёшь контент</title>
+<title>ИИ на острове — промт для продающего текста</title>
 <style>
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -391,6 +391,7 @@ body { color: #fff; }
 #isle .spark { position: absolute; width: 46px; height: 46px; opacity: 0;
   background: radial-gradient(circle, #fff 0 12%, transparent 13%), linear-gradient(90deg, transparent 46%, #fff 50%, transparent 54%), linear-gradient(0deg, transparent 46%, #fff 50%, transparent 54%); filter: drop-shadow(0 0 8px #fff); }
 #isle .shade { position: absolute; left: 380px; top: -160px; width: 900px; height: 900px; opacity: .10; filter: blur(14px); }
+.chat .msg.me { background: linear-gradient(180deg, #0f7d93, #0a5d74); color: #fff; }
 </style>
 </head>
 <body>
@@ -411,133 +412,101 @@ body { color: #fff; }
 
   <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/draw), data-mark, data-at, data-count, data-shatter -->
   <div id="world">
-    <!-- 1. Хук: контент ИИ каждый день → 0 ₽ → одна ошибка -->
+    <!-- 1. Хук: 10 сек на продающий текст → сохраняй -->
     <section class="sec" id="s1">
       <div class="layer A">
-        <div class="row" style="top:215px"><div class="kicker hk" style="font-size:34px;text-align:center;line-height:1.3">КОНТЕНТ НЕЙРОСЕТЬЮ<br>КАЖДЫЙ ДЕНЬ</div></div>
-        <div class="row" style="top:320px"><div class="money hk hkx" data-fx="punch" style="font-size:230px">0 ₽<small>на выходе</small></div></div>
-        <div class="tst hk" style="position:absolute;left:170px;top:640px;width:740px;height:740px"><img src="assets/ai/toon/15_empty.png" alt=""></div>
+        <div class="row" style="top:215px"><div class="kicker hk" style="font-size:36px">ПРОДАЮЩИЙ ТЕКСТ ЗА</div></div>
+        <div class="row" style="top:290px"><div class="money hk hkx" data-fx="punch" style="font-size:230px">10 сек<small>один промт</small></div></div>
+        <div class="tst hk" style="position:absolute;left:170px;top:640px;width:740px;height:740px"><img src="assets/ai/toon/05_ai_do.png" alt=""></div>
       </div>
-      <div class="layer B redbg" style="opacity:0">
-        <div class="ghost" style="top:200px">1</div>
-        <div class="row" style="top:300px"><div class="h1 wt" data-fx="kin" style="font-size:90px;line-height:1.3">ОДНА<br>ОШИБКА</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".3" style="position:absolute;left:250px;top:700px;width:600px;height:600px"><img src="assets/ai/toon/12_secret.png" alt=""></div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:84px;line-height:1.15">СОХРАНЯЙ,<br><em>ПОКА НЕ ПОТЕРЯЛ</em></div></div>
+        <div class="row" style="top:500px"><div class="tag" data-fx="slam" data-at=".4" style="font-size:60px">📌 сохранить</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".3" style="position:absolute;left:250px;top:680px;width:600px;height:600px"><img src="assets/ai/toon/12_secret.png" alt=""></div>
       </div>
     </section>
 
-    <!-- 2. Картинки, видео, просмотры → а на карте пусто → клип: снимает галстук «у меня было так же» -->
+    <!-- 2. Клип: фейспалм «час на пост» → ИИ пишет плохо, когда плохо объяснили -->
     <section class="sec" id="s2">
       <div class="layer A">
-        <div class="row" style="top:200px"><div class="card neon" data-fx="up" data-at=".05" style="width:900px;padding:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
-          <div style="height:250px;border-radius:22px;background:linear-gradient(160deg,#ffb88a,#ff5e7e)"></div><div style="height:250px;border-radius:22px;background:linear-gradient(160deg,#8ad8ff,#5a6dff)"></div><div style="height:250px;border-radius:22px;background:linear-gradient(160deg,#a6f2c0,#20a39e)"></div>
-          <div style="height:250px;border-radius:22px;background:linear-gradient(160deg,#ffe38a,#ff9d2e)"></div><div style="height:250px;border-radius:22px;background:linear-gradient(160deg,#d8a6ff,#7b4dff)"></div><div style="height:250px;border-radius:22px;background:linear-gradient(160deg,#9ff3ff,#13aea8)"></div></div></div>
-        <div class="row" style="top:300px"><div class="tag" data-fx="pop" data-at=".3" style="font-size:44px">🖼 картинки</div></div>
-        <div class="row" style="top:440px"><div class="tag dark" data-fx="pop" data-mark="a" data-at="-.05" style="font-size:44px">🎬 видео</div></div>
-        <div class="row" style="top:580px"><div class="tag" data-fx="slam" data-mark="b" data-at="-.05" style="font-size:52px">👁 105 346 просмотров</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="b" data-at=".3" style="position:absolute;left:270px;top:830px;width:540px;height:540px"><img src="assets/ai/toon/24_loading.png" alt=""></div>
+        <div class="shotz vid full" data-video="facepalm_laptop" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/facepalm_laptop/f_0001.jpg" alt=""></div>
       </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:76px;line-height:1.15">А НА КАРТЕ<br><em>ПУСТО</em></div></div>
-        <div class="row" style="top:480px"><div data-fx="zoom" data-at=".2" style="width:720px;height:440px;border-radius:40px;background:linear-gradient(135deg,#2b3550,#0b0f1a);box-shadow:0 30px 70px rgba(0,15,25,.5),0 0 0 4px rgba(255,255,255,.15);padding:44px;color:#fff;position:relative">
-          <div style="width:96px;height:72px;border-radius:14px;background:linear-gradient(135deg,#ffe27a,#c98a08)"></div>
-          <div style="font:700 30px/1 Man;color:#9fb0c8;margin-top:60px">баланс</div>
-          <div style="font:900 110px/1 Unb;margin-top:12px">0,00 ₽</div></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".6" style="position:absolute;right:-80px;top:900px;width:480px;height:480px"><img src="assets/ai/toon/34_overheat.png" alt=""></div>
-        <div class="row" style="top:1000px;justify-content:flex-start;padding-left:70px"><div class="tag" data-fx="slam" data-mark="c" data-at="-.05" style="font-size:48px">знакомо? 🙋‍♂️</div></div>
+      <div class="layer B redbg" style="opacity:0">
+        <div class="row" style="top:270px"><div class="h1 wt" data-fx="kin" style="font-size:64px;line-height:1.4">ИИ ПИШЕТ ПЛОХО,<br>КОГДА ЕМУ<br>ПЛОХО ОБЪЯСНИЛИ</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:250px;top:740px;width:580px;height:580px"><img src="assets/ai/toon/26_redo.png" alt=""></div>
       </div>
     </section>
 
-    <!-- 3. Продаёшь контент → его никто не покупает → люди покупают решение проблемы (мазок) -->
+    <!-- 3. Вот промт: печатается → разбор на 4 части (мазок) -->
     <section class="sec" id="s3" data-trans="smear">
-      <div class="layer A redbg">
-        <div class="row" style="top:280px"><div class="h1 wt" data-fx="kin" style="font-size:76px;line-height:1.35">ТЫ ПРОДАЁШЬ<br>КОНТЕНТ</div></div>
-        <div class="row" style="top:560px"><svg class="ul" data-fx="draw" data-at=".6" width="760" height="120" viewBox="0 0 760 120"><path class="dr" pathLength="1" d="M20 80 L740 30" stroke="#0b1f2a" stroke-width="18" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:250px;top:720px;width:600px;height:600px"><img src="assets/ai/toon/26_redo.png" alt=""></div>
-      </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:66px;line-height:1.2">КОНТЕНТ<br><em>НИКТО НЕ ПОКУПАЕТ</em></div></div>
-        <div class="row" style="top:500px"><div data-fx="zoom" data-at=".3" style="font-size:240px;line-height:1">🛒</div></div>
-        <div class="row" style="top:760px"><div class="tag dark" data-fx="slam" data-at=".7" style="font-size:52px">пусто</div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".9" style="position:absolute;right:-80px;top:900px;width:460px;height:460px"><img src="assets/ai/toon/32_argue.png" alt=""></div>
-      </div>
-      <div class="layer C" style="opacity:0" data-zoomto>
-        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:36px">ЛЮДИ ПОКУПАЮТ</div></div>
-        <div class="row" style="top:290px"><div class="h1" data-fx="kin" style="font-size:74px;line-height:1.15">РЕШЕНИЕ<br><em>СВОЕЙ ПРОБЛЕМЫ</em></div></div>
-        <div class="row" style="top:560px"><div class="tst" data-fx="plop" data-at=".3" style="width:720px;height:720px"><img src="assets/ai/toon/10_pain.png" alt=""></div></div>
+      <div class="layer A">
+        <div class="row" style="top:180px"><div class="kicker" data-fx="pop" style="font-size:38px">📋 ПРОМТ — СОХРАНИ</div></div>
+        <div class="row" style="top:240px"><div class="card neon" data-fx="up" data-at=".05" style="width:960px;padding:36px 40px">
+          <div data-fx="type" data-at=".2" data-d="2.0" style="font:600 37px/1.36 JB,monospace;color:#0b1f2a;min-height:410px">Ты — копирайтер с 10 годами опыта. Напиши продающий текст для [продукт] для [кому продаём]. Структура: цепляющий заголовок, боль клиента, решение, 3 выгоды, призыв к действию. Пиши просто, без воды, до 600 знаков.</div></div></div>
+        <div class="row" style="top:760px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;width:960px">
+          <div class="cmt" data-fx="pop" data-mark="r" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#ff6b5b;width:56px;height:56px;line-height:56px;font-size:28px">1</i><div><b>роль</b><span style="font-size:32px">копирайтер с опытом</span></div></div>
+          <div class="cmt" data-fx="pop" data-mark="a" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#3f8cff;width:56px;height:56px;line-height:56px;font-size:28px">2</i><div><b>что и кому</b><span style="font-size:32px">продукт + аудитория</span></div></div>
+          <div class="cmt" data-fx="pop" data-mark="b" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#2fd17a;width:56px;height:56px;line-height:56px;font-size:28px">3</i><div><b>структура</b><span style="font-size:32px">боль → выгоды → призыв</span></div></div>
+          <div class="cmt" data-fx="pop" data-mark="c" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#ffb31a;width:56px;height:56px;line-height:56px;font-size:28px">4</i><div><b>ограничение</b><span style="font-size:32px">без воды, до 600 знаков</span></div></div></div></div>
       </div>
     </section>
 
-    <!-- 4. Рабочая схема: видео собирает → ссылка ведёт → продукт решает боль → видео = витрина (зум) -->
+    <!-- 4. Отправляю → 10 секунд → ответ нейросети печатается (зум) -->
     <section class="sec" id="s4" data-trans="zoom">
       <div class="layer A" data-zoomfrom>
-        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:80px;line-height:1.15">РАБОЧАЯ<br><em>СХЕМА</em></div></div>
-        <div class="row" style="top:500px"><div class="tst" data-fx="plop" data-at=".1" style="width:760px;height:760px"><img src="assets/ai/toon/37_funnel.png" alt=""></div></div>
-      </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:200px"><div style="display:flex;flex-direction:column;gap:26px;width:920px">
-          <div class="cmt neon" data-fx="left" data-at=".1" style="width:auto"><i style="background:#ff3d3d">▶</i><div><b>шаг 1 · видео</b><span>собирает людей</span></div></div>
-          <div class="cmt" data-fx="left" data-mark="a" data-at="-.1" style="width:auto"><i style="background:#3f8cff">🔗</i><div><b>шаг 2 · ссылка под видео</b><span>ведёт к продукту</span></div></div>
-          <div class="cmt" data-fx="left" data-mark="b" data-at="-.1" style="width:auto;box-shadow:0 0 0 5px #ffc93c,0 16px 40px rgba(0,20,30,.3)"><i style="background:#ffb31a">₽</i><div><b>шаг 3 · продукт</b><span>решает боль — и за это закидывают</span></div></div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="b" data-at=".3" style="position:absolute;left:280px;top:860px;width:520px;height:520px"><img src="assets/ai/toon/27_lead.png" alt=""></div>
-        <div class="rain" data-fx="rain" data-mark="b" data-at=".4" data-n="14"></div>
-      </div>
-      <div class="layer C" style="opacity:0">
-        <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:72px;line-height:1.2">ВИДЕО —<br><em>ЭТО ВИТРИНА</em></div></div>
-        <div class="row" style="top:500px"><div class="tst" data-fx="plop" data-at=".2" style="width:740px;height:740px"><img src="assets/ai/toon/19_checked.png" alt=""></div></div>
+        <div class="row" style="top:200px"><div class="chat card neon" data-fx="up" data-at=".05" style="width:960px">
+          <div class="ch"><div style="width:76px;height:76px;border-radius:50%;background:#06283a;display:flex;align-items:center;justify-content:center;font-size:44px">🤖</div><div><b>Нейросеть</b><span>печатает…</span></div></div>
+          <div class="msg me" data-fx="pop" data-at=".1" style="font-size:32px;max-width:760px">Напиши продающий текст для кофейни у моря для туристов…</div>
+          <div class="msg ai" style="font-size:31px;max-width:860px;line-height:1.4;white-space:pre-line" data-fx="type" data-mark="a" data-at="0" data-d="2.6">☕ Устал от кофе на бегу?
+В «Бризе» варят так, что хочется остаться.
+— свежая обжарка каждую неделю
+— вид на океан с каждого столика
+— вторая чашка за полцены до 10:00
+Загляни утром — первый круассан за наш счёт 🥐</div></div></div>
+        <div class="row" style="top:1110px"><div class="tag dark" data-fx="pop" data-mark="a" data-at="0" style="font-size:44px">⏱ <span data-count="0,10">0</span> сек</div></div>
       </div>
     </section>
 
-    <!-- 5. Узкая игровая ниша → клип: ноутбук в джунглях «продукт написал ИИ» → итог 403 679 ₽ -->
+    <!-- 5. Разбор ответа: заголовок, боль, выгоды, призыв → клип: ноутбук в джунглях «вставь свой продукт» -->
     <section class="sec" id="s5">
       <div class="layer A">
-        <div class="row" style="top:190px"><div class="tag" data-fx="pop" style="font-size:44px">🎮 узкая игровая ниша</div></div>
-        <div class="row" style="top:300px"><div class="iph" data-fx="left" data-at=".1" style="width:520px;rotate:3deg"><div class="scrn" style="background:#fff;padding:40px 10px 20px"><img src="assets/ai/shots/yt_views.png" alt=""></div></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".7" style="position:absolute;right:-90px;top:880px;width:500px;height:500px"><img src="assets/ai/toon/11_niche.png" alt=""></div>
+        <div class="row" style="top:210px"><div class="notes neon" data-fx="up" data-at=".05" style="width:900px">
+          <div class="nh">ЧТО ПОЛУЧИЛИ</div>
+          <div class="ni" style="font-size:50px" data-fx="left" data-at=".2"><span style="color:#14a35a">✓</span>цепляющий заголовок</div>
+          <div class="ni" style="font-size:50px" data-fx="left" data-mark="a" data-at="-.1"><span style="color:#14a35a">✓</span>боль клиента</div>
+          <div class="ni" style="font-size:50px" data-fx="left" data-mark="b" data-at="-.1"><span style="color:#14a35a">✓</span>3 выгоды</div>
+          <div class="ni" style="font-size:50px" data-fx="left" data-mark="c" data-at="-.1"><span style="color:#14a35a">✓</span>призыв к действию</div></div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="c" data-at=".2" style="position:absolute;left:280px;top:880px;width:520px;height:520px"><img src="assets/ai/toon/19_checked.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
         <div class="shotz vid full" data-video="jungle_laptop" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/jungle_laptop/f_0001.jpg" alt=""></div>
       </div>
-      <div class="layer C" style="opacity:0">
-        <i data-fx="pop" data-at=".3" data-bank="403679" style="position:absolute;opacity:0"></i>
-        <div class="row" style="top:190px"><div class="kicker" data-fx="pop" style="font-size:40px">ИТОГ</div></div>
-        <div class="row" style="top:270px"><div class="iph" data-fx="up" data-at=".05" style="width:600px;rotate:-2deg">
-          <div class="scrn"><img src="assets/ai/shots/boosty.png" alt="" data-fx="zoomin" data-at=".5" data-z="2.6" style="--ox:37%;--oy:15%"></div></div></div>
-        <div class="tst" data-fx="peek" data-from="left" data-rot="8" data-at=".9" style="position:absolute;left:-90px;top:920px;width:480px;height:480px"><img src="assets/ai/toon/35_levelup.png" alt=""></div>
-        <div class="rain" data-fx="rain" data-at=".8" data-n="20"></div>
-      </div>
     </section>
 
-    <!-- 6. Не тот продукт — не сработает → как понять, что точно купят (мазок) -->
+    <!-- 6. 1 из 20 промтов → тексты, посты, ответы, идеи (мазок) -->
     <section class="sec" id="s6" data-trans="smear">
       <div class="layer A redbg">
-        <div class="ghost" style="top:200px">✗</div>
-        <div class="row" style="top:280px"><div class="h1 wt" data-fx="kin" style="font-size:70px;line-height:1.35">НЕ ТОТ ПРОДУКТ —<br>СХЕМА<br>НЕ СРАБОТАЕТ</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:250px;top:760px;width:580px;height:580px"><img src="assets/ai/toon/25_ai_fail.png" alt=""></div>
+        <div class="row" style="top:250px"><div class="kicker" data-fx="pop" style="font-size:40px">ЭТО ОДИН ИЗ</div></div>
+        <div class="row" style="top:320px"><div class="h1 wt" data-fx="slam" data-at=".2" style="font-size:300px;letter-spacing:-10px"><span data-count="1,20">1</span></div></div>
+        <div class="row" style="top:640px"><div class="tag dark" data-fx="pop" data-at=".6" style="font-size:46px">промтов на каждый день</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".6" style="position:absolute;left:260px;top:780px;width:560px;height:560px"><img src="assets/ai/toon/17_auto.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:60px;line-height:1.25">КАК ПОНЯТЬ,<br><em>ЧТО ТОЧНО КУПЯТ</em></div></div>
-        <div class="row" style="top:470px"><div class="tag dark" data-fx="slam" data-at=".8" style="font-size:44px">разбираю отдельно 👇</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:230px;top:600px;width:640px;height:640px"><img src="assets/ai/toon/22_idea.png" alt=""></div>
+        <div class="row" style="top:220px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:960px">
+          <div class="tag" data-fx="pop" data-at=".05" style="font-size:38px;text-align:center;white-space:normal">✍️ тексты</div>
+          <div class="tag dark" data-fx="pop" data-mark="a" data-at="-.05" style="font-size:38px;text-align:center;white-space:normal">📱 посты</div>
+          <div class="tag dark" data-fx="pop" data-mark="b" data-at="-.05" style="font-size:38px;text-align:center;white-space:normal">💬 ответы клиентам</div>
+          <div class="tag" data-fx="pop" data-mark="c" data-at="-.05" style="font-size:38px;text-align:center;white-space:normal">🎬 идеи роликов</div></div></div>
+        <div class="row" style="top:560px"><div class="tst" data-fx="plop" data-at=".3" style="width:700px;height:700px"><img src="assets/ai/toon/30_office.png" alt=""></div></div>
       </div>
     </section>
 
-    <!-- 7. Клип: будильник у бассейна → обучение по ИИ → напиши «ИИ» + «сгенерировано ИИ» -->
+    <!-- 7. Напиши «ПРОМТ» → пришлю все 20 в TG + «сгенерировано ИИ» -->
     <section class="sec" id="s7">
       <div class="layer A">
-        <div class="shotz vid full" data-video="alarm_pool" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/alarm_pool/f_0001.jpg" alt=""></div>
-      </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:200px"><div class="h1" data-fx="kin" style="font-size:60px;line-height:1.25">ОБУЧЕНИЕ<br><em>ПО ИИ</em></div></div>
-        <div class="row" style="top:420px"><div class="notes neon" data-fx="up" data-at=".05">
-          <div class="ni" style="font-size:50px" data-fx="left" data-at=".2"><span style="color:#14a35a">✓</span>только практика</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-at=".8"><span style="color:#14a35a">✓</span>мои реальные кейсы</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-at="1.4"><span style="color:#14a35a">✓</span>от идеи до результата</div></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at="1.0" style="position:absolute;right:-60px;top:860px;width:520px;height:520px"><img src="assets/ai/toon/39_nowater.png" alt=""></div>
-      </div>
-      <div class="layer C" style="opacity:0">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:100px;line-height:1.1">НАПИШИ<br><em>«ИИ»</em></div></div>
-        <div class="row" style="top:470px"><div class="tag" id="cta" data-fx="slam" data-at=".3" style="font-size:46px;line-height:1.2;padding:26px 50px;border-radius:44px;white-space:normal;text-align:center">в комментариях 👇<br>пришлю подробности в личку</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:220px;top:620px;width:640px;height:640px"><img src="assets/ai/toon/13_write_ai.png" alt=""></div>
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:96px;line-height:1.1">НАПИШИ<br><em>«ПРОМТ»</em></div></div>
+        <div class="row" style="top:470px"><div class="tag" id="cta" data-fx="slam" data-at=".3" style="font-size:46px;line-height:1.2;padding:26px 50px;border-radius:44px;white-space:normal;text-align:center">в комментариях 👇<br>пришлю все 20 в TG</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:220px;top:620px;width:640px;height:640px"><img src="assets/ai/toon/14_go.png" alt=""></div>
         <div class="row" style="top:1210px"><div class="aibadge" data-fx="slam" data-mark="b" data-at="-.05">🤖 это видео полностью сделано ИИ</div></div>
       </div>
     </section>

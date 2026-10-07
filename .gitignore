@@ -39,3 +39,17 @@ assets/video/sad_with_boyfriend.wav
 assets/video/training/
 assets/video/training.wav
 !assets/video/src/*.mp4
+
+# кадры клипов ИИ-блога (нарезает build.ps1 в ветке ai-blog)
+assets/video/monkey_glasses/
+assets/video/alarm_pool/
+assets/video/monkey_grab/
+assets/video/suitcase_laptop/
+assets/video/jungle_laptop/
+assets/video/facepalm_laptop/
+assets/video/tear_paper/
+assets/video/tie_off/
+assets/video/monkey_photobomb/
+assets/video/sunset_phone/
+assets/video/pool_jump/
+assets/video/laptop_sea/

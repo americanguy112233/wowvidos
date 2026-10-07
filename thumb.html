@@ -4,26 +4,34 @@
 @font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #f4f1ec; font-family: Man; color: #121212; position: relative; overflow: hidden; }
+body { font-family: Man; color: #fff; position: relative; overflow: hidden; }
 body.v { width: 1080px; height: 1920px; } body.h { width: 1920px; height: 1080px; }
 .abs { position: absolute; }
-.bg { inset: 0; background: radial-gradient(60% 45% at 80% 20%, #fbe3e3 0, transparent 70%), #f4f1ec; }
-.t { font: 900 150px/1 Unb; letter-spacing: -5px; } .t em { font-style: normal; color: #c8102e; }
-.ph { border-radius: 60px; overflow: hidden; box-shadow: 0 30px 80px rgba(60,40,20,.2); } .ph img { width: 100%; height: 100%; object-fit: cover; }
-.tag { font: 800 54px/1 Unb; padding: 26px 44px 30px; border-radius: 999px; background: #c8102e; color: #fff; white-space: nowrap; }
-.prof { display: flex; align-items: center; gap: 22px; font: 800 44px/1 Man; } .prof img { width: 110px; height: 110px; border-radius: 50%; object-fit: cover; }
-.prof span { display: block; font: 600 32px/1 Man; color: #8b857e; margin-top: 8px; }
-.v .t { left: 0; right: 0; top: 230px; text-align: center; font-size: 104px; } .v .ph { left: 190px; top: 640px; width: 700px; height: 860px; }
-.v .tag { left: 0; right: 0; margin: 0 auto; width: max-content; top: 1560px; } .v .prof { left: 70px; top: 80px; }
-.h .t { left: 90px; top: 250px; font-size: 104px; } .h .ph { right: 110px; top: 90px; width: 700px; height: 900px; }
-.h .tag { left: 90px; top: 760px; } .h .prof { left: 90px; top: 80px; }
+.bg { inset: 0; background: radial-gradient(45% 30% at 82% 10%, rgba(255,214,110,.85) 0, rgba(255,170,60,.25) 45%, transparent 75%),
+  radial-gradient(70% 35% at 50% 100%, rgba(40,230,210,.5) 0, transparent 70%), linear-gradient(180deg, #073d55 0%, #0a5d74 40%, #0d8794 75%, #13aea8 100%); }
+.palm { opacity: .3; }
+.money { font: 900 200px/1 Unb; letter-spacing: -8px; white-space: nowrap;
+  background: linear-gradient(100deg, #fff1b0 0%, #ffd23f 25%, #c98a08 42%, #fffbe6 52%, #ffd23f 62%, #b87400 85%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 10px 0 #8a5300) drop-shadow(0 22px 40px rgba(255,170,30,.5)); }
+.sub { font: 900 70px/1.1 Unb; letter-spacing: -2px; text-shadow: 0 8px 30px rgba(0,30,45,.5); }
+.sub em { font-style: normal; color: #ffd23f; }
+.st { filter: drop-shadow(0 30px 40px rgba(0,25,40,.45)); }
+.tag { font: 900 52px/1 Unb; padding: 26px 46px 30px; border-radius: 999px; background: linear-gradient(180deg, #ffe066, #ffb31a); color: #0b1f2a; white-space: nowrap; box-shadow: 0 16px 40px rgba(255,170,30,.45); }
+.ai { font: 900 36px/1 Unb; padding: 18px 30px; border-radius: 999px; background: #06283a; box-shadow: 0 0 0 4px #7ff3ff, 0 0 40px rgba(127,243,255,.55); }
+.coin { width: 120px; filter: drop-shadow(0 12px 16px rgba(0,0,0,.35)); }
+.v .money { left: 0; right: 0; text-align: center; top: 210px; font-size: 158px; letter-spacing: -6px; } .v .sub { left: 0; right: 0; text-align: center; top: 430px; }
+.v .st { left: 60px; top: 600px; width: 960px; } .v .tag { left: 0; right: 0; margin: 0 auto; width: max-content; top: 1600px; } .v .ai { left: 0; right: 0; margin: 0 auto; width: max-content; top: 1740px; }
+.h .money { left: 80px; top: 230px; font-size: 140px; letter-spacing: -5px; } .h .sub { left: 90px; top: 450px; } .h .st { right: 40px; top: 60px; width: 900px; }
+.h .tag { left: 90px; top: 740px; } .h .ai { left: 90px; top: 880px; }
 </style></head>
 <body>
 <div class="abs bg"></div>
-<div class="abs prof"><img src="assets/nika/face.jpg" alt=""><div>Я Ника<span>Фитнес | Питание</span></div></div>
-<div class="abs t">403 679 ₽<br><em>НА СКРИПТЕ ОТ ИИ</em></div>
-<div class="abs ph"><img src="assets/nika/face.jpg" alt=""></div>
-<div class="abs tag">я не написал ни строчки кода</div>
+<svg class="abs palm" style="left:-150px;top:-60px" width="620" height="620" viewBox="0 0 560 560"><g fill="#022f3d"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg>
+<img class="abs st" src="assets/ai/toon/02_sleep.png" alt="">
+<div class="abs money">403 679 ₽</div>
+<div class="abs sub">НА СКРИПТЕ<br><em>БЕЗ КОДА</em></div>
+<div class="abs tag">его написал ИИ 🤖</div>
+<div class="abs ai">🌴 ИИ на острове</div>
 <script>
 document.body.className = new URLSearchParams(location.search).get('v') === 'v' ? 'v' : 'h';
 window.READY = Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode())]);

@@ -361,6 +361,36 @@ body { color: #fff; }
 .cmt i { flex: none; width: 70px; height: 70px; border-radius: 50%; font-style: normal; font: 900 34px/70px Unb; text-align: center; color: #fff; }
 .cmt b { display: block; font: 800 26px/1 Man; color: #6b7b84; margin-bottom: 8px; }
 .cmt span { font: 700 40px/1.2 Man; }
+
+/* ── ИИ-блог v2: телефон, пуши, монеты, счётчик, металл, неон ── */
+.iph { position: relative; padding: 18px; border-radius: 76px; background: linear-gradient(160deg, #2a2f3a, #0b0d12); box-shadow: 0 0 0 4px #4b5160, 0 40px 90px rgba(0,15,25,.55), inset 0 0 0 2px rgba(255,255,255,.08); }
+.iph .scrn { position: relative; border-radius: 58px; overflow: hidden; background: #1e1e1e; }
+.iph .scrn img { display: block; width: 100%; transform-origin: var(--ox, 50%) var(--oy, 50%); }
+.iph::before { content: ''; position: absolute; left: 50%; top: 34px; width: 150px; height: 40px; margin-left: -75px; border-radius: 20px; background: #000; z-index: 3; }
+.iph::after { content: ''; position: absolute; inset: 18px; border-radius: 58px; pointer-events: none; z-index: 2;
+  background: linear-gradient(115deg, transparent 0 40%, rgba(255,255,255,.22) 47%, rgba(255,255,255,.05) 52%, transparent 60%) no-repeat;
+  background-size: 300% 100%; background-position: calc(100% - mod(var(--t) * 40, 260) * 1%) 0; }
+.push { position: absolute; left: 50px; right: 50px; top: 170px; z-index: 4; display: flex; align-items: center; gap: 22px; padding: 22px 28px; border-radius: 40px;
+  background: rgba(245,248,250,.92); color: #0b1f2a; box-shadow: 0 24px 60px rgba(0,20,30,.4); backdrop-filter: blur(10px); opacity: 0; }
+.push .ic { flex: none; width: 92px; height: 92px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font: 900 52px/1 Unb; color: #fff; background: linear-gradient(160deg, #ff8a3d, #f15a22); }
+.push .tx b { display: block; font: 800 30px/1.1 Man; color: #6b7b84; margin-bottom: 6px; }
+.push .tx span { font: 800 40px/1.15 Man; }
+.push .tx em { font-style: normal; color: #14a35a; }
+.rain { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: visible; }
+.coin3d { position: absolute; left: 0; top: 0; opacity: 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); }
+#bank { position: absolute; right: 36px; top: 136px; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 12px 22px 12px 14px; border-radius: 999px;
+  background: rgba(4,32,46,.78); box-shadow: 0 0 0 3px #ffc93c, 0 10px 30px rgba(0,0,0,.3); font: 900 36px/1 Unb; color: #ffd75e; opacity: 0; transform-origin: 100% 50%; }
+#bank i { width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6c2, #ffcf3a 45%, #c47d00); font: 900 26px/46px Unb; color: #a86400; text-align: center; font-style: normal; }
+.money { background: linear-gradient(100deg, #fff1b0 0%, #ffd23f 22%, #c98a08 38%, #ffe680 50%, #fffbe6 54%, #ffd23f 62%, #b87400 80%, #ffe27a 100%);
+  background-size: 260% 100%; background-position: calc(mod(var(--t) * 55, 260) * 1%) 0; -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-stroke: 2px rgba(120,70,0,.35); filter: drop-shadow(0 8px 0 #8a5300) drop-shadow(0 18px 30px rgba(255,170,30,.45)); text-shadow: none; }
+.money small { -webkit-text-fill-color: #fff; -webkit-text-stroke: 0; filter: none; }
+.neon { box-shadow: 0 0 0 4px #7ff3ff, 0 0 40px rgba(127,243,255,.55), 0 20px 60px rgba(0,20,30,.4) !important; }
+.chat .msg.ai { font-family: 'JB', monospace; }
+@font-face { font-family: JB; src: url(assets/fonts/JetBrainsMono-VF.ttf); font-weight: 100 800; }
+#isle .spark { position: absolute; width: 46px; height: 46px; opacity: 0;
+  background: radial-gradient(circle, #fff 0 12%, transparent 13%), linear-gradient(90deg, transparent 46%, #fff 50%, transparent 54%), linear-gradient(0deg, transparent 46%, #fff 50%, transparent 54%); filter: drop-shadow(0 0 8px #fff); }
+#isle .shade { position: absolute; left: 380px; top: -160px; width: 900px; height: 900px; opacity: .10; filter: blur(14px); }
 </style>
 </head>
 <body>
@@ -368,6 +398,7 @@ body { color: #fff; }
   <div id="bg"></div>
   <div id="blobs"><i class="blob" style="left:-120px;top:120px;width:520px;height:520px;background:#3ff0e0"></i><i class="blob" style="left:620px;top:520px;width:600px;height:600px;background:#ffc93c"></i><i class="blob" style="left:80px;top:1200px;width:560px;height:560px;background:#29d3ff"></i></div>
   <div id="isle">
+    <svg class="shade" viewBox="0 0 560 560"><g fill="#00151d"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg><i class="spark" style="left:371px;top:1557px;scale:0.74"></i><i class="spark" style="left:89px;top:1517px;scale:0.99"></i><i class="spark" style="left:136px;top:1667px;scale:0.85"></i><i class="spark" style="left:971px;top:1739px;scale:0.63"></i><i class="spark" style="left:128px;top:1702px;scale:0.75"></i><i class="spark" style="left:286px;top:1526px;scale:0.83"></i><i class="spark" style="left:100px;top:1769px;scale:0.57"></i><i class="spark" style="left:268px;top:1802px;scale:0.88"></i><i class="spark" style="left:103px;top:1775px;scale:0.85"></i><i class="spark" style="left:90px;top:1593px;scale:0.53"></i><i class="spark" style="left:919px;top:1548px;scale:0.67"></i><i class="spark" style="left:187px;top:1756px;scale:0.57"></i><i class="spark" style="left:355px;top:1766px;scale:0.99"></i><i class="spark" style="left:225px;top:1532px;scale:0.85"></i><i class="spark" style="left:816px;top:250px;scale:0.44"></i><i class="spark" style="left:752px;top:90px;scale:0.65"></i><i class="spark" style="left:974px;top:278px;scale:0.71"></i><i class="spark" style="left:958px;top:292px;scale:0.54"></i>
     <svg class="waves" width="1080" height="1920" viewBox="0 0 1080 1920"><path d="M-20 1700 q60 -22 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0"/><path d="M-80 1790 q60 -22 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0"/><path d="M-20 1870 q60 -22 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0"/></svg>
     <svg class="palm" style="left:-150px;top:-60px;opacity:.28;transform-origin:0 0" width="560" height="560" viewBox="0 0 560 560"><g fill="#022f3d"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg>
     <svg class="palm" style="right:-170px;top:1130px;opacity:.22;transform-origin:100% 100%" width="560" height="560" viewBox="0 0 560 560"><g fill="#022f3d" transform="translate(560 560) rotate(180)"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg>
@@ -380,132 +411,138 @@ body { color: #fff; }
 
   <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/draw), data-mark, data-at, data-count, data-shatter -->
   <div id="world">
-    <!-- 1. Хук: 403 679 ₽ за год → ни строчки кода -->
+    <!-- 1. Хук: 403 679 ₽ + дождь из монет → клип: чемодан с ноутбуком, «ни строчки кода» -->
     <section class="sec" id="s1">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="kicker hk" style="font-size:38px">ЗА ГОД НА ИИ-ПРОДУКТЕ</div></div>
-        <div class="row" style="top:300px"><div class="money hk hkx" data-fx="punch">403 679 ₽<small>я не написал ни строчки кода</small></div></div>
-        <div class="tst hk" style="position:absolute;left:190px;top:640px;width:700px;height:700px"><img src="assets/ai/toon/07_paid.png" alt=""></div>
+        <div class="row" style="top:215px"><div class="kicker hk" style="font-size:38px">ЗА ГОД НА ИИ-ПРОДУКТЕ</div></div>
+        <div class="row" style="top:290px"><div class="money hk hkx" data-fx="punch" style="font-size:140px">403 679 ₽<small>и ни строчки кода</small></div></div>
+        <div class="tst hk" style="position:absolute;left:170px;top:620px;width:740px;height:740px"><img src="assets/ai/toon/02_sleep.png" alt=""></div>
+        <div class="rain" data-fx="rain" data-at=".05" data-n="22"></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:84px;line-height:1.15">0 СТРОК<br><em>КОДА</em></div></div>
-        <div class="row" style="top:500px"><div class="tst" data-fx="plop" data-at=".1" style="width:760px;height:760px"><img src="assets/ai/toon/04_nocode.png" alt=""></div></div>
+        <div class="shotz vid full" data-video="suitcase_laptop" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/suitcase_laptop/f_0001.jpg" alt=""></div>
       </div>
     </section>
 
-    <!-- 2. Доказательство: Boosty, всего заработано → я не программист → сейчас покажу -->
+    <!-- 2. Доказательство: Boosty в телефоне, наезд на «всего заработано» → клип: обезьяна хватает камеру -->
     <section class="sec" id="s2">
       <div class="layer A">
-        <div class="row" style="top:210px"><div class="tag dark" data-fx="pop" style="font-size:40px;line-height:1.25;padding:22px 40px;white-space:normal;text-align:center">это не реклама курса —<br>это мой Boosty</div></div>
-        <div class="row" style="top:410px"><div class="scr glow" data-fx="zoom" data-at=".15" style="width:960px"><img src="assets/ai/shots/boosty_earned.png" alt=""></div></div>
-        <div class="row" style="top:400px"><svg class="ul" data-fx="draw" data-at=".9" width="1000" height="320" viewBox="0 0 1000 320"><path class="dr" pathLength="1" d="M70 160 C60 30 940 20 950 150 C960 300 90 310 50 170" stroke="#ffc93c" stroke-width="14" fill="none" stroke-linecap="round"/></svg></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".8" style="position:absolute;left:250px;top:780px;width:600px;height:600px"><img src="assets/ai/toon/09_numbers.png" alt=""></div>
+        <div class="row" style="top:180px"><div class="tag dark" data-fx="pop" style="font-size:38px">это не промо — это мой Boosty 👇</div></div>
+        <div class="row" style="top:280px"><div class="iph" data-fx="up" data-at=".05" style="width:620px;rotate:-3deg">
+          <div class="scrn"><img src="assets/ai/shots/boosty.png" alt="" data-fx="zoomin" data-at=".8" data-z="2.6" style="--ox:37%;--oy:15%"></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at="1.3" style="position:absolute;right:-90px;top:900px;width:480px;height:480px"><img src="assets/ai/toon/09_numbers.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:80px;line-height:1.15">СЕЙЧАС<br><em>ПОКАЖУ</em></div></div>
-        <div class="row" style="top:520px"><div class="tst" data-fx="plop" data-at=".1" style="width:740px;height:740px"><img src="assets/ai/toon/12_secret.png" alt=""></div></div>
+        <div class="shotz vid full" data-video="monkey_grab" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/monkey_grab/f_0001.jpg" alt=""></div>
       </div>
     </section>
 
-    <!-- 3. Узкая игровая ниша: ролики, 100 тыс. просмотров → в комментах ноют: золото фармится долго -->
+    <!-- 3. Узкая игровая ниша: YouTube в телефоне → комменты ноют → клип: фейспалм -->
     <section class="sec" id="s3" data-trans="smear">
       <div class="layer A">
-        <div class="row" style="top:210px"><div class="tag" data-fx="pop" style="font-size:44px">🎮 узкая игровая ниша</div></div>
-        <div class="row" style="top:320px"><div style="display:flex;gap:26px;align-items:flex-start">
-          <div class="scr" data-fx="left" data-at=".15" style="width:420px;background:#fff"><img src="assets/ai/shots/yt_views.png" alt=""></div>
-          <div class="scr" data-fx="right" data-at=".35" style="width:440px;background:#fff"><img src="assets/ai/shots/yt_channel.png" alt=""></div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".8" style="position:absolute;left:260px;top:820px;width:560px;height:560px"><img src="assets/ai/toon/11_niche.png" alt=""></div>
+        <div class="row" style="top:190px"><div class="tag" data-fx="pop" style="font-size:44px">🎮 узкая игровая ниша</div></div>
+        <div class="row" style="top:300px"><div class="iph" data-fx="left" data-at=".1" style="width:520px;rotate:3deg"><div class="scrn" style="background:#fff;padding:40px 10px 20px"><img src="assets/ai/shots/yt_views.png" alt=""></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".7" style="position:absolute;right:-90px;top:880px;width:500px;height:500px"><img src="assets/ai/toon/11_niche.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
         <div class="row" style="top:210px"><div class="kicker" data-fx="pop" style="font-size:36px">💬 ВСЕ В КОММЕНТАХ НОЮТ</div></div>
         <div class="row" style="top:290px"><div class="cmt" data-fx="left" data-at=".15"><i style="background:#ff6b5b">А</i><div><b>@alex_farm</b><span>золото фармится вечность 😩</span></div></div></div>
-        <div class="row" style="top:450px"><div class="cmt" data-fx="right" data-mark="a" data-at="-.2"><i style="background:#3f8cff">Д</i><div><b>@dimon</b><span>есть способ быстрее? 🙏</span></div></div></div>
-        <div class="row" style="top:610px"><div class="cmt" data-fx="left" data-mark="a" data-at=".2"><i style="background:#2fd17a">К</i><div><b>@kate_gg</b><span>3 часа ради 100 золота…</span></div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="a" data-at=".4" style="position:absolute;left:280px;top:820px;width:540px;height:540px"><img src="assets/ai/toon/10_pain.png" alt=""></div>
-      </div>
-    </section>
-
-    <!-- 4. Не учил код → описал нейросети → пара вечеров → хелпер добывает больше золота (зум) -->
-    <section class="sec" id="s4" data-trans="zoom">
-      <div class="layer A">
-        <div class="row" style="top:230px" data-zoomfrom><div class="h1" data-fx="kin" style="font-size:72px;line-height:1.15">НЕ СТАЛ<br><em>УЧИТЬ КОД</em></div></div>
-        <div class="row" style="top:480px"><div class="tst" data-fx="plop" data-at=".1" style="width:760px;height:760px"><img src="assets/ai/toon/34_overheat.png" alt=""></div></div>
-      </div>
-      <div class="layer B" style="opacity:0">
-        <div class="row" style="top:210px"><div class="chat card" data-fx="up" data-at=".05" style="width:940px">
-          <div class="ch"><img src="assets/ai/avatar.jpg" alt=""><div><b>Нейросеть 🤖</b><span>печатает…</span></div></div>
-          <div class="msg me" data-fx="pop" data-at=".2" style="font-size:40px;max-width:780px">сделай хелпер, чтобы золото в игре добывалось быстрее</div>
-          <div class="msg ai" data-fx="pop" data-at="1.3" style="font-size:40px;max-width:780px">Готово ✅ Вот код и инструкция, как запустить</div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at="1.0" style="position:absolute;left:260px;top:800px;width:560px;height:560px"><img src="assets/ai/toon/05_ai_do.png" alt=""></div>
+        <div class="row" style="top:450px"><div class="cmt" data-fx="right" data-at=".8"><i style="background:#3f8cff">Д</i><div><b>@dimon</b><span>есть способ быстрее? 🙏</span></div></div></div>
+        <div class="row" style="top:610px"><div class="cmt" data-fx="left" data-at="1.4"><i style="background:#2fd17a">К</i><div><b>@kate_gg</b><span>3 часа ради 100 золота…</span></div></div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at="1.6" style="position:absolute;left:280px;top:830px;width:520px;height:520px"><img src="assets/ai/toon/10_pain.png" alt=""></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:36px">ЧЕРЕЗ ПАРУ ВЕЧЕРОВ</div></div>
-        <div class="row" style="top:290px"><div class="h1" data-fx="kin" style="font-size:80px;line-height:1.15">ХЕЛПЕР<br><em>ГОТОВ</em></div></div>
-        <div class="row" style="top:500px"><div class="tag dark" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:46px">🪙 больше золота за то же время</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:220px;top:640px;width:660px;height:660px"><img src="assets/ai/toon/23_launch.png" alt=""></div>
+        <div class="shotz vid full" data-video="facepalm_laptop" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/facepalm_laptop/f_0001.jpg" alt=""></div>
       </div>
     </section>
 
-    <!-- 5. Boosty по подписке → ссылка под видео → аудитория пришла сама → 11 человек платят -->
+    <!-- 4. Клип: рвёт бумагу «не стал учить код» → чат с ИИ печатается → клип: ноутбук в море → хелпер готов + монеты -->
+    <section class="sec" id="s4" data-trans="zoom">
+      <div class="layer A" data-zoomfrom>
+        <div class="shotz vid full" data-video="tear_paper" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/tear_paper/f_0001.jpg" alt=""></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="row" style="top:200px"><div class="chat card neon" data-fx="up" data-at=".05" style="width:960px">
+          <div class="ch"><div style="width:76px;height:76px;border-radius:50%;background:#06283a;display:flex;align-items:center;justify-content:center;font-size:44px">🤖</div><div><b>Нейросеть</b><span>в сети</span></div></div>
+          <div class="msg me" data-fx="type" data-at=".2" data-d="1.3" style="font-size:40px;max-width:820px">сделай хелпер, чтобы золото в игре добывалось быстрее</div>
+          <div class="msg ai" data-fx="pop" data-at="1.7" style="font-size:36px;max-width:820px">Готово ✅ Вот код и инструкция, как запустить</div></div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at="1.2" style="position:absolute;left:270px;top:820px;width:540px;height:540px"><img src="assets/ai/toon/05_ai_do.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full" data-video="laptop_sea" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/laptop_sea/f_0001.jpg" alt=""></div>
+      </div>
+      <div class="layer D" style="opacity:0">
+        <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:84px;line-height:1.15">ХЕЛПЕР<br><em>ГОТОВ</em></div></div>
+        <div class="row" style="top:480px"><div class="tag dark" data-fx="slam" data-at=".3" style="font-size:44px">🪙 больше золота за то же время</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".3" style="position:absolute;left:210px;top:620px;width:680px;height:680px"><img src="assets/ai/toon/23_launch.png" alt=""></div>
+        <div class="rain" data-fx="rain" data-at=".5" data-n="14"></div>
+      </div>
+    </section>
+
+    <!-- 5. Видео → ссылка → Boosty → аудитория сама пришла (пуш) → 11 человек закидывают (пуш, дождь, счётчик) -->
     <section class="sec" id="s5">
       <div class="layer A">
         <div class="row" style="top:230px"><div class="flow">
           <div class="st" data-fx="pop" data-at=".1">▶ видео</div><div class="ar" data-fx="pop" data-at=".3">→</div>
           <div class="st" data-fx="pop" data-mark="a" data-at="-.1">🔗 ссылка</div><div class="ar" data-fx="pop" data-mark="a" data-at=".1">→</div>
-          <div class="st g" data-fx="pop" data-at=".25">Boosty</div></div></div>
-        <div class="row" style="top:400px"><div class="money" data-fx="slam" data-mark="a" data-at=".5" style="font-size:120px">→ ₽</div></div>
+          <div class="st g" data-fx="pop" data-mark="a" data-at=".3">Boosty</div></div></div>
+        <div class="row" style="top:400px"><div class="money" data-fx="slam" data-mark="a" data-at=".55" style="font-size:130px">→ ₽</div></div>
         <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".6" style="position:absolute;left:220px;top:620px;width:660px;height:660px"><img src="assets/ai/toon/37_funnel.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:64px;line-height:1.2">АУДИТОРИЯ<br><em>ПРИШЛА САМА</em></div></div>
-        <div class="row" style="top:450px"><div class="scr" data-fx="zoom" data-at=".2" style="width:640px;background:#fff"><img src="assets/ai/shots/yt_channel.png" alt=""></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".7" style="position:absolute;left:300px;top:880px;width:500px;height:500px"><img src="assets/ai/toon/27_lead.png" alt=""></div>
+        <div class="push" data-fx="push" data-at=".5" data-hold="2.2"><div class="ic" style="background:linear-gradient(160deg,#ff0000,#c4001a)">▶</div><div class="tx"><b>YouTube · сейчас</b><span>+63 подписчика за 28 дней</span></div></div>
+        <div class="row" style="top:420px"><div class="iph" data-fx="up" data-at=".1" style="width:600px;rotate:-2deg"><div class="scrn" style="background:#fff;padding:60px 14px 30px"><img src="assets/ai/shots/yt_channel.png" alt=""></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at="1.0" style="position:absolute;right:-90px;top:930px;width:460px;height:460px"><img src="assets/ai/toon/27_lead.png" alt=""></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:220px"><div class="scr glow" data-fx="zoom" data-at=".05" style="width:820px"><img src="assets/ai/shots/boosty_paid.png" alt=""></div></div>
-        <div class="row" style="top:470px"><div class="scr" data-fx="up" data-at=".5" style="width:460px"><img src="assets/ai/shots/boosty_month.png" alt=""></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at=".7" style="position:absolute;right:-80px;top:760px;width:560px;height:560px"><img src="assets/ai/toon/03_eleven.png" alt=""></div>
+        <i data-fx="pop" data-at=".6" data-bank="22075" style="position:absolute;opacity:0"></i>
+        <div class="push" data-fx="push" data-at=".2" data-hold="1.6"><div class="ic">B</div><div class="tx"><b>Boosty · сейчас</b><span>+1 платный подписчик</span></div></div>
+        <div class="row" style="top:300px"><div class="iph" data-fx="up" data-at=".05" style="width:600px;rotate:2deg">
+          <div class="scrn"><img src="assets/ai/shots/boosty.png" alt="" data-fx="zoomin" data-at=".6" data-z="2.4" style="--ox:14%;--oy:3%"></div></div></div>
+        <div class="tst" data-fx="peek" data-from="left" data-rot="8" data-at="1.0" style="position:absolute;left:-90px;top:930px;width:470px;height:470px"><img src="assets/ai/toon/03_eleven.png" alt=""></div>
+        <div class="rain" data-fx="rain" data-at=".9" data-n="18"></div>
       </div>
     </section>
 
-    <!-- 6. Но главное не это → как найти боль в любой нише → приём за 10 минут, не только в играх -->
+    <!-- 6. Клип: обезьяна снимает очки «но главное не скрипт» → как найти боль → 10 минут → клип: закат с телефоном -->
     <section class="sec" id="s6" data-trans="smear">
-      <div class="layer A redbg">
-        <div class="ghost" style="top:200px">…</div>
-        <div class="row" style="top:280px"><div class="h1 wt" data-fx="kin" style="font-size:80px;line-height:1.35">НО ГЛАВНОЕ<br>НЕ ЭТО…</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:250px;top:700px;width:600px;height:600px"><img src="assets/ai/toon/32_argue.png" alt=""></div>
+      <div class="layer A">
+        <div class="shotz vid full" data-video="monkey_glasses" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/monkey_glasses/f_0001.jpg" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
         <div class="row" style="top:230px"><div class="h1" data-fx="kin" style="font-size:62px;line-height:1.25">КАК НАЙТИ БОЛЬ<br><em>В ЛЮБОЙ НИШЕ</em></div></div>
         <div class="row" style="top:500px"><div class="tst" data-fx="plop" data-at=".2" style="width:760px;height:760px"><img src="assets/ai/toon/22_idea.png" alt=""></div></div>
       </div>
-      <div class="layer C" style="opacity:0">
-        <div class="row" style="top:220px"><div class="kicker" data-fx="pop" style="font-size:36px">ОДИН ПРИЁМ</div></div>
-        <div class="row" style="top:290px"><div class="money" data-fx="slam" data-at=".1"><span data-count="0,10">0</span> мин<small>чтобы найти боль ниши</small></div></div>
-        <div class="row" style="top:640px"><div class="tag dark" data-fx="slam" data-mark="a" data-at="-.05" style="font-size:44px">и не только в играх 🌍</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="a" data-at=".2" style="position:absolute;left:280px;top:780px;width:560px;height:560px"><img src="assets/ai/toon/31_saved.png" alt=""></div>
+      <div class="layer C redbg" style="opacity:0">
+        <div class="row" style="top:230px"><div class="kicker" data-fx="pop" style="font-size:36px">ОДИН ПРИЁМ</div></div>
+        <div class="row" style="top:300px"><div class="h1 wt" data-fx="slam" data-at=".1" style="font-size:200px;letter-spacing:-8px"><span data-count="0,10">0</span> мин</div></div>
+        <div class="row" style="top:560px"><div class="tag dark" data-fx="pop" data-at=".6" style="font-size:44px">чтобы найти боль ниши</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:260px;top:720px;width:560px;height:560px"><img src="assets/ai/toon/31_saved.png" alt=""></div>
+      </div>
+      <div class="layer D" style="opacity:0">
+        <div class="shotz vid full" data-video="sunset_phone" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/sunset_phone/f_0001.jpg" alt=""></div>
       </div>
     </section>
 
-    <!-- 7. Курс по монетизации на ИИ → без воды → напиши «ИИ» → видео сгенерировано ИИ -->
+    <!-- 7. Клип: прыжок в бассейн «собрал в обучение» → внутри → напиши «ИИ» + бейдж «сгенерировано ИИ» -->
     <section class="sec" id="s7">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:60px;line-height:1.25">КУРС ПО МОНЕТИЗАЦИИ<br><em>НА ИИ</em></div></div>
-        <div class="row" style="top:460px"><div class="tst" data-fx="plop" data-at=".1" style="width:800px;height:800px"><img src="assets/ai/toon/20_course.png" alt=""></div></div>
+        <div class="shotz vid full" data-video="pool_jump" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/pool_jump/f_0001.jpg" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:210px"><div class="notes" data-fx="up" data-at=".05">
-          <div class="nh">ВНУТРИ</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-at=".2"><span style="color:#2fd17a">✓</span>только практика</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-at=".8"><span style="color:#2fd17a">✓</span>мои реальные кейсы</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-at="1.4"><span style="color:#2fd17a">✓</span>от идеи до первых денег</div></div></div>
-        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at="1.0" style="position:absolute;right:-60px;top:800px;width:540px;height:540px"><img src="assets/ai/toon/39_nowater.png" alt=""></div>
+        <div class="row" style="top:200px"><div class="h1" data-fx="kin" style="font-size:60px;line-height:1.25">ОБУЧЕНИЕ<br><em>ПО ИИ</em></div></div>
+        <div class="row" style="top:420px"><div class="notes neon" data-fx="up" data-at=".05">
+          <div class="ni" style="font-size:50px" data-fx="left" data-at=".2"><span style="color:#14a35a">✓</span>только практика</div>
+          <div class="ni" style="font-size:50px" data-fx="left" data-at=".8"><span style="color:#14a35a">✓</span>мои реальные кейсы</div>
+          <div class="ni" style="font-size:50px" data-fx="left" data-at="1.4"><span style="color:#14a35a">✓</span>от идеи до результата</div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-8" data-at="1.0" style="position:absolute;right:-60px;top:860px;width:520px;height:520px"><img src="assets/ai/toon/39_nowater.png" alt=""></div>
       </div>
       <div class="layer C" style="opacity:0">
-        <div class="row" style="top:200px"><div class="h1" data-fx="kin" style="font-size:96px;line-height:1.1">НАПИШИ<br><em>«ИИ»</em></div></div>
-        <div class="row" style="top:440px"><div class="tag" id="cta" data-fx="slam" data-at=".3" style="font-size:46px;line-height:1.2;padding:26px 50px;border-radius:44px;white-space:normal;text-align:center">в комментариях 👇<br>пришлю подробности в личку</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:220px;top:600px;width:640px;height:640px"><img src="assets/ai/toon/13_write_ai.png" alt=""></div>
-        <div class="row" style="top:1200px"><div class="aibadge" data-fx="slam" data-mark="b" data-at="-.05">🤖 это видео полностью сделано ИИ</div></div>
+        <i data-fx="pop" data-at=".2" data-bank="403679" style="position:absolute;opacity:0"></i>
+        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:100px;line-height:1.1">НАПИШИ<br><em>«ИИ»</em></div></div>
+        <div class="row" style="top:470px"><div class="tag" id="cta" data-fx="slam" data-at=".3" style="font-size:46px;line-height:1.2;padding:26px 50px;border-radius:44px;white-space:normal;text-align:center">в комментариях 👇<br>пришлю подробности в личку</div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:220px;top:620px;width:640px;height:640px"><img src="assets/ai/toon/13_write_ai.png" alt=""></div>
+        <div class="row" style="top:1210px"><div class="aibadge" data-fx="slam" data-mark="b" data-at="-.05">🤖 это видео полностью сделано ИИ</div></div>
       </div>
     </section>
   </div>
@@ -514,7 +551,8 @@ body { color: #fff; }
   <canvas id="fx" width="1080" height="1920"></canvas>
   <svg id="smear" viewBox="0 0 1080 1920" width="1080" height="1920"><path id="smearp" pathLength="1" d="M-300 120 L1380 420 L-300 760 L1380 1060 L-300 1400 L1380 1700 L-300 2040" stroke="#ffc93c" stroke-width="520" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity:0"/></svg>
   <div id="story"><div id="bars"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
-    <div id="prof"><img src="assets/ai/avatar.jpg" alt=""><div><div class="n">ИИ на острове 🌴</div><div class="s">заработок на нейросетях</div></div></div></div>
+    <div id="prof"><img src="assets/ai/avatar.jpg" alt=""><div><div class="n">ИИ на острове 🌴</div><div class="s">нейросети · свобода · остров</div></div></div></div>
+  <div id="bank"><i>₽</i><span id="bankv">0 ₽</span></div>
   <canvas id="grain" width="360" height="640"></canvas>
   <div id="flash"></div>
   <div id="subs"></div>

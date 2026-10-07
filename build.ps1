@@ -28,7 +28,7 @@ Get-ChildItem assets\video\src\*.mp4 -ErrorAction SilentlyContinue | ForEach-Obj
     Write-Host "клип: $($_.Name) -> $dir"
     New-Item -ItemType Directory -Force $dir | Out-Null
     Remove-Item "$dir\f_*.jpg" -ErrorAction SilentlyContinue
-    ffmpeg -v error -y -i $_.FullName -vf "fps=30,scale=720:-2" -q:v 3 -start_number 1 "$dir\f_%04d.jpg"
+    ffmpeg -v error -y -i $_.FullName -vf "fps=30,scale='min(iw,900)':-2" -q:v 3 -start_number 1 "$dir\f_%04d.jpg"
     ffmpeg -v error -y -i $_.FullName -vn -ac 1 -ar 48000 "assets\video\$n.wav"
     if ($LASTEXITCODE) { throw "Не нарезался клип $($_.Name)" }
   }

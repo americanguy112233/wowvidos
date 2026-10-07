@@ -132,7 +132,8 @@ const typeOut = (key, t, d, n) => {   // печать команды + щелч�
 const KINS = [];                                     // кинетический текст: слова подпрыгивают, когда их произносит голос
 const COUNTS = [];                                   // счётчики: { el, o: { v }, ph }
 const VIDS = [];                                     // видео-вставки: { img, name, from, rate, n, t0, t1 }
-const BURSTS = [];                                   // взрывы частиц: { t, x, y (мировые координаты), c }
+const BURSTS = [];
+const RAINS = [], TYPES = [], BANK = [];             // ИИ-блог: монетный дождь, печать текста, счётчик ₽ в углу                                   // взрывы частиц: { t, x, y (мировые координаты), c }
 const SECS = [...document.querySelectorAll('.sec')];
 const POS = new Map();                               // центры элементов до анимаций (для частиц)
 document.querySelectorAll('[data-fx], [data-shatter]').forEach(el => {
@@ -174,6 +175,17 @@ const FX = {
   // облачко-реплика: раздувается из хвостика (transform-origin задан в CSS у .bubble)
   bub:   (el, t) => { tl.fromTo(el, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: .45, ease: 'back.out(2.2)', immediateRender: true }, t); sfx(t, 'blip', { f: 1.1 }); },
   write: (el, t) => { tl.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'power1.inOut', immediateRender: true }, t); sfx(t, 'zip', { d: .8 }); },
+  // ── ИИ-блог: наезд на цифру, монетный дождь, пуш-уведомление, печать текста ──
+  zoomin:(el, t) => { const z = +(el.dataset.z || 2.2);
+    tl.fromTo(el, { scale: 1 }, { scale: z, duration: .5, ease: 'power3.inOut', immediateRender: false }, t);
+    flashAt(t + .42, .55, .3); sfx(t, 'swoosh', { f: .8 }); sfx(t + .45, 'coin'); sfx(t + .5, 'sparkle'); },
+  rain:  (el, t) => { RAINS.push({ el, t }); sfx(t, 'coin'); sfx(t + .25, 'coin'); sfx(t + .5, 'sparkle'); sfx(t + .7, 'coin'); },
+  push:  (el, t) => { const hold = +(el.dataset.hold || 1.8);
+    tl.fromTo(el, { y: -320, opacity: 0 }, { y: 0, opacity: 1, duration: .42, ease: 'back.out(1.7)', immediateRender: true }, t);
+    tl.to(el, { y: -320, opacity: 0, duration: .32, ease: 'power2.in' }, t + hold); sfx(t, 'ding', { f: 1.25 }); },
+  type:  (el, t) => { const full = el.textContent, o = { n: 0 }, d = +(el.dataset.d || Math.min(1.6, full.length * .035));
+    tl.set(el, { opacity: 1 }, 0); TYPES.push({ el, full, t, d });
+    for (let k = 0; k < full.length; k += 3) sfx(t + d * k / full.length, 'tick', { f: 1.3 + (k % 7) * .05, g: .4 }); },
   slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); if (!el.closest('.layer')?.querySelector('.vid.full')) burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
 function startCount(el, t) {
@@ -198,6 +210,7 @@ function layerFx(layer, i, t0, t1) {
       tl.fromTo(el, { scale: 1.28 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, .04 + k * .03);
     } else (FX[el.dataset.fx] || FX.pop)(el, t);
     startCount(el, t);
+    if (el.dataset.bank) { BANK.push({ t, v: +el.dataset.bank }); sfx(t + .1, 'coin'); }
     (el.dataset.react || '').split(',').filter(Boolean).forEach(k => { const m = SC[i].marks?.[k]; if (m == null || m < t0 || m > t1) return;
       tl.to(el, { keyframes: { rotation: [0, -9, 8, -4, 0], scale: [1, 1.12, .98, 1.04, 1] }, duration: .5, ease: 'none' }, m - .05); sfx(m - .05, 'bonk'); });
   });
@@ -372,7 +385,7 @@ SC.forEach((sc, i) => {
     if (cur.length && (t - cur.at(-1).t > .6)) flush();
     cur.push({ t, w });
     const chars = cur.reduce((n, c) => n + c.w.length + 1, 0);
-    if (cur.length >= 3 || /[.,!?:;…]$/.test(w) || (chars > 15 && cur.length >= 2)) flush();
+    if (cur.length >= 2 || /[.,!?:;…]$/.test(w) || chars > 11) flush();
   });
   flush();
 });
@@ -404,9 +417,29 @@ function subs(t) {
   });
 }
 
-// ---------------------------------------------------------------- микродвижение, зерно, фон
+// ---------------------------------------------------------------- ИИ-блог: дождь из монет, печать, счётчик ₽
 const rnd = (k, n) => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
-const MICRO = [...document.querySelectorAll('.card,.tst,.plate,.lbl,.tag,.prop,.h1,.h2,.ul:not(.spin),.clay,.bubble')].map((el, k) => ({ el, k, br: el.classList.contains('tst') }));
+const COIN = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6c2"/><stop offset=".45" stop-color="#ffcf3a"/><stop offset="1" stop-color="#c47d00"/></radialGradient></defs><circle cx="50" cy="50" r="46" fill="url(#g)"/><circle cx="50" cy="50" r="33" fill="none" stroke="#b97300" stroke-width="5"/><text x="50" y="66" font-family="Arial Black,Arial" font-weight="900" font-size="44" text-anchor="middle" fill="#a86400">₽</text><ellipse cx="34" cy="28" rx="14" ry="8" fill="#fff" opacity=".7"/></svg>');
+RAINS.forEach((r, i) => { r.coins = Array.from({ length: +(r.el.dataset.n || 18) }, (_, k) => {
+  const im = document.createElement('img'); im.src = COIN; im.className = 'coin3d'; r.el.appendChild(im);
+  return { im, x: 60 + rnd(k + i * 31, 7) * 960, s: 70 + rnd(k + i * 31, 8) * 70, dl: rnd(k + i * 31, 9) * .55, fy: 1150 + rnd(k + i * 31, 10) * 300, sp: (rnd(k + i * 31, 11) - .5) * 720 }; }); });
+function drawRain(t) { for (const r of RAINS) for (const c of r.coins) {
+  const d = t - r.t - c.dl; if (d < 0 || d > 2.3) { c.im.style.opacity = 0; continue; }
+  const T = .75, y = d < T ? -200 + (c.fy + 200) * (d / T) ** 2 : c.fy - Math.abs(Math.sin((d - T) * 7)) * 140 * Math.exp(-(d - T) * 3.5);
+  c.im.style.opacity = d > 1.9 ? (2.3 - d) / .4 : 1;
+  c.im.style.transform = `translate(${(c.x - c.s / 2).toFixed(1)}px,${y.toFixed(1)}px) rotate(${(c.sp * d).toFixed(1)}deg) rotateY(${(d * 540 % 360).toFixed(0)}deg)`;
+  c.im.style.width = c.s.toFixed(0) + 'px'; } }
+function drawTypes(t) { for (const y of TYPES) { const n = Math.max(0, Math.min(y.full.length, Math.round((t - y.t) / y.d * y.full.length)));
+  const cur = (t - y.t < y.d + 1.2) && Math.floor(t * 2.5) % 2 === 0 ? '▍' : ''; const s = y.full.slice(0, n) + cur; if (y.el.textContent !== s) y.el.textContent = s; } }
+const fmt = v => Math.round(v).toLocaleString('ru-RU').replace(/\u00a0|,/g, ' ');
+function drawBank(t) { const el = $('bankv'); if (!el) return; let v = 0, p = 0, tt = -9;
+  for (const b of BANK) if (t >= b.t) { p = v; v = b.v; tt = b.t; }
+  const k = Math.min(1, (t - tt) / .8), cur = p + (v - p) * (1 - (1 - k) ** 3); el.textContent = fmt(cur) + ' ₽';
+  const box = $('bank'); box.style.opacity = BANK.length && t >= BANK[0].t - .2 && t < DUR - LOOP ? 1 : 0;
+  box.style.scale = (1 + .18 * Math.max(0, 1 - (t - tt) / .35)).toFixed(3); }
+
+// ---------------------------------------------------------------- микродвижение, зерно, фон
+const MICRO = [...document.querySelectorAll('.iph,.push,.card,.tst,.plate,.lbl,.tag,.prop,.h1,.h2,.ul:not(.spin),.clay,.bubble')].map((el, k) => ({ el, k, br: el.classList.contains('tst') }));
 function micro(t) {
   for (const m of MICRO) {
     const a = 2 * Math.PI * (.12 + rnd(m.k, 1) * .1), ph = rnd(m.k, 2) * 6.28, amp = m.el.classList.contains('h1') || m.el.classList.contains('h2') ? 4 : 9;
@@ -433,13 +466,17 @@ const gc = document.getElementById('grain')?.getContext('2d'), GT = [];
 // зерно — один неподвижный кадр, еле заметный: живая «рябь» 24 раза в секунду утомляла глаза
 if (gc) { const im = gc.createImageData(360, 640); for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (rnd(i, 1) - .5) * 160; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; } gc.putImageData(im, 0, 0); }
 function grain(t) {}
-function blobs(t) { document.querySelectorAll('#isle .palm').forEach((p, k) => (p.style.rotate = `${(Math.sin(t * .7 + k * 2) * 2.2).toFixed(2)}deg`));
+function blobs(t) { document.querySelectorAll('#isle .spark').forEach((s, k) => (s.style.opacity = (Math.max(0, Math.sin(t * (1.3 + rnd(k, 12)) + k * 1.7)) ** 6).toFixed(3)));
+  const sh = document.querySelector('#isle .shade'); if (sh) sh.style.translate = `${(Math.sin(t * .18) * 160).toFixed(1)}px ${(Math.cos(t * .13) * 60).toFixed(1)}px`;
+  document.querySelectorAll('#isle .palm').forEach((p, k) => (p.style.rotate = `${(Math.sin(t * .7 + k * 2) * 2.2).toFixed(2)}deg`));
   document.querySelectorAll('.blob').forEach((b, k) => {
   b.style.translate = `${(Math.sin(t * .12 + k * 2) * 50 - P.cam / H * 60).toFixed(1)}px ${(Math.cos(t * .1 + k) * 40).toFixed(1)}px`; }); }
 
 // ---------------------------------------------------------------- кадр
 let lastFilter = '';
 function apply(t) {
+  document.documentElement.style.setProperty('--t', t.toFixed(3));
+  drawRain(t); drawTypes(t); drawBank(t);
   const camX = P.cam / H * W, fr0 = (P.cam / H) % 1, sw = Math.sin(Math.PI * fr0);
   $('world').style.transformOrigin = `${(camX + P.zx).toFixed(1)}px ${P.zy.toFixed(1)}px`;
   $('world').style.transform = `translate3d(${(-camX).toFixed(1)}px,0,0) scale(${((1 - .08 * sw) * P.zs).toFixed(4)})`;
@@ -480,7 +517,7 @@ function apply(t) {
     b.style.width = (p * 100).toFixed(2) + '%';
   });
   // счётчики
-  for (const c of COUNTS) { const v = c.o.v < 0 ? c.ph : String(Math.round(c.o.v)); if (c.el.textContent !== v) c.el.textContent = v; }
+  for (const c of COUNTS) { const v = c.o.v < 0 ? c.ph : Math.round(c.o.v).toLocaleString('ru-RU').replace(/\u00a0|,/g, ' '); if (c.el.textContent !== v) c.el.textContent = v; }
   drawBursts(t);
   drawSpeed(t);
   subs(t);

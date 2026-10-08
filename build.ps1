@@ -22,17 +22,28 @@ New-Item -ItemType Directory -Force build | Out-Null
 
 # WoW (ветка wow-anna): ролик 16:9, 30 к/с. Геймплей владельца — assets\video\src\wowfarm.mp4
 if (-not (Test-Path assets\video\src\wowfarm.mp4) -and -not (Test-Path assets\video\wowfarm\f_0001.jpg)) { throw 'Положи своё видео с фармом в assets\video\src\wowfarm.mp4' }
+if (Test-Path assets\video\src\wowfarm.mp4) {
+  $wl = [double](ffprobe -v error -show_entries format=duration -of csv=p=0 assets\video\src\wowfarm.mp4)
+  if ($wl -lt 255) { throw "assets\video\src\wowfarm.mp4 длится $([math]::Round($wl)) с, а ролик собран из исходника на 262 с (WoW_Forever___The_INSANE_Hyperspawn...). Положи именно его." }
+}
 # 0. клипы владельца: assets\video\src\<имя>.mp4 -> кадры assets\video\<имя>\f_0001.jpg (30 к/с) + <имя>.wav
 Get-ChildItem assets\video\src\*.mp4 -ErrorAction SilentlyContinue | ForEach-Object {
   $n = ($_.BaseName -replace '\s+', '_').ToLower()
   $dir = "assets\video\$n"
-  if (-not (Test-Path "$dir\f_0001.jpg") -or ($_.LastWriteTime -gt (Get-Item "$dir\f_0001.jpg").LastWriteTime)) {
+  # сколько кадров должно быть: длина видео × 30 (если нарезка прервалась, кадров меньше — режем заново)
+  $len = [double](ffprobe -v error -show_entries format=duration -of csv=p=0 $_.FullName)
+  $need = [math]::Floor($len * 30) - 5
+  $have = @(Get-ChildItem "$dir\f_*.jpg" -ErrorAction SilentlyContinue).Count
+  if ($have -lt $need -or -not (Test-Path "$dir\f_0001.jpg") -or ($_.LastWriteTime -gt (Get-Item "$dir\f_0001.jpg").LastWriteTime)) {
     Write-Host "клип: $($_.Name) -> $dir"
     New-Item -ItemType Directory -Force $dir | Out-Null
     Remove-Item "$dir\f_*.jpg" -ErrorAction SilentlyContinue
     ffmpeg -v error -y -i $_.FullName -vf "fps=30,scale='min(iw,1280)':-2" -q:v 3 -start_number 1 "$dir\f_%04d.jpg"
     ffmpeg -v error -y -i $_.FullName -vn -ac 1 -ar 48000 "assets\video\$n.wav"
     if ($LASTEXITCODE) { throw "Не нарезался клип $($_.Name)" }
+    $have = @(Get-ChildItem "$dir\f_*.jpg").Count
+    if ($have -lt $need) { throw "Клип $($_.Name) нарезался не полностью: $have кадров из $need. Проверь место на диске и запусти ещё раз." }
+    Write-Host "  готово: $have кадров"
   }
 }
 

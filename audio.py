@@ -221,6 +221,55 @@ def sparkle(seed=0):
         i = int(t0 * SR); out[i:i + len(b)] += b[:len(out) - i]
     return out
 
+# ── WoW-подобные звуки интерфейса (свои, синтез; не оригинальные файлы игры) ──
+def _pl(f, L=.6, b=.9):        # щипок арфы
+    t = T(L); return (np.sin(2*np.pi*f*t) + .35*np.sin(4*np.pi*f*t) + .12*np.sin(6*np.pi*f*t)) * np.exp(-t/(L*.35)) * np.minimum(1, t/.003) * .3 * b
+def wcoin(seed=0):              # звон монет при луте: несколько металлических «дзынь»
+    r = np.random.default_rng(seed); out = np.zeros(int(.7*SR))
+    for k in range(5):
+        t0 = k*.05 + r.random()*.03; f = 2600 + r.random()*1800; L = .35; t = T(L)
+        y = sum(a*np.sin(2*np.pi*f*m*t)*np.exp(-t/d) for m, a, d in ((1, 1, .12), (1.47, .6, .08), (2.09, .35, .05), (2.9, .2, .03)))
+        y = y * np.minimum(1, t/.0015) * .16; i = int(t0*SR); out[i:i+len(y)] += y[:len(out)-i]
+    return out
+def bagopen():                  # кожаная сумка: мягкий «флоп» + пряжка
+    t = T(.35); fl = lp(noise(.35), 700) * np.exp(-t/.07) * np.minimum(1, t/.01) * .9
+    bk = np.zeros_like(t); tb = T(.05); b = (bp(noise(.05), 2500, 6000)*.6 + np.sin(2*np.pi*3100*tb)*.3) * np.exp(-tb/.008)
+    i = int(.12*SR); bk[i:i+len(b)] += b
+    return (fl + bk) * .8
+def questacc():                 # «задание принято»: три ноты арфы вверх
+    out = np.zeros(int(1.2*SR))
+    for k, m in enumerate((72, 76, 79, 84)):
+        y = _pl(midi(m), .9); i = int(k*.07*SR); out[i:i+len(y)] += y[:len(out)-i]
+    return out
+def questdone():                # «задание выполнено»: короткая фанфара
+    out = np.zeros(int(1.8*SR))
+    for k, (ms, L) in enumerate((((60, 64, 67), .22), ((62, 65, 69), .22), ((64, 67, 72, 76), 1.3))):
+        t = T(L); y = 0
+        for m in ms: f = midi(m); y = y + lp(saw(f, t) + .6*saw(f*1.004, t), 2400)
+        y = y * np.minimum(1, t/.02) * np.exp(-t/(L*.6)) * .12; i = int(k*.2*SR); out[i:i+len(y)] += y[:len(out)-i]
+    b = bell(2093, 1.0, .6); i = int(.4*SR); out[i:i+len(b)] += b[:len(out)-i]
+    return out
+def levelup():                  # «левел-ап»: сияющий аккорд колокольчиков + подъём
+    out = np.zeros(int(2.0*SR))
+    for k, m in enumerate((72, 76, 79, 84, 88)):
+        y = _pl(midi(m), 1.2, .8); i = int(k*.06*SR); out[i:i+len(y)] += y[:len(out)-i]
+    for f in (1046.5, 1318.5, 1568, 2093): b = bell(f, 1.6, .5); out[int(.3*SR):int(.3*SR)+len(b)] += b[:len(out)-int(.3*SR)]
+    return out
+def portal(d=.9):               # портал: низкий гул + закручивающийся шум
+    t = T(d+.4); p = np.clip(t/d, 0, 1)
+    n = svf_sweep(noise(len(t)/SR), 200 + 2400*np.sin(np.pi*p)**2 * (1 + .3*np.sin(t*40)), .5) * np.sin(np.pi*p)**1.2
+    hum = np.sin(2*np.pi*np.cumsum(70 + 60*p)/SR) * np.sin(np.pi*p) * .5
+    return (n*.6 + hum*.5) * .8
+def chains():                   # цепи звенят
+    r = np.random.default_rng(7); out = np.zeros(int(.8*SR))
+    for k in range(9):
+        t0 = k*.06 + r.random()*.04; L = .12; t = T(L); f = 1800 + r.random()*1500
+        y = (np.sin(2*np.pi*f*t) + .5*np.sin(2*np.pi*f*2.3*t) + bp(noise(L), 3000, 8000)*.5) * np.exp(-t/.025) * .2
+        i = int(t0*SR); out[i:i+len(y)] += y[:len(out)-i]
+    return out
+def crack():                    # замок ломается
+    t = T(.6); return (lp(noise(.6), 3000)*np.exp(-t/.03)*.9 + np.sin(glide(220, 60, t, .05))*np.exp(-t/.15)*.6 + hp(noise(.6), 5000)*np.exp(-t/.25)*.15)
+
 _clips = {}
 def clip(e):
     """Звук из видео-вставки: кусок wav с from, длиной d, с короткими фейдами."""
@@ -242,9 +291,11 @@ MONO = {'clip': clip, 'pop': lambda e: pop(e.get('f', 1)), 'thump': lambda e: th
         'click': lambda e: click(), 'blip': lambda e: blip(e.get('f', 1)), 'check': lambda e: check(),
         'zip': lambda e: zip_(e.get('d', .7)), 'riser': lambda e: riser(e.get('d', 1.5)), 'fall': lambda e: fall(e.get('d', .3)),
         'impact': lambda e: impact(), 'sparkle': lambda e: sparkle(int(e['t'] * 10)), 'swoosh': lambda e: swoosh(e.get('f', 1)),
-        'swish': lambda e: swoosh(1.8 * e.get('f', 1)) * .6}
+        'swish': lambda e: swoosh(1.8 * e.get('f', 1)) * .6,
+        'wcoin': lambda e: wcoin(int(e['t'] * 10)), 'bagopen': lambda e: bagopen(), 'questacc': lambda e: questacc(), 'questdone': lambda e: questdone(),
+        'levelup': lambda e: levelup(), 'portal': lambda e: portal(e.get('d', .9)), 'chains': lambda e: chains(), 'crack': lambda e: crack()}
 GAIN = {'pop': .8, 'thump': .7, 'tick': .5, 'bonk': .9, 'ding': .8, 'success': .8, 'coin': .8, 'click': 1, 'blip': .8, 'check': .9,
-        'zip': .6, 'riser': .5, 'fall': .5, 'impact': 1.0, 'sparkle': .7, 'swoosh': .75, 'swish': .6, 'whoosh': .9}
+        'zip': .6, 'riser': .5, 'fall': .5, 'impact': 1.0, 'sparkle': .7, 'swoosh': .75, 'swish': .6, 'whoosh': .9, 'wcoin': .9, 'bagopen': .8, 'questacc': .9, 'questdone': .8, 'levelup': .9, 'portal': .8, 'chains': .7, 'crack': .9}
 
 events = json.load(open(sys.argv[1], encoding='utf-8'))
 for e in events:

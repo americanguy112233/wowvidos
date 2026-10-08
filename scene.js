@@ -8,11 +8,14 @@ const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
 const $ = id => document.getElementById(id);
 const SFX = [];
-const sfx = (t, type, o = {}) => SFX.push({ t: +t.toFixed(3), type, ...o });
+// WoW: «общие» звуки появления тише, чтобы на первом плане были звуки интерфейса WoW (монеты, сумка, задания)
+const QUIET = { pop: .5, swoosh: .45, thump: .45, tick: .5, bonk: .5, whoosh: .5, impact: .5, coin: .6 };
+const sfx = (t, type, o = {}) => SFX.push({ t: +t.toFixed(3), type, ...o, g: (o.g ?? 1) * (QUIET[type] ?? 1) });
 const mk = (i, k, def) => SC[i].marks?.[k] ?? SC[i].start + def;   // метка из озвучки или запасное время
 
 const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
-const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, zs: 1, zx: 960, zy: 540, sm: 0, sm2: 0 };
+const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, zs: 1, zx: 960, zy: 540, sm: 0, sm2: 0, dip: 0, pt: 0, ld: 0, lp: 0 };
+const LOADS = [];                                // экраны загрузки: { t0, t1, hint }
 
 const W = 1920;
 document.querySelectorAll('.sec').forEach((s, i) => { s.style.left = i * W + 'px'; s.style.top = '0px'; });
@@ -86,8 +89,25 @@ const secCenter = (sec, sel) => { const el = sec.querySelector(sel); if (!el) re
   const r = el.getBoundingClientRect(), s0 = sec.getBoundingClientRect(); return { x: r.left - s0.left + r.width / 2, y: r.top - s0.top + r.height / 2 }; };
 const SECS0 = [...document.querySelectorAll('.sec')];
 for (let i = 1; i < SC.length; i++) {
-  const t = snap(SC[i].start) - .5, tr = SECS0[i]?.dataset.trans || 'swipe';
-  if (tr === 'zoom') {
+  const t = snap(SC[i].start) - .5, tr = SECS0[i]?.dataset.trans || 'fade';
+  if (tr === 'fade') {            // спокойный переход: короткое затемнение
+    tl.fromTo(P, { dip: 0 }, { dip: .92, duration: .28, ease: 'power1.in', immediateRender: false }, t + .1);
+    tl.set(P, { cam: i * H }, t + .38);
+    tl.to(P, { dip: 0, duration: .4, ease: 'power1.out' }, t + .38);
+    sfx(t + .1, 'whoosh', { d: .5, g: .5 });
+  } else if (tr === 'portal') {   // портал: фиолетовый вихрь закрывает экран и раскрывается в новой сцене
+    tl.fromTo(P, { pt: 0 }, { pt: 1, duration: .45, ease: 'power2.in', immediateRender: false }, t - .1);
+    tl.set(P, { cam: i * H }, t + .35);
+    tl.to(P, { pt: 0, duration: .55, ease: 'power2.out' }, t + .35);
+    sfx(t - .1, 'portal', { d: 1 });
+  } else if (tr === 'load') {     // экран загрузки как в WoW: логотип, полоса загрузки, подсказка
+    const t0 = t - .45, hint = SECS0[i]?.dataset.hint || '';
+    tl.fromTo(P, { ld: 0 }, { ld: 1, duration: .25, ease: 'power1.out', immediateRender: false }, t0);
+    tl.fromTo(P, { lp: 0 }, { lp: 1, duration: 1.0, ease: 'power1.inOut', immediateRender: false }, t0 + .15);
+    tl.set(P, { cam: i * H }, t0 + .6);
+    tl.to(P, { ld: 0, duration: .3, ease: 'power1.in' }, t0 + 1.2);
+    LOADS.push({ t0, t1: t0 + 1.5, hint }); sfx(t0, 'questacc', { g: .6 });
+  } else if (tr === 'zoom') {
     const a = secCenter(SECS0[i - 1], '[data-zoomto]') || { x: 960, y: 500 }, b = secCenter(SECS0[i], '[data-zoomfrom]') || { x: 960, y: 540 };
     tl.set(P, { zx: a.x, zy: a.y }, t);
     tl.fromTo(P, { zs: 1 }, { zs: 4, duration: .27, ease: 'power3.in', immediateRender: false }, t);
@@ -182,7 +202,24 @@ const FX = {
   // таймер респавна: кольцо и цифры от data-n до 0 за data-d секунд (иллюстрация, время сжато)
   timer: (el, t) => { pop(el, t, { s: .5, d: .4 }); TIMERS.push({ el, t: t + .3, d: +(el.dataset.d || 2.5), n: +(el.dataset.n || 12) }); sfx(t, 'pop');
                       for (let k = 0; k < 6; k++) sfx(t + .3 + k * (+(el.dataset.d || 2.5)) / 6, 'tick', { f: 1.2, g: .5 }); sfx(t + .3 + (+(el.dataset.d || 2.5)), 'ding', { f: 1.1 }); },
-  rain:  (el, t) => { RAINS.push({ el, t }); sfx(t, 'coin'); sfx(t + .25, 'coin'); sfx(t + .5, 'sparkle'); sfx(t + .7, 'coin'); },
+  rain:  (el, t) => { RAINS.push({ el, t }); if (el.dataset.img === 'linen') { sfx(t, 'bagopen'); sfx(t + .5, 'bagopen', { g: .6 }); } else { sfx(t, 'wcoin'); sfx(t + .45, 'wcoin', { g: .7 }); sfx(t + .9, 'wcoin', { g: .5 }); } },
+  // название главы как при входе в новую зону WoW: проявляется, буквы сходятся, держится data-hold с и гаснет
+  zone:  (el, t) => { const hold = +(el.dataset.hold || 2.4);
+    tl.set(el, { opacity: 0 }, 0);
+    tl.fromTo(el, { opacity: 0, letterSpacing: '26px' }, { opacity: 1, letterSpacing: '6px', duration: .9, ease: 'power2.out', immediateRender: false }, t);
+    tl.to(el, { opacity: 0, duration: .7, ease: 'power1.in' }, t + .9 + hold); },
+  // из сундука вылетают листки
+  fly:   (el, t) => { tl.fromTo(el, { y: 260, x: -(+(el.dataset.dx || 0)), scale: .2, rotation: 0, opacity: 0 }, { y: 0, x: 0, scale: 1, rotation: +(el.dataset.rot || 0), opacity: 1, duration: .7, ease: 'back.out(1.4)', immediateRender: true }, t); sfx(t, 'swoosh', { f: .9 }); },
+  // сундук на цепях: на метке data-crack замок трескается, цепи падают, из щели бьёт свет
+  chest: (el, t) => { pop(el, t, { s: .7, d: .5 }); sfx(t + .1, 'chains');
+    const i = SECS.indexOf(el.closest('.sec')), m = SC[i]?.marks?.[el.dataset.crack] ?? t + 1.5, c = Math.max(t + .8, m - .05);
+    const lock = el.querySelector('.lock'), ch = el.querySelectorAll('.chain'), ray = el.querySelector('.rays'), lid = el.querySelector('.lid');
+    tl.to(lock, { keyframes: { x: [0, -10, 9, -7, 5, 0], rotation: [0, -8, 7, -5, 3, 0] }, duration: .45, ease: 'none' }, c - .45);
+    tl.to(lock, { y: 260, rotation: 50, opacity: 0, duration: .6, ease: 'power2.in' }, c);
+    ch.forEach((x, k) => tl.to(x, { y: 300, rotation: k ? 25 : -25, opacity: 0, duration: .7, ease: 'power2.in' }, c + .05));
+    tl.fromTo(ray, { opacity: 0, scale: .4 }, { opacity: 1, scale: 1, duration: .6, ease: 'power2.out', immediateRender: true }, c + .1);
+    tl.to(lid, { rotation: -14, y: -30, duration: .5, ease: 'back.out(2)' }, c + .1);
+    flashAt(c + .1, .35, .4); sfx(c, 'crack'); sfx(c + .15, 'sparkle'); sfx(c + .3, 'wcoin', { g: .7 }); },
   push:  (el, t) => { const hold = +(el.dataset.hold || 1.8);
     tl.fromTo(el, { y: -320, opacity: 0 }, { y: 0, opacity: 1, duration: .42, ease: 'back.out(1.7)', immediateRender: true }, t);
     tl.to(el, { y: -320, opacity: 0, duration: .32, ease: 'power2.in' }, t + hold); sfx(t, 'ding', { f: 1.25 }); },
@@ -213,6 +250,7 @@ function layerFx(layer, i, t0, t1) {
       tl.fromTo(el, { scale: 1.28 }, { scale: 1, duration: .5, ease: 'back.out(3)', immediateRender: false }, .04 + k * .03);
     } else (FX[el.dataset.fx] || FX.pop)(el, t);
     startCount(el, t);
+    if (el.dataset.sfx) el.dataset.sfx.split(',').forEach((x, k) => sfx(t + .05 + k * .3, x));   // WoW: звук интерфейса к элементу (wcoin, bagopen, questacc, questdone, levelup)
     if (el.dataset.bank) { BANK.push({ t, v: +el.dataset.bank }); sfx(t + .1, 'coin'); }
     (el.dataset.react || '').split(',').filter(Boolean).forEach(k => { const m = SC[i].marks?.[k]; if (m == null || m < t0 || m > t1) return;
       tl.to(el, { keyframes: { rotation: [0, -9, 8, -4, 0], scale: [1, 1.12, .98, 1.04, 1] }, duration: .5, ease: 'none' }, m - .05); sfx(m - .05, 'bonk'); });
@@ -243,7 +281,7 @@ function layerFx(layer, i, t0, t1) {
     } else tl.fromTo(img, { scale: 1 }, { scale: 1.06, duration: Math.max(.5, t1 - t0), ease: 'none', immediateRender: false }, t0);
   });
 }
-const CUTS = [];
+const CUTS = [], MINL = 2.4;                        // WoW: кадр держится не меньше ~2.4 с
 SECS.forEach((sec, i) => {
   const s = i ? SC[i].start : 0, e = SC[i].start + SC[i].dur;
   const L = [...sec.querySelectorAll(':scope > .layer')];
@@ -252,15 +290,16 @@ SECS.forEach((sec, i) => {
     const key = ['x', 'y', 'z', 'u', 'v', 'w'][n], m = SC[i].marks?.[key];
     let c = m != null ? m - .12 : s + SC[i].dur * (n + 1) / L.length;
     const prev = cuts.at(-1) ?? s;
-    c = Math.max(prev + 1.3, Math.min(e - 1.4 * (L.length - 1 - n), c));
+    c = Math.max(prev + MINL, Math.min(e - MINL * (L.length - 1 - n), c));
     if (i === 0 && n === 0) c = Math.min(Math.max(c, 1.6), 2.2);   // хук: склейка до 2.2 с
-    c = Math.max(prev + 1.2, snap(c));                              // склейка — на долю бита
+    c = Math.max(prev + MINL - .3, snap(c));                        // склейка — на долю бита
     cuts.push(c); CUTS.push(c);
     if (n === 0 && i > 0 && CONN[i - 1]) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
-    tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
-    tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .2, .2); speedAt(c, .45);   // WoW: на тёмном геймплее сильная вспышка «засвечивает» кадр if (!layer.querySelector('.vid.full:not(.game)')) BURSTS.push({ t: c, x: i * W + 960, y: 480, c: '255,201,60' });   // на клипе брызги выглядят как пятна на лице
-    sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
+    // WoW: мягкая склейка — наплыв 0.4 с вместо вспышки и линий скорости (владелец: «слишком динамично»)
+    tl.fromTo(layer, { opacity: 0 }, { opacity: 1, duration: .4, ease: 'power1.inOut', immediateRender: false }, c - .2);
+    tl.set(L[n], { opacity: 0 }, c + .2);
+    tl.fromTo(layer, { scale: 1.02 }, { scale: 1, duration: .6, ease: 'power2.out', immediateRender: false }, c - .2);   // WoW: на тёмном геймплее сильная вспышка «засвечивает» кадр if (!layer.querySelector('.vid.full:not(.game)')) BURSTS.push({ t: c, x: i * W + 960, y: 480, c: '255,201,60' });   // на клипе брызги выглядят как пятна на лице
+    sfx(c - .2, 'whoosh', { d: .4, g: .4 });
   });
   // первый кадр сцены начинает оживать, когда камера приезжает (переход кончается на доле бита, иногда раньше начала реплики)
   L.forEach((layer, n) => layerFx(layer, i, n ? cuts[n - 1] : (i ? Math.min(s, snap(s)) - .15 : 0), cuts[n] ?? e));
@@ -334,9 +373,9 @@ async function loadStickers() {
 
 // ---------------------------------------------------------------- фон: скриншоты игры + искры
 const BG_FOREST = [1, 1, 0, 1, 1, 0];          // 0 — Тёмный портал (bgA), 1 — лес (bgB)
-const EMB = [...Array(70)].map((_, k) => {     // детерминированные искры (одинаковые при каждом рендере)
+const EMB = [...Array(36)].map((_, k) => {     // детерминированные искры (одинаковые при каждом рендере)
   const r = n => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
-  return { x: r(1) * W, sp: 40 + r(2) * 90, sz: 1.5 + r(3) * 3.5, ph: r(4) * H, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
+  return { x: r(1) * W, sp: 12 + r(2) * 30, sz: 1.5 + r(3) * 3.5, ph: r(4) * H, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
 });
 const emb = document.getElementById('embers').getContext('2d');
 function drawEmbers(t) {
@@ -344,9 +383,11 @@ function drawEmbers(t) {
   for (const e of EMB) {
     const y = H - ((e.ph + t * e.sp) % (H + 80));
     const x = e.x + Math.sin(t * e.fr + e.ph) * e.sw;
-    const g = emb.createRadialGradient(x, y, 0, x, y, e.sz * 3);
-    g.addColorStop(0, `rgba(255,214,120,${e.a})`); g.addColorStop(1, 'rgba(255,140,40,0)');
-    emb.fillStyle = g; emb.beginPath(); emb.arc(x, y, e.sz * 3, 0, 7); emb.fill();
+    // светлячки: мерцают, тёплый жёлто-зелёный свет (ночная локация у причала)
+    const a = e.a * (.35 + .65 * Math.max(0, Math.sin(t * (1.1 + e.fr) + e.ph)) ** 2), r = e.sz * 4;
+    const g = emb.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(240,255,170,${a.toFixed(3)})`); g.addColorStop(.35, `rgba(200,255,120,${(a * .5).toFixed(3)})`); g.addColorStop(1, 'rgba(160,255,90,0)');
+    emb.fillStyle = g; emb.beginPath(); emb.arc(x, y, r, 0, 7); emb.fill();
   }
 }
 
@@ -508,6 +549,20 @@ function apply(t) {
   $('mbg').setAttribute('stdDeviation', `${P.mb.toFixed(2)} 0`);
   if (f !== lastFilter) { $('view').style.filter = f; lastFilter = f; }
   $('fade').style.opacity = P.fade;
+  if ($('dip')) $('dip').style.opacity = P.dip.toFixed(3);
+  if ($('portal')) { const pt = P.pt; $('portal').style.opacity = Math.min(1, pt * 1.6).toFixed(3);
+    $('portal').style.transform = `translate(-50%,-50%) scale(${(.05 + pt * 3.2).toFixed(3)}) rotate(${(t * 220).toFixed(1)}deg)`; }
+  if ($('load')) { $('load').style.opacity = P.ld.toFixed(3); $('ldbar').style.width = (P.lp * 100).toFixed(1) + '%';
+    const L = LOADS.find(o => t >= o.t0 && t <= o.t1); if (L && $('ldhint').textContent !== L.hint) $('ldhint').textContent = L.hint; }
+  // полоса «задания»: этап загорается, когда начинается сцена с data-stage=N
+  if ($('qbar')) { const st = SECS.map((s, i) => s.dataset.stage != null ? [+s.dataset.stage, SC[i].start] : null).filter(Boolean).sort((a, b) => a[0] - b[0]);
+    const n = st.length; let f = 0;
+    for (let k = 0; k < n; k++) { const a = st[k][1], b = st[k + 1]?.[1]; if (t >= a) f = b == null ? 1 : Math.min(1, k / (n - 1) + (t - a) / (b - a) / (n - 1)); }
+    if (t < st[0]?.[1]) f = 0;
+    $('qfill').style.width = (f * 100).toFixed(2) + '%';
+    document.querySelectorAll('#qbar .qs').forEach((d, k) => d.classList.toggle('on', st[k] && t >= st[k][1] - .1));
+    $('qbar').style.opacity = t > 3 && t < DUR - 1.5 ? 1 : 0; }
+  document.querySelectorAll('#fog i').forEach((f, k) => (f.style.transform = `translate3d(${(Math.sin(t * .05 + k * 2.1) * 260 - 200 + k * 30).toFixed(1)}px,0,0)`));
   // фон: плавная смена скриншота между сценами + медленный наезд
   const c = Math.min(SC.length - 1, Math.max(0, P.cam / H)), i0 = Math.floor(c), fr = c - i0;
   const wB = BG_FOREST[i0] * (1 - fr) + (BG_FOREST[Math.min(i0 + 1, SC.length - 1)] ?? 0) * fr;

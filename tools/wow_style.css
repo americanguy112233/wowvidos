@@ -1,4 +1,4 @@
-/* ═══════════ WoW Forever · 16:9 для YouTube · стиль Warcraft: тёмные панели, золотые рамки, Alegreya SC ═══════════ */
+/* ═══════════ WoW Forever · 16:9 · стиль Warcraft: тёмные панели, золотые рамки, Alegreya SC ═══════════ */
 @font-face { font-family: Aleg; src: url(assets/fonts/AlegreyaSC-Black.ttf); font-weight: 900; }
 @font-face { font-family: AlegX; src: url(assets/fonts/AlegreyaSC-ExtraBold.ttf); font-weight: 800; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
@@ -172,3 +172,66 @@ em .kw.hot { color: var(--gold); }
 #subs .w { font: 900 1em/1.25 Aleg; color: #fff; -webkit-text-stroke: 12px #120a04; paint-order: stroke fill; letter-spacing: 1px; text-shadow: 0 8px 20px rgba(0,0,0,.85); }
 #subs .w.on { color: var(--gold); }
 .chip.wp.sm .ico { width: 72px; height: 72px; }
+
+/* ═══ v2 (08.10.2026): геймплей светлее, спокойнее; главы как вход в зону; полоса задания; портал; загрузка; туман; сундук Boosty ═══ */
+/* геймплей хорошо виден: лёгкая виньетка, без сильного затемнения и размытия */
+.vid.full::after { background: radial-gradient(ellipse 85% 80% at 50% 45%, transparent 65%, rgba(0,0,0,.35)), linear-gradient(0deg, rgba(0,0,0,.45), transparent 20%), linear-gradient(180deg, rgba(0,0,0,.3), transparent 14%); }
+.vid.dim img { filter: brightness(.8) saturate(.95); }
+.vid.soft img { filter: brightness(.72) saturate(.9); }
+.vid.red img { filter: brightness(.75) sepia(.35) hue-rotate(-30deg) saturate(1.6); }
+#embers { opacity: .8; mix-blend-mode: screen; }
+#dip { position: absolute; inset: 0; background: #050302; opacity: 0; pointer-events: none; z-index: 12; }
+/* надпись главы как при входе в новую зону */
+.zone { text-align: center; opacity: 0; white-space: nowrap; }
+.zone b { display: block; font: 900 120px/1 Aleg; color: var(--gold); -webkit-text-stroke: 3px #1f0f02; paint-order: stroke fill;
+  text-shadow: 0 4px 0 #8a5a00, 0 0 40px rgba(255,190,60,.55), 0 14px 30px rgba(0,0,0,.9); letter-spacing: inherit; }
+.zone span { display: block; margin-top: 12px; font: 800 42px/1 AlegX; color: #f3e3bd; letter-spacing: 3px; text-shadow: 0 3px 12px #000, 0 0 2px #000; }
+/* полоса «задания» сверху по центру */
+#qbar { position: absolute; left: 560px; width: 800px; top: 24px; opacity: 0; transition: none; }
+#qbar .qt { font: 900 26px/1 Aleg; color: var(--gold); text-align: center; letter-spacing: 3px; -webkit-text-stroke: 1px #000; paint-order: stroke fill; text-shadow: 0 2px 8px #000; margin-bottom: 8px; }
+#qbar .ql { height: 12px; border-radius: 6px; background: rgba(10,6,2,.8); border: 2px solid #8a6a2e; box-shadow: 0 0 0 2px #000; overflow: hidden; }
+#qfill { height: 100%; width: 0; background: linear-gradient(180deg, #fff1a6, #ffcc33 50%, #c47a00); box-shadow: 0 0 12px rgba(255,209,0,.8); }
+#qbar .qss { display: flex; justify-content: space-between; margin-top: 8px; }
+#qbar .qs { font: 800 22px/1 AlegX; color: rgba(243,227,189,.55); text-shadow: 0 2px 6px #000; letter-spacing: 1px; }
+#qbar .qs::before { content: '◆ '; color: rgba(201,161,74,.5); }
+#qbar .qs.on { color: #fff; } #qbar .qs.on::before { color: var(--gold); }
+/* портал */
+#portal { position: absolute; left: 50%; top: 50%; width: 900px; height: 900px; border-radius: 50%; opacity: 0; pointer-events: none; z-index: 13;
+  background: radial-gradient(circle, #fff 0 4%, #f0c8ff 9%, rgba(160,60,255,.95) 26%, rgba(70,10,140,.98) 48%, #12001f 68%),
+              repeating-conic-gradient(from 0deg, rgba(220,160,255,.5) 0deg, rgba(255,255,255,0) 45deg, rgba(220,160,255,.5) 90deg);
+  background-blend-mode: screen; box-shadow: 0 0 120px 60px rgba(150,60,255,.6); }
+/* экран загрузки */
+#load { position: absolute; inset: 0; opacity: 0; z-index: 14; pointer-events: none; background: #000; }
+#load img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.85) saturate(1.1); transform: scale(1.22); transform-origin: 70% 100%; }
+#load .llogo { transform: translateX(-50%) !important; }
+#load .lshade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.85), transparent 40%); }
+#load .llogo { position: absolute; left: 50%; top: 60px; right: auto; bottom: auto; width: 420px; height: auto; transform: translateX(-50%); filter: drop-shadow(0 10px 24px #000); }
+#load .lhint { position: absolute; left: 240px; right: 240px; bottom: 150px; text-align: center; font: 800 36px/1.3 AlegX; color: #f3e3bd; text-shadow: 0 2px 8px #000; }
+#load .lbar { position: absolute; left: 360px; right: 360px; bottom: 80px; height: 30px; border-radius: 4px; background: #120c06; border: 3px solid #8a6a2e; box-shadow: 0 0 0 3px #000; overflow: hidden; }
+#ldbar { height: 100%; width: 0; background: linear-gradient(180deg, #ff7a4a, #c8102e); }
+/* туман снизу */
+#fog { position: absolute; left: 0; right: 0; bottom: 0; height: 420px; pointer-events: none; overflow: hidden; }
+#fog i { position: absolute; bottom: -160px; width: 1500px; height: 420px; border-radius: 50%; background: radial-gradient(ellipse, rgba(150,190,230,.22), transparent 70%); filter: blur(30px); }
+#fog i:nth-child(1) { left: -300px; } #fog i:nth-child(2) { left: 500px; bottom: -200px; opacity: .8; } #fog i:nth-child(3) { left: 1100px; bottom: -140px; opacity: .7; }
+/* сундук на цепях */
+.chest { position: absolute; width: 400px; height: 420px; }
+.chest .cbody { position: absolute; left: 0; top: 120px; width: 400px; height: 300px; }
+.chest .lid { position: absolute; left: 0; top: 30px; width: 400px; height: 160px; transform-origin: 6% 100%; }
+.chest .chain { position: absolute; top: -20px; width: 60px; height: 440px; }
+.chest .chain.c1 { left: 60px; transform: rotate(-14deg); } .chest .chain.c2 { right: 60px; transform: rotate(14deg); }
+.chest .lock { position: absolute; left: 140px; top: 120px; width: 120px; height: 144px; filter: drop-shadow(0 8px 12px rgba(0,0,0,.6)); }
+.chest .rays { position: absolute; left: -400px; top: -400px; width: 1200px; height: 900px; opacity: 0; pointer-events: none;
+  background: radial-gradient(ellipse 30% 22% at 50% 52%, rgba(255,250,210,1), rgba(255,209,0,.7) 40%, transparent 75%),
+              repeating-conic-gradient(from 0deg at 50% 52%, rgba(255,214,90,.55) 0 6deg, transparent 6deg 18deg);
+  -webkit-mask: radial-gradient(ellipse at 50% 52%, #000 20%, transparent 65%); mask: radial-gradient(ellipse at 50% 52%, #000 20%, transparent 65%); }
+/* секретные листки */
+.page { position: absolute; width: 380px; height: 470px; padding: 50px 36px; border-radius: 6px; background: radial-gradient(120% 90% at 50% 40%, #fbecc6, #d4b070);
+  box-shadow: 0 0 0 3px #6e4418, 0 24px 50px rgba(0,0,0,.7); overflow: hidden; }
+.page i { display: block; height: 18px; margin: 18px 0; border-radius: 9px; background: #5a3a1a; opacity: .55; filter: blur(5px); }
+.page i.s { background: #2a1408; opacity: .9; filter: none; height: 22px; }
+.page b { position: absolute; left: 20px; top: 190px; transform: rotate(-16deg); padding: 6px 18px 10px; border: 7px solid #c8102e; border-radius: 10px; font: 900 48px/1 Aleg; color: #c8102e; letter-spacing: 2px; background: rgba(255,240,220,.4); }
+/* Boosty без QR: логотип и ссылка */
+.bcard .bt { gap: 22px; }
+.blogo { height: 150px; display: block; }
+.bcard .blink { font-size: 64px; }
+.subbtn { background: linear-gradient(180deg, #ffe066, #c98a08); color: #2a1404; border-color: #fff1a6; box-shadow: 0 0 0 3px #3a2400, 0 18px 40px rgba(0,0,0,.7); }

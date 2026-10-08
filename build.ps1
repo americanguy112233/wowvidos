@@ -20,11 +20,10 @@ if (-not $env:CHROME) {
 Write-Host "Браузер: $env:CHROME"
 New-Item -ItemType Directory -Force build | Out-Null
 
-# WoW (ветка wow-anna): ролик 16:9, 30 к/с. Геймплей владельца — assets\video\src\wowfarm.mp4
-if (-not (Test-Path assets\video\src\wowfarm.mp4) -and -not (Test-Path assets\video\wowfarm\f_0001.jpg)) { throw 'Положи своё видео с фармом в assets\video\src\wowfarm.mp4' }
-if (Test-Path assets\video\src\wowfarm.mp4) {
-  $wl = [double](ffprobe -v error -show_entries format=duration -of csv=p=0 assets\video\src\wowfarm.mp4)
-  if ($wl -lt 255) { throw "assets\video\src\wowfarm.mp4 длится $([math]::Round($wl)) с, а ролик собран из исходника на 262 с (WoW_Forever___The_INSANE_Hyperspawn...). Положи именно его." }
+# WoW (ветка wow-anna): ролик 16:9, 30 к/с. Геймплей владельца: assets\video\src\<имя>.mp4, имя берётся из index.html (data-video)
+$vids = [regex]::Matches((Get-Content index.html -Raw -Encoding UTF8), 'data-video="([^"]+)"') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique
+foreach ($v in $vids) {
+  if (-not (Test-Path "assets\video\src\$v.mp4") -and -not (Test-Path "assets\video\$v\f_0001.jpg")) { throw "Положи видео для этого ролика в assets\video\src\$v.mp4" }
 }
 # 0. клипы владельца: assets\video\src\<имя>.mp4 -> кадры assets\video\<имя>\f_0001.jpg (30 к/с) + <имя>.wav
 Get-ChildItem assets\video\src\*.mp4 -ErrorAction SilentlyContinue | ForEach-Object {

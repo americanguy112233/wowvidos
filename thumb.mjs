@@ -25,6 +25,9 @@ const JOBS = [
   ['thumb-wow.html?v=a', 1920, 1080, 'Обложка WoW голдфарм A (7 мобов)'],
   ['thumb-wow.html?v=b', 1920, 1080, 'Обложка WoW голдфарм B (карта)'],
   ['thumb-wow.html?v=c', 1920, 1080, 'Обложка WoW голдфарм C (запретный)'],
+  ['thumb-wow.html?v=d', 1920, 1080, 'Обложка WoW 30 уровень D (полполяны)'],
+  ['thumb-wow.html?v=e', 1920, 1080, 'Обложка WoW 30 уровень E (маг и шаман)'],
+  ['thumb-wow.html?v=f', 1920, 1080, 'Обложка WoW 30 уровень F (ферма Орды)'],
 ].filter(j => !process.argv[3] || j[3].includes(process.argv[3]));
 for (const [url, w, h, name] of JOBS) {
   const page = await browser.newPage();

@@ -1,8 +1,9 @@
 // Анимация ролика: детерминированная, управляется только временем → window.renderAt(t).
 // Тайминг сцен и метки синхронизации приходят из assets/timeline.js (его пишет voice.py).
-const H = 1920, FPS = 60;
+// WoW (ветка wow-anna): ролик 16:9 для YouTube — 1920×1080, сцены стоят в ряд по горизонтали
+const H = 1080, FPS = 60;
 const MIN = [4, 8, 7, 9, 6];
-const LOOP = .55;                              // финальный перелёт камеры обратно к первому кадру
+const LOOP = 0;                                // YouTube: петли нет, в конце — затемнение
 const SC = window.SCENES || MIN.reduce((a, d, i) => (a.push({ start: i ? a[i - 1].start + MIN[i - 1] : 0, dur: d, marks: {} }), a), []);
 const DUR = SC.at(-1).start + SC.at(-1).dur + LOOP;
 const $ = id => document.getElementById(id);
@@ -11,9 +12,9 @@ const sfx = (t, type, o = {}) => SFX.push({ t: +t.toFixed(3), type, ...o });
 const mk = (i, k, def) => SC[i].marks?.[k] ?? SC[i].start + def;   // метка из озвучки или запасное время
 
 const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
-const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, zs: 1, zx: 540, zy: 960, sm: 0, sm2: 0 };
+const P = { cam: 0, mb: 0, fade: 0, flash: 0, spd: 0, zs: 1, zx: 960, zy: 540, sm: 0, sm2: 0 };
 
-const W = 1080;
+const W = 1920;
 document.querySelectorAll('.sec').forEach((s, i) => { s.style.left = i * W + 'px'; s.style.top = '0px'; });
 // ритм: музыка в audio.py — 120 BPM, доля 0.5 с; склейки и переходы ставим на доли
 const BEAT = .5, snap = t => Math.round(t / BEAT) * BEAT;
@@ -38,7 +39,7 @@ $('starp').setAttribute('d', [...Array(16)].map((_, k) => {
 const CONN = [];
 document.querySelectorAll('.sec').forEach((s, i) => {
   if (!i) return;
-  const hdr = s.querySelector('.row'), top = parseFloat(hdr.style.top) - 26, from = -560;
+  const hdr = s.querySelector('.row'), top = (hdr ? parseFloat(hdr.style.top) || 200 : 200) - 26, from = -560;
   const len = top - from;
   const wrap = document.createElement('div');
   wrap.className = 'conn'; wrap.style.top = from + 'px'; wrap.style.height = '0px'; wrap.style.opacity = '0';
@@ -51,9 +52,8 @@ document.querySelectorAll('.sec').forEach((s, i) => {
 
 // ---------------------------------------------------------------- QR
 (function buildQR() {
-  if (!$('qrsvg')) return;
-  const q = window.QR, n = q.length, svg = $('qrsvg');
-  svg.setAttribute('viewBox', `-0.5 -0.5 ${n + 1} ${n + 1}`);
+  const svgs = document.querySelectorAll('.qrsvg'); if (!svgs.length || !window.QR) return;
+  const q = window.QR, n = q.length;
   const inFinder = (x, y) => (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
   let out = '';
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
@@ -66,7 +66,7 @@ document.querySelectorAll('.sec').forEach((s, i) => {
       `<rect x="${fx + .5}" y="${fy + .5}" width="6" height="6" rx="1.5" fill="none" stroke="#2b2b35" stroke-width="1"/>` +
       `<rect x="${fx + 2}" y="${fy + 2.1}" width="3" height="3" rx=".7" fill="#15151c"/><rect x="${fx + 2}" y="${fy + 2}" width="3" height="2.9" rx=".7" fill="#2b2b35"/></g>`;
   }
-  svg.innerHTML = out;
+  svgs.forEach(svg => { svg.setAttribute('viewBox', `-0.5 -0.5 ${n + 1} ${n + 1}`); svg.innerHTML = out; });
 })();
 
 // ---------------------------------------------------------------- помощники анимации
@@ -88,12 +88,12 @@ const SECS0 = [...document.querySelectorAll('.sec')];
 for (let i = 1; i < SC.length; i++) {
   const t = snap(SC[i].start) - .5, tr = SECS0[i]?.dataset.trans || 'swipe';
   if (tr === 'zoom') {
-    const a = secCenter(SECS0[i - 1], '[data-zoomto]') || { x: 540, y: 900 }, b = secCenter(SECS0[i], '[data-zoomfrom]') || { x: 540, y: 960 };
+    const a = secCenter(SECS0[i - 1], '[data-zoomto]') || { x: 960, y: 500 }, b = secCenter(SECS0[i], '[data-zoomfrom]') || { x: 960, y: 540 };
     tl.set(P, { zx: a.x, zy: a.y }, t);
     tl.fromTo(P, { zs: 1 }, { zs: 4, duration: .27, ease: 'power3.in', immediateRender: false }, t);
     tl.set(P, { cam: i * H, zx: b.x, zy: b.y, zs: 2.4 }, t + .27);
     tl.to(P, { zs: 1, duration: .33, ease: 'power3.out' }, t + .27);
-    tl.set(P, { zx: 540, zy: 960 }, t + .62);
+    tl.set(P, { zx: 960, zy: 540 }, t + .62);
     tl.fromTo(P, { flash: .7 }, { flash: 0, duration: .3, ease: 'power2.out', immediateRender: false }, t + .22);
     tl.fromTo(P, { spd: 1 }, { spd: 0, duration: .6, ease: 'power2.out', immediateRender: false }, t + .1);
     sfx(t, 'riser', { d: .3 }); sfx(t + .27, 'impact', { g: .5 });
@@ -112,7 +112,7 @@ for (let i = 1; i < SC.length; i++) {
     sfx(t, 'whoosh', { d: .5 }); sfx(t + .45, 'thump', { g: .55 });
   }
   const c = CONN[i - 1];
-  tl.fromTo(c.el, { height: 0, opacity: 0 }, { height: c.len, opacity: 1, duration: .45, ease: 'power2.inOut', immediateRender: false }, t + .05);
+  if (c) tl.fromTo(c.el, { height: 0, opacity: 0 }, { height: c.len, opacity: 1, duration: .45, ease: 'power2.inOut', immediateRender: false }, t + .05);
 }
 const hdr = (i, el) => { pop(el, SC[i].start + .02, { s: .7, d: .5 }); sfx(SC[i].start + .02, 'thump', { g: .8 }); };
 
@@ -133,13 +133,13 @@ const KINS = [];                                     // кинетический
 const COUNTS = [];                                   // счётчики: { el, o: { v }, ph }
 const VIDS = [];                                     // видео-вставки: { img, name, from, rate, n, t0, t1 }
 const BURSTS = [];
-const RAINS = [], TYPES = [], BANK = [];             // ИИ-блог: монетный дождь, печать текста, счётчик ₽ в углу                                   // взрывы частиц: { t, x, y (мировые координаты), c }
+const RAINS = [], TYPES = [], BANK = [], TIMERS = [];             // ИИ-блог: монетный дождь, печать текста, счётчик ₽ в углу                                   // взрывы частиц: { t, x, y (мировые координаты), c }
 const SECS = [...document.querySelectorAll('.sec')];
 const POS = new Map();                               // центры элементов до анимаций (для частиц)
 document.querySelectorAll('[data-fx], [data-shatter]').forEach(el => {
   const r = el.getBoundingClientRect(); POS.set(el, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
 });
-const burstAt = (t, el, c = '255,201,60') => { const p = POS.get(el) || { x: 540, y: 800 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
+const burstAt = (t, el, c = '255,201,60') => { const p = POS.get(el) || { x: 960, y: 480 }; BURSTS.push({ t, x: p.x, y: p.y, c }); };
 let nsnd = 0;
 const FX = {
   pop:   (el, t) => { pop(el, t, { s: .5, d: .4 }); sfx(t, 'pop', { f: .9 + (nsnd++ % 5) * .08 }); },
@@ -179,6 +179,9 @@ const FX = {
   zoomin:(el, t) => { const z = +(el.dataset.z || 2.2);
     tl.fromTo(el, { scale: 1 }, { scale: z, duration: .5, ease: 'power3.inOut', immediateRender: false }, t);
     flashAt(t + .42, .55, .3); sfx(t, 'swoosh', { f: .8 }); sfx(t + .45, 'coin'); sfx(t + .5, 'sparkle'); },
+  // таймер респавна: кольцо и цифры от data-n до 0 за data-d секунд (иллюстрация, время сжато)
+  timer: (el, t) => { pop(el, t, { s: .5, d: .4 }); TIMERS.push({ el, t: t + .3, d: +(el.dataset.d || 2.5), n: +(el.dataset.n || 12) }); sfx(t, 'pop');
+                      for (let k = 0; k < 6; k++) sfx(t + .3 + k * (+(el.dataset.d || 2.5)) / 6, 'tick', { f: 1.2, g: .5 }); sfx(t + .3 + (+(el.dataset.d || 2.5)), 'ding', { f: 1.1 }); },
   rain:  (el, t) => { RAINS.push({ el, t }); sfx(t, 'coin'); sfx(t + .25, 'coin'); sfx(t + .5, 'sparkle'); sfx(t + .7, 'coin'); },
   push:  (el, t) => { const hold = +(el.dataset.hold || 1.8);
     tl.fromTo(el, { y: -320, opacity: 0 }, { y: 0, opacity: 1, duration: .42, ease: 'back.out(1.7)', immediateRender: true }, t);
@@ -186,7 +189,7 @@ const FX = {
   type:  (el, t) => { const full = el.textContent, o = { n: 0 }, d = +(el.dataset.d || Math.min(1.6, full.length * .035));
     tl.set(el, { opacity: 1 }, 0); TYPES.push({ el, full, t, d });
     for (let k = 0; k < full.length; k += 3) sfx(t + d * k / full.length, 'tick', { f: 1.3 + (k % 7) * .05, g: .4 }); },
-  slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); if (!el.closest('.layer')?.querySelector('.vid.full')) burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
+  slam:  (el, t) => { tl.set(el, { opacity: 0 }, 0); slamIn(el, t); shake(el.closest('.layer') || el, t + .24); if (!el.closest('.layer')?.querySelector('.vid.full:not(.game)')) burstAt(t + .24, el); sfx(t + .22, 'impact', { g: .6 }); },
 };
 function startCount(el, t) {
   el.querySelectorAll('[data-count]').forEach(c => {
@@ -228,9 +231,17 @@ function layerFx(layer, i, t0, t1) {
     if (o.rate === 1 && v.dataset.audio !== '0')
       SFX.push({ t: +t0.toFixed(3), type: 'clip', file: `assets/video/${o.name}.wav`, from: o.from, d: +(t1 - t0).toFixed(3), g: +(v.dataset.gain || .45) });
   });
-  // медленный наезд на скриншоты
-  layer.querySelectorAll('.shotz img').forEach(img =>
-    tl.fromTo(img, { scale: 1 }, { scale: 1.12, duration: Math.max(.5, t1 - t0), ease: 'none', immediateRender: false }, t0));
+  // медленный наезд на скриншоты; у видео с data-roi — «камера» едет в нужную область кадра (карта, окно аддона…)
+  layer.querySelectorAll('.shotz img').forEach(img => {
+    const roi = img.closest('.vid')?.dataset.roi;
+    if (roi) {
+      const [a, b] = roi.trim().split(/\s+/).map(r => r.split(',').map(Number)), st = r => ({ x: -r[0] * W / r[2], y: -r[1] * H / r[2], scale: 1 / r[2] });
+      const dz = +(img.closest('.vid').dataset.zd || 1.2);
+      tl.set(img, { transformOrigin: '0 0', ...st(a) }, 0);
+      tl.fromTo(img, st(a), { ...st(b || a), duration: Math.min(dz, Math.max(.4, t1 - t0 - .2)), ease: 'power2.inOut', immediateRender: false }, t0 + .15);
+      if (b) sfx(t0 + .15, 'swoosh', { f: .8, g: .5 });
+    } else tl.fromTo(img, { scale: 1 }, { scale: 1.06, duration: Math.max(.5, t1 - t0), ease: 'none', immediateRender: false }, t0);
+  });
 }
 const CUTS = [];
 SECS.forEach((sec, i) => {
@@ -245,10 +256,10 @@ SECS.forEach((sec, i) => {
     if (i === 0 && n === 0) c = Math.min(Math.max(c, 1.6), 2.2);   // хук: склейка до 2.2 с
     c = Math.max(prev + 1.2, snap(c));                              // склейка — на долю бита
     cuts.push(c); CUTS.push(c);
-    if (n === 0 && i > 0) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
+    if (n === 0 && i > 0 && CONN[i - 1]) tl.to(CONN[i - 1].el, { opacity: 0, duration: .15, immediateRender: false }, c - .1);   // стрелка перехода не мешает второму кадру
     tl.set(L[n], { opacity: 0 }, c); tl.set(layer, { opacity: 1 }, c);
     tl.fromTo(layer, { scale: 1.07 }, { scale: 1, duration: .35, ease: 'power2.out', immediateRender: false }, c);
-    flashAt(c, .45, .25); speedAt(c, .45); if (!layer.querySelector('.vid.full')) BURSTS.push({ t: c, x: i * W + 540, y: 760, c: '255,201,60' });   // на клипе брызги выглядят как пятна на лице
+    flashAt(c, .2, .2); speedAt(c, .45);   // WoW: на тёмном геймплее сильная вспышка «засвечивает» кадр if (!layer.querySelector('.vid.full:not(.game)')) BURSTS.push({ t: c, x: i * W + 960, y: 480, c: '255,201,60' });   // на клипе брызги выглядят как пятна на лице
     sfx(c - .06, 'whoosh', { d: .3 }); sfx(c, 'thump', { g: .6 });
   });
   // первый кадр сцены начинает оживать, когда камера приезжает (переход кончается на доле бита, иногда раньше начала реплики)
@@ -275,8 +286,10 @@ document.querySelectorAll('.slide').forEach(el => { const i = SECS.indexOf(el.cl
   tl.to('#cta', { keyframes: { rotation: [0, -4, 4, -3, 0] }, duration: .6, ease: 'none' }, Math.max(s + 1.2, b + .4));
   for (let t = s + 1.4; t < DUR - LOOP - .4; t += 1) pulse('#cta', t, 1.06);   // плашка «пиши ДЕСЕРТ» мягко пульсирует до конца
 }
+// YouTube: вместо петли — затемнение в конце
+if (!LOOP) { tl.fromTo(P, { fade: 0 }, { fade: 1, duration: .8, ease: 'power1.in', immediateRender: false }, DUR - .8); }
 // петля: камера перелетает к первому кадру, он возвращается в исходное состояние
-{
+if (LOOP) {
   const L0 = DUR - LOOP, A = SECS[0].querySelector('.layer.A'), B = SECS[0].querySelector('.layer.B');
   tl.fromTo(P, { cam: (SECS.length - 1) * H }, { cam: 0, duration: LOOP, ease: 'power3.in', immediateRender: false }, L0);
   tl.fromTo(P, { mb: 0 }, { mb: 60, duration: LOOP * .8, ease: 'power2.in', immediateRender: false }, L0);
@@ -323,13 +336,13 @@ async function loadStickers() {
 const BG_FOREST = [1, 1, 0, 1, 1, 0];          // 0 — Тёмный портал (bgA), 1 — лес (bgB)
 const EMB = [...Array(70)].map((_, k) => {     // детерминированные искры (одинаковые при каждом рендере)
   const r = n => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
-  return { x: r(1) * 1080, sp: 40 + r(2) * 90, sz: 1.5 + r(3) * 3.5, ph: r(4) * 1920, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
+  return { x: r(1) * W, sp: 40 + r(2) * 90, sz: 1.5 + r(3) * 3.5, ph: r(4) * H, sw: 10 + r(5) * 30, fr: .5 + r(6) * 1.5, a: .35 + r(7) * .6 };
 });
 const emb = document.getElementById('embers').getContext('2d');
 function drawEmbers(t) {
-  emb.clearRect(0, 0, 1080, 1920);
+  emb.clearRect(0, 0, W, H);
   for (const e of EMB) {
-    const y = 1920 - ((e.ph + t * e.sp) % 2000);
+    const y = H - ((e.ph + t * e.sp) % (H + 80));
     const x = e.x + Math.sin(t * e.fr + e.ph) * e.sw;
     const g = emb.createRadialGradient(x, y, 0, x, y, e.sz * 3);
     g.addColorStop(0, `rgba(255,214,120,${e.a})`); g.addColorStop(1, 'rgba(255,140,40,0)');
@@ -342,12 +355,12 @@ const spc = document.getElementById('speed').getContext('2d');
 const SPL = [...Array(90)].map((_, k) => { const r = n => { const x = Math.sin(k * 91.7 + n * 47.3) * 43758.5453; return x - Math.floor(x); };
   return { a: r(1) * Math.PI * 2, w: 2 + r(2) * 6, r0: 420 + r(3) * 260, len: 300 + r(4) * 700, sp: r(5) }; });
 function drawSpeed(t) {
-  spc.clearRect(0, 0, 1080, 1920);
+  spc.clearRect(0, 0, W, H);
   if (P.spd < .02) return;
-  spc.save(); spc.translate(540, 820);
+  spc.save(); spc.translate(W / 2, H / 2);
   for (const l of SPL) {
     const o = ((t * 3 + l.sp) % 1) * 200, r0 = l.r0 + o, r1 = r0 + l.len;
-    spc.strokeStyle = `rgba(18,18,18,${(P.spd * .22).toFixed(3)})`; spc.lineWidth = l.w;
+    spc.strokeStyle = `rgba(255,214,120,${(P.spd * .16).toFixed(3)})`; spc.lineWidth = l.w;
     spc.beginPath(); spc.moveTo(Math.cos(l.a) * r0, Math.sin(l.a) * r0); spc.lineTo(Math.cos(l.a) * r1, Math.sin(l.a) * r1); spc.stroke();
   }
   spc.restore();
@@ -356,10 +369,10 @@ function drawSpeed(t) {
 // ---------------------------------------------------------------- взрывы частиц (детерминированные)
 const fxc = document.getElementById('fx').getContext('2d');
 function drawBursts(t) {
-  fxc.clearRect(0, 0, 1080, 1920);
+  fxc.clearRect(0, 0, W, H);
   for (const b of BURSTS) {
     const dt = t - b.t; if (dt < 0 || dt > .9) continue;
-    const x0 = b.x - P.cam / H * W, y0 = b.y; if (x0 < -500 || x0 > 1600) continue;
+    const x0 = b.x - P.cam / H * W, y0 = b.y; if (x0 < -500 || x0 > W + 500) continue;
     const life = 1 - dt / .9;
     for (let k = 0; k < 28; k++) {
       const ang = k / 28 * Math.PI * 2 + (b.t * 7 % 1), sp = 380 + ((k * 37) % 11) * 45;
@@ -385,7 +398,7 @@ SC.forEach((sc, i) => {
     if (cur.length && (t - cur.at(-1).t > .6)) flush();
     cur.push({ t, w });
     const chars = cur.reduce((n, c) => n + c.w.length + 1, 0);
-    if (cur.length >= 2 || /[.,!?:;…]$/.test(w) || chars > 11) flush();
+    if (cur.length >= 4 || /[.,!?:;…]$/.test(w) || chars > 24) flush();
   });
   flush();
 });
@@ -401,10 +414,10 @@ function subs(t) {
   if (!c) { if (lastChunk) { el.innerHTML = ''; lastChunk = null; } return; }
   if (c !== lastChunk) {
     const chars = c.words.reduce((n, w) => n + w.w.length + 1, 0), longest = Math.max(...c.words.map(w => w.w.length));
-    let fs = Math.max(66, Math.min(100, 860 / Math.max(chars * .6, longest * .7)));   // вся фраза — максимум в 2 строки
+    let fs = 74;   // 16:9: одна строка, при длинной фразе шрифт уменьшается
     el.innerHTML = `<div class="ln" style="font-size:${fs.toFixed(0)}px">` + c.words.map(w => `<span class="w">${(/^[—–]$/.test(w.w) ? '' : w.w)}</span>`).join('') + '</div>';
     // подгон по реальной ширине: у Unbounded широкие заглавные, оценка по буквам ошибалась и текст вылезал за край
-    const ln0 = el.firstChild, fits = () => [...ln0.children].every(sp => sp.offsetWidth <= 840) && ln0.offsetHeight <= fs * 1.36 * 2 + 14;
+    const ln0 = el.firstChild, fits = () => ln0.scrollWidth <= 1560 && ln0.offsetHeight <= fs * 1.5 + 14;
     while (!fits() && fs > 40) { fs -= 3; ln0.style.fontSize = fs + 'px'; }
     lastChunk = c;
   }
@@ -419,16 +432,21 @@ function subs(t) {
 
 // ---------------------------------------------------------------- ИИ-блог: дождь из монет, печать, счётчик ₽
 const rnd = (k, n) => { const x = Math.sin(k * 127.1 + n * 311.7) * 43758.5453; return x - Math.floor(x); };
-const COIN = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6c2"/><stop offset=".45" stop-color="#ffcf3a"/><stop offset="1" stop-color="#c47d00"/></radialGradient></defs><circle cx="50" cy="50" r="46" fill="url(#g)"/><circle cx="50" cy="50" r="33" fill="none" stroke="#b97300" stroke-width="5"/><text x="50" y="66" font-family="Arial Black,Arial" font-weight="900" font-size="44" text-anchor="middle" fill="#a86400">₽</text><ellipse cx="34" cy="28" rx="14" ry="8" fill="#fff" opacity=".7"/></svg>');
+const COIN = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6c2"/><stop offset=".45" stop-color="#ffcf3a"/><stop offset="1" stop-color="#c47d00"/></radialGradient></defs><circle cx="50" cy="54" r="46" fill="#8a5200"/><circle cx="50" cy="50" r="46" fill="url(#g)"/><circle cx="50" cy="50" r="31" fill="none" stroke="#b97300" stroke-width="6"/><circle cx="50" cy="50" r="18" fill="none" stroke="#e8a600" stroke-width="4"/><ellipse cx="34" cy="28" rx="14" ry="8" fill="#fff" opacity=".7"/></svg>');
+const LINEN = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 70"><defs><linearGradient id="l" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf3df"/><stop offset="1" stop-color="#c9b48a"/></linearGradient></defs><rect x="4" y="6" width="96" height="58" rx="16" fill="url(#l)"/><ellipse cx="100" cy="35" rx="16" ry="29" fill="#efe2c2"/><ellipse cx="100" cy="35" rx="7" ry="12" fill="#b8a273"/><path d="M30 6v58M70 6v58" stroke="#b8a273" stroke-width="4"/><rect x="18" y="14" width="50" height="8" rx="4" fill="#fff" opacity=".7"/></svg>');
 RAINS.forEach((r, i) => { r.coins = Array.from({ length: +(r.el.dataset.n || 18) }, (_, k) => {
-  const im = document.createElement('img'); im.src = COIN; im.className = 'coin3d'; r.el.appendChild(im);
-  return { im, x: 60 + rnd(k + i * 31, 7) * 960, s: 70 + rnd(k + i * 31, 8) * 70, dl: rnd(k + i * 31, 9) * .55, fy: 1150 + rnd(k + i * 31, 10) * 300, sp: (rnd(k + i * 31, 11) - .5) * 720 }; }); });
+  const im = document.createElement('img'); im.src = r.el.dataset.img === 'linen' ? LINEN : COIN; im.className = 'coin3d'; r.el.appendChild(im);
+  return { im, x: 80 + rnd(k + i * 31, 7) * (W - 160), s: 60 + rnd(k + i * 31, 8) * 60, dl: rnd(k + i * 31, 9) * .55, fy: H * .62 + rnd(k + i * 31, 10) * H * .2, sp: (rnd(k + i * 31, 11) - .5) * 720 }; }); });
 function drawRain(t) { for (const r of RAINS) for (const c of r.coins) {
   const d = t - r.t - c.dl; if (d < 0 || d > 2.3) { c.im.style.opacity = 0; continue; }
   const T = .75, y = d < T ? -200 + (c.fy + 200) * (d / T) ** 2 : c.fy - Math.abs(Math.sin((d - T) * 7)) * 140 * Math.exp(-(d - T) * 3.5);
   c.im.style.opacity = d > 1.9 ? (2.3 - d) / .4 : 1;
   c.im.style.transform = `translate(${(c.x - c.s / 2).toFixed(1)}px,${y.toFixed(1)}px) rotate(${(c.sp * d).toFixed(1)}deg) rotateY(${(d * 540 % 360).toFixed(0)}deg)`;
   c.im.style.width = c.s.toFixed(0) + 'px'; } }
+function drawTimers(t) { for (const o of TIMERS) { const p = Math.max(0, Math.min(1, (t - o.t) / o.d)), v = Math.ceil(o.n * (1 - p));
+  const b = o.el.querySelector('b'); if (b && b.textContent !== String(v)) b.textContent = v;
+  const c = o.el.querySelector('.ring'); if (c) c.style.strokeDashoffset = p.toFixed(4);
+  o.el.classList.toggle('done', p >= 1); } }
 function drawTypes(t) { for (const y of TYPES) { const n = Math.max(0, Math.min(y.full.length, Math.round((t - y.t) / y.d * y.full.length)));
   const cur = (t - y.t < y.d + 1.2) && Math.floor(t * 2.5) % 2 === 0 ? '▍' : ''; const s = y.full.slice(0, n) + cur; if (y.el.textContent !== s) y.el.textContent = s; } }
 const fmt = v => Math.round(v).toLocaleString('ru-RU').replace(/\u00a0|,/g, ' ');
@@ -476,7 +494,7 @@ function blobs(t) { document.querySelectorAll('#isle .spark').forEach((s, k) => 
 let lastFilter = '';
 function apply(t) {
   document.documentElement.style.setProperty('--t', t.toFixed(3));
-  drawRain(t); drawTypes(t); drawBank(t);
+  drawRain(t); drawTypes(t); drawBank(t); drawTimers(t);
   const camX = P.cam / H * W, fr0 = (P.cam / H) % 1, sw = Math.sin(Math.PI * fr0);
   $('world').style.transformOrigin = `${(camX + P.zx).toFixed(1)}px ${P.zy.toFixed(1)}px`;
   $('world').style.transform = `translate3d(${(-camX).toFixed(1)}px,0,0) scale(${((1 - .08 * sw) * P.zs).toFixed(4)})`;

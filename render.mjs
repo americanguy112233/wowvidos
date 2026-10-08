@@ -39,7 +39,7 @@ async function launch() {
 async function newPage() {
   const browser = await launch();
   const page = (await browser.pages())[0] || await browser.newPage();
-  await page.setViewport({ width: 1080, height: 1920, deviceScaleFactor: 1 });
+  await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });   // WoW: 16:9 для YouTube
   page.on('pageerror', e => console.error('PAGE ERROR', e.message));
   await page.goto(URL, { waitUntil: 'load' });
   const ok = await Promise.race([page.evaluate(() => window.READY).then(() => true), new Promise(r => setTimeout(() => r(false), 90000))]);

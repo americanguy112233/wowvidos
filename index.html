@@ -2,552 +2,453 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<title>ИИ на острове — промт для продающего текста</title>
+<title>WoW Forever — голдфарм-точка с гиперспавном (Аня, 16:9)</title>
+<!-- файл собран tools/wow_page.py (стили — tools/wow_style.css, иконки — tools/wow_defs.svg) -->
 <style>
-@font-face { font-family: Unb; src: url(assets/fonts/Unbounded-VF.ttf); font-weight: 200 900; }
+/* ═══════════ WoW Forever · 16:9 для YouTube · стиль Warcraft: тёмные панели, золотые рамки, Alegreya SC ═══════════ */
+@font-face { font-family: Aleg; src: url(assets/fonts/AlegreyaSC-Black.ttf); font-weight: 900; }
+@font-face { font-family: AlegX; src: url(assets/fonts/AlegreyaSC-ExtraBold.ttf); font-weight: 800; }
 @font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
-:root { --bg: #f4f1ec; --ink: #121212; --muted: #8b857e; --red: #c8102e; --red2: #ff4a5e; --card: #ffffff; --line: #e6e0d8; --green: #1aa36b; }
+:root { --gold: #ffd100; --bronze: #c9a14a; --q0: #9d9d9d; --q2: #1eff00; --q3: #3a9bff; --boosty: #f15f2c; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
-body { font-family: Man, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+body { font-family: Man, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
 #view { position: absolute; inset: 0; overflow: hidden; }
-
-/* фон: тёплый светлый, мягкие пятна; служебные слои движка скрыты */
-#bg { position: absolute; inset: 0; background: radial-gradient(70% 45% at 85% 12%, #fbe3e3 0, transparent 70%), radial-gradient(60% 40% at 10% 88%, #ece6dc 0, transparent 70%), var(--bg); }
-.bgi, #star, #arc, #grid, #floor, #embers, .conn { display: none !important; }
-#vig { position: absolute; inset: 0; pointer-events: none; }
-#fade { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
-#flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+#bg { position: absolute; inset: 0; background: #0b0806; }
+.bgi, #star, #arc, #grid, #floor, .conn { display: none !important; }
 #speed, #fx { position: absolute; inset: 0; pointer-events: none; }
+#embers { position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: screen; }
+#flash { position: absolute; inset: 0; background: #fff3c8; opacity: 0; pointer-events: none; }
+#fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 20; }
+#grain { position: absolute; inset: 0; width: 1920px; height: 1080px; opacity: .03; mix-blend-mode: overlay; pointer-events: none; }
 
-#world { position: absolute; left: 0; top: 0; width: 1080px; }
-.sec { position: absolute; left: 0; width: 1080px; height: 1920px; overflow: hidden; }
+#world { position: absolute; left: 0; top: 0; width: 1920px; }
+.sec { position: absolute; left: 0; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
 .layer { position: absolute; inset: 0; }
 .row { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; }
+.abs { position: absolute; }
 
-/* сторис: полоски прогресса + профиль */
-#story { position: absolute; left: 36px; right: 36px; top: 34px; z-index: 5; }
-#bars { display: flex; gap: 10px; }
-#bars i { flex: 1; height: 7px; border-radius: 4px; background: rgba(18,18,18,.14); overflow: hidden; position: relative; }
-#bars b { position: absolute; inset: 0; width: 0; background: var(--ink); border-radius: 4px; }
-#prof { display: flex; align-items: center; gap: 18px; margin-top: 22px; }
-#prof img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
-#prof .n { font: 800 34px/1 Man; }
-#prof .s { font: 600 26px/1 Man; color: var(--muted); margin-top: 6px; }
-
-/* типографика */
-.h1 { font: 900 108px/1.02 Unb; letter-spacing: -3px; text-align: center; }
-.h1 em { font-style: normal; color: var(--red); }
-.h2 { font: 800 64px/1.08 Unb; letter-spacing: -1px; text-align: center; }
-.h2 em { font-style: normal; color: var(--red); }
-.num { font: 900 260px/.9 Unb; letter-spacing: -10px; }
-.num.red { color: var(--red); }
-.cap { font: 700 40px/1.25 Man; color: var(--muted); text-align: center; }
-.cap b { color: var(--ink); }
-.kicker { font: 800 30px/1 Unb; letter-spacing: 4px; color: var(--red); text-transform: uppercase; }
-.step { display: inline-flex; align-items: center; gap: 18px; padding: 16px 30px 16px 16px; border-radius: 999px; background: var(--ink); color: #fff; font: 800 40px/1 Unb; }
-.step span { width: 64px; height: 64px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; font: 900 34px/1 Unb; }
-
-/* карточки */
-.card { background: var(--card); border-radius: 40px; box-shadow: 0 20px 60px rgba(60,40,20,.10), 0 2px 0 rgba(0,0,0,.03); }
-.photo { border-radius: 44px; overflow: hidden; background: #ddd; box-shadow: 0 24px 70px rgba(60,40,20,.18); }
-.photo img { display: block; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 40%; }
-.shotz { overflow: hidden; }
-.shotz img { transform-origin: 50% 40%; }
-.tag { font: 800 34px/1 Unb; padding: 18px 30px 20px; border-radius: 999px; background: var(--red); color: #fff; white-space: nowrap; box-shadow: 0 12px 30px rgba(200,16,46,.3); }
-.tag.dark { background: var(--ink); box-shadow: 0 12px 30px rgba(0,0,0,.2); }
-.tag.light { background: #fff; color: var(--ink); box-shadow: 0 12px 30px rgba(0,0,0,.08); }
-.stk { position: relative; }
-.stk img { filter: drop-shadow(0 16px 30px rgba(60,40,20,.25)); }
-
-/* весы */
-.scale { width: 620px; height: 300px; border-radius: 60px; background: #fff; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; position: relative; }
-.scale .lcd { font: 900 150px/1 Unb; letter-spacing: -4px; }
-.scale .unit { font: 800 34px/1 Unb; color: var(--muted); }
-
-/* масло */
-.kcal { display: flex; align-items: baseline; gap: 16px; }
-.kcal small { font: 800 56px/1 Unb; color: var(--muted); letter-spacing: 0; }
-
-/* мышцы / жир */
-.vs { width: 940px; padding: 40px 44px; display: flex; flex-direction: column; gap: 34px; }
-.vrow { display: flex; align-items: center; gap: 26px; }
-.vrow .l { width: 220px; font: 800 44px/1 Unb; }
-.vrow .tr { flex: 1; height: 54px; border-radius: 27px; background: #f1ece6; overflow: hidden; }
-.vrow .fl { height: 100%; border-radius: 27px; }
-.vrow .ar { width: 90px; font: 900 64px/1 Unb; text-align: center; }
-
-/* график: калории вниз, вес на месте */
-.chart { width: 960px; padding: 36px 36px 30px; }
-.chart svg { display: block; }
-.legend { display: flex; gap: 40px; justify-content: center; margin-top: 14px; font: 700 32px/1 Man; color: var(--muted); }
-.legend i { display: inline-block; width: 34px; height: 10px; border-radius: 5px; margin-right: 12px; vertical-align: 8px; }
-
-/* батарейка */
-.batt { width: 520px; height: 250px; border-radius: 44px; border: 14px solid var(--ink); padding: 22px; display: flex; gap: 18px; position: relative; background: #fff; }
-.batt::after { content: ''; position: absolute; right: -44px; top: 70px; width: 26px; height: 82px; border-radius: 0 16px 16px 0; background: var(--ink); }
-.batt i { flex: 1; border-radius: 18px; background: var(--green); }
-.batt i.low { background: var(--red); }
-
-/* неделя */
-.week { display: grid; grid-template-columns: repeat(7, 118px); gap: 14px; position: relative; }
-.day { height: 170px; border-radius: 28px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 10px 30px rgba(60,40,20,.08); }
-.day b { font: 800 30px/1 Unb; color: var(--muted); }
-.day .ok { width: 58px; height: 58px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font: 900 34px/1 Unb; }
-.day .no { width: 58px; height: 58px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font: 900 36px/1 Unb; }
-.day.bad { background: #fff0f2; }
-.strike { position: absolute; left: -20px; right: -20px; top: 50%; pointer-events: none; }
-
-/* комментарий + гайд */
-.cmt { width: 900px; padding: 30px 34px; display: flex; align-items: center; gap: 24px; }
-.cmt img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
-.cmt .who { font: 700 28px/1 Man; color: var(--muted); margin-bottom: 12px; }
-.cmt .txt { font: 900 70px/1 Unb; letter-spacing: 2px; display: flex; }
-.cmt .txt span { display: inline-block; }
-.cmt .heart { margin-left: auto; font: 900 56px/1 Unb; color: var(--red); }
-.guide { width: 620px; height: 780px; padding: 50px 46px; display: flex; flex-direction: column; justify-content: space-between; background: var(--ink); color: #fff; border-radius: 44px; position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.25); }
-.guide > * { position: relative; z-index: 1; }
-.guide .k { font: 800 28px/1 Unb; letter-spacing: 5px; color: var(--red2); }
-.guide .t { font: 900 86px/1 Unb; letter-spacing: -2px; }
-.guide .t em { font-style: normal; color: var(--red2); }
-.guide .b { display: flex; align-items: center; gap: 16px; font: 700 30px/1 Man; color: #cfc9c2; }
-.guide .b img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; }
-.guide::before { content: ''; position: absolute; right: -140px; bottom: -140px; width: 380px; height: 380px; border-radius: 50%; background: var(--red); opacity: .9; }
-
-/* субтитры — светлая версия: чёрный текст с белой обводкой, текущее слово красное */
-#subs { position: absolute; left: 60px; width: 840px; top: 1405px; height: 190px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-#subs .ln { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 18px; transform-origin: 50% 60%; }
-#subs .w { text-align: center; font: 900 1em/1.15 Unb; color: var(--ink); text-transform: uppercase; letter-spacing: -1px;
-  -webkit-text-stroke: 12px #fff; paint-order: stroke fill; }
-#subs .w.on { color: var(--red); }
-/* еда: тарелки, подписи-выноски, круг-схема */
-.plate { position: relative; width: 640px; height: 640px; }
-.plate > svg { position: absolute; inset: 0; }
-.lbl { position: absolute; font: 800 36px/1 Unb; padding: 16px 26px 18px; border-radius: 999px; background: #fff; color: var(--ink); white-space: nowrap; box-shadow: 0 10px 30px rgba(60,40,20,.12); }
-.lbl.r { background: var(--ink); color: #fff; }
-.meal { display: inline-flex; align-items: center; gap: 18px; padding: 16px 32px 16px 18px; border-radius: 999px; background: var(--ink); color: #fff; font: 800 44px/1 Unb; }
-.meal span { padding: 12px 20px; border-radius: 999px; background: var(--red); font: 900 30px/1 Unb; }
-.tst { width: 300px; height: 300px; } .tst img { width: 100%; height: 100%; }
-.seg { position: absolute; inset: 0; }
-.dots4 { display: flex; gap: 26px; }
-.dots4 .d { width: 190px; height: 190px; border-radius: 50%; background: #fff; box-shadow: 0 14px 40px rgba(60,40,20,.12); display: flex; align-items: center; justify-content: center; font: 900 80px/1 Unb; color: var(--red); }
-.vs2 { display: flex; gap: 30px; align-items: flex-end; }
-.vs2 .col { display: flex; flex-direction: column; align-items: center; gap: 18px; font: 800 34px/1.2 Unb; text-align: center; }
-/* ===== улучшения визуала (свайпы, кинетика, текстура, фирменные элементы) ===== */
-@font-face { font-family: Hand; src: url(assets/fonts/Caveat-VF.ttf); font-weight: 400 700; }
-.kw { display: inline-block; transition: none; }
-.kw.hot { color: var(--red); }
-em .kw.hot { color: var(--ink); }
-#grain { position: absolute; inset: 0; width: 1080px; height: 1920px; opacity: .025; mix-blend-mode: multiply; pointer-events: none; z-index: 6; }
-#blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .32; }
-.hand { font: 700 64px/1 Hand; color: var(--red); white-space: nowrap; }
-.sign { font: 700 120px/1 Hand; color: var(--red); }
-.ul { display: block; }
-.prop { display: block; }
-.big500 { font: 900 230px/.9 Unb; letter-spacing: -10px; }
-.big500 small { font: 800 54px/1 Unb; letter-spacing: 0; color: var(--muted); display: block; text-align: center; margin-top: 10px; }
-.eq { display: flex; align-items: center; gap: 22px; font: 900 64px/1 Unb; }
-.chipf { padding: 22px 30px; border-radius: 30px; background: #fff; font: 800 40px/1 Unb; box-shadow: 0 14px 34px rgba(60,40,20,.12); }
-.chipf.r { background: var(--red); color: #fff; }
-/* субтитры: крупнее, 2–3 слова, активное слово — красная плашка-маркер */
-#subs .w { -webkit-text-stroke: 14px #fff; padding: 0 10px; border-radius: 18px; }
-#subs .w.on { color: #fff; background: var(--red); -webkit-text-stroke: 0; box-shadow: 0 8px 22px rgba(200,16,46,.35); }
-/* столбики: белок за день */
-.chart3 { width: 900px; padding: 40px 50px 34px; }
-.vb { height: 380px; display: flex; align-items: flex-end; justify-content: space-around; border-bottom: 6px solid #efe9e1; margin-top: 26px; }
-.vb .c { height: 100%; width: 150px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
-.vb .bar { width: 116px; border-radius: 26px 26px 8px 8px; background: #e6dfd6; }
-.vb .bar.r { background: var(--red); } .vb .bar.g { background: var(--green); }
-.vb .v { font: 900 44px/1 Unb; margin-bottom: 14px; }
-.vlab { display: flex; justify-content: space-around; margin-top: 16px; }
-.vlab span { width: 150px; text-align: center; font: 700 30px/1 Man; color: var(--muted); }
-.vb.w7 .c, .vlab.w7 span { width: 100px; } .vb.w7 .bar { width: 74px; border-radius: 20px 20px 6px 6px; }
-.week .day { position: relative; }
-.chk { width: 760px; padding: 34px 44px; display: flex; flex-direction: column; gap: 22px; }
-.chk .ci { display: flex; align-items: center; gap: 24px; font: 800 52px/1 Unb; transform-origin: 20% 50%; }
-.chk .ci i { width: 72px; height: 72px; border-radius: 50%; background: var(--green); color: #fff; font: 900 40px/72px Unb; text-align: center; font-style: normal; }
-.vrow .l small { display: block; font: 700 24px/1 Man; color: var(--muted); margin-top: 8px; }
-.vs .vrow .l { width: 250px; }
-.qbadge { position: absolute; right: -60px; top: -20px; width: 130px; height: 130px; border-radius: 50%; background: var(--red); color: #fff; font: 900 86px/130px Unb; text-align: center; box-shadow: 0 12px 30px rgba(200,16,46,.3); }
-.cups { display: flex; gap: 22px; }
-.dgrid { display: grid; grid-template-columns: repeat(2, 430px); gap: 28px; }
-.dc { height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 26px 20px 30px; gap: 14px; }
-.dc .prop { flex: none; }
-.dc b { font: 800 30px/1.15 Unb; text-align: center; }
-.dc span { font: 900 40px/1 Unb; color: var(--red); }
-.swap { width: 980px; padding: 40px 34px; display: flex; flex-direction: column; gap: 30px; }
-.sw { display: flex; align-items: center; gap: 18px; }
-.sw > div { flex: 1; display: flex; align-items: center; gap: 16px; }
-.sw span { font: 800 36px/1.15 Unb; }
-.sw .o { opacity: .5; } .sw .o span { text-decoration: line-through 5px var(--red); }
-.sw .n span { color: var(--green); }
-.sw i { font: 900 60px/1 Unb; font-style: normal; color: var(--red); }
-/* ===== визуал v2: пластилиновые иконки, интерфейс телефона, облачка, красная сцена, сплит ===== */
-.clay { display: block; filter: drop-shadow(0 22px 26px rgba(120,60,30,.22)); overflow: visible; }
-#smear { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
-.redbg { background: var(--red); }
-.redbg .h1, .redbg .h1 em, .wt { color: #fff !important; }
-.redbg .kw.hot { color: #121212 !important; }
-.ghost { position: absolute; left: 0; right: 0; top: 260px; text-align: center; font: 900 1100px/1 Unb; color: rgba(255,255,255,.08); letter-spacing: -40px; }
-.bubble { position: relative; background: #fff; border-radius: 56px; padding: 44px 60px; box-shadow: 0 24px 60px rgba(60,40,20,.14); transform-origin: 50% 120%; }
-.bubble.down::after { content: ''; position: absolute; left: 50%; bottom: -46px; margin-left: -40px; border: 40px solid transparent; border-top: 52px solid #fff; border-bottom: 0; }
-.chat { width: 900px; padding: 30px 34px 26px; display: flex; flex-direction: column; gap: 16px; border-radius: 48px; }
-.chat .ch { display: flex; align-items: center; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid #f0ebe4; }
-.chat .ch img { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; }
-.chat .ch b { display: block; font: 800 34px/1 Man; } .chat .ch span { font: 600 24px/1 Man; color: var(--green); }
-.msg { max-width: 640px; padding: 22px 30px; border-radius: 34px; font: 700 38px/1.2 Man; transform-origin: 90% 50%; }
-.msg.me { align-self: flex-end; background: var(--red); color: #fff; border-bottom-right-radius: 10px; }
-.msg.her { align-self: flex-start; background: #f1ece6; border-bottom-left-radius: 10px; transform-origin: 10% 50%; }
-.chat .tm { align-self: flex-end; font: 600 24px/1 Man; color: var(--muted); }
-.notes { width: 920px; padding: 40px 46px; background: #fff8dc; border-radius: 44px; display: flex; flex-direction: column; gap: 28px; }
-.notes .nh { font: 900 56px/1 Unb; padding-bottom: 14px; border-bottom: 3px solid #f0e2b0; }
-.notes .ni { display: flex; align-items: center; gap: 24px; font: 700 46px/1.15 Man; transform-origin: 0 50%; }
-.notes .ni i { width: 50px; height: 50px; border: 5px solid #c9b77a; border-radius: 12px; flex: none; }
-.loop { position: relative; width: 860px; height: 860px; }
-.loop .lc { position: absolute; left: 50%; top: 50%; }
-.loop .tst.lc { margin: 0; }
-.np { position: absolute; width: 0; height: 0; }
-.node { position: absolute; transform: translate(-50%, -50%); background: #fff; border-radius: 999px; padding: 22px 36px 24px; font: 900 44px/1.05 Unb; text-align: center; white-space: nowrap; box-shadow: 0 16px 40px rgba(60,40,20,.14); }
-.node.r { background: var(--red); color: #fff; }
-.half { position: absolute; top: 0; bottom: 0; width: 540px; padding: 200px 34px 0; display: flex; flex-direction: column; align-items: center; gap: 22px; }
-.half.l { left: 0; background: #fbe4e7; } .half.r { left: 540px; background: #e3f4ea; }
-.hk2 { font: 900 44px/1 Unb; letter-spacing: 1px; margin-bottom: 18px; }
-.half.l .hk2 { color: var(--red); } .half.r .hk2 { color: var(--green); }
-.hx { width: 100%; padding: 22px 26px; border-radius: 28px; background: #fff; font: 800 32px/1.15 Unb; color: #b9566a; text-decoration: line-through 4px; }
-.ho { font: 800 34px/1.1 Unb; text-align: center; margin: 4px 0 18px; }
-.ho.g { margin-top: 10px; padding: 20px 28px; border-radius: 999px; background: var(--green); color: #fff; }
-.track { width: 940px; padding: 36px 34px 40px; }
-.track .th { font: 900 40px/1 Unb; margin-bottom: 28px; }
-.track .tw { display: flex; justify-content: space-between; }
-.td { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.td i { width: 104px; height: 104px; border-radius: 50%; background: var(--green); color: #fff; font: 900 50px/104px Unb; text-align: center; font-style: normal; box-shadow: inset 0 -8px 0 rgba(0,0,0,.12); }
-.td i.bad { background: var(--red); }
-.td span { font: 700 30px/1 Man; color: var(--muted); }
-.poll { width: 880px; padding: 44px 44px 48px; display: flex; flex-direction: column; gap: 22px; border-radius: 48px; }
-.pq { font: 900 52px/1.1 Unb; text-align: center; margin-bottom: 10px; }
-.po { position: relative; height: 110px; border-radius: 30px; background: #f1ece6; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.po span { position: relative; font: 900 46px/1 Unb; }
-.po b { position: absolute; right: 34px; top: 50%; margin-top: -26px; font: 900 52px/1 Unb; color: #fff; }
-.po .pf { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--red); }
-.po.yes span { color: var(--ink); mix-blend-mode: normal; }
-.orb { position: absolute; left: 540px; top: 760px; width: 190px; height: 190px; margin: -95px 0 0 -95px; border-radius: 50%; background: var(--ink); color: #fff; font: 900 54px/190px Unb; text-align: center; box-shadow: 0 18px 40px rgba(0,0,0,.25); z-index: 2; }
-.notes .ni s { text-decoration: line-through 5px var(--red); color: #9a8f86; }
-.weeks { display: flex; flex-direction: column; gap: 18px; }
-.wrow { display: flex; align-items: center; gap: 16px; }
-.wrow span { width: 190px; font: 700 30px/1 Man; color: var(--muted); }
-.wrow i { width: 78px; height: 78px; border-radius: 50%; background: var(--green); box-shadow: inset 0 -7px 0 rgba(0,0,0,.12); }
-.wrow i.bad { background: var(--red); }
-/* субтитры v3: слово — чёрное на белой плашке, текущее — белое на красной (обводка букв перекрывала сам текст при мелком шрифте) */
-#subs .ln { gap: 10px 12px !important; }
-#subs .w { -webkit-text-stroke: 0 !important; color: var(--ink); background: #fff; padding: .08em .3em .12em; border-radius: .26em; box-shadow: 0 10px 24px rgba(60,40,20,.16); line-height: 1.1; }
-#subs .w.on { color: #fff; background: var(--red); box-shadow: 0 10px 26px rgba(200,16,46,.4); }
-.dayc { width: 940px; padding: 36px 40px 70px; }
-.dayc .th { font: 900 40px/1 Unb; margin-bottom: 34px; }
-.dline { position: relative; height: 70px; border-radius: 35px; background: #e3f4ea; overflow: visible; }
-.dfill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 35px; background: repeating-linear-gradient(-45deg, #d9d2c8 0 18px, #cfc7bc 18px 36px); }
-.dt { position: absolute; top: 86px; font: 800 30px/1 Unb; color: var(--muted); }
-.dt[style*="46%"] { translate: -50% 0; color: var(--red); }
-.dlab { position: absolute; left: 23%; top: 50%; translate: -50% -50%; font: 900 32px/1 Unb; color: #6f665c; }
-.ring { position: relative; width: 560px; height: 560px; }
-.rc { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; font: 900 52px/1.1 Unb; color: var(--green); }
-.meals4 { display: grid; grid-template-columns: repeat(2, 440px); gap: 26px; }
-.m4 { height: 220px; display: flex; align-items: center; gap: 18px; padding: 0 24px; }
-.m4 b { font: 800 38px/1 Unb; }
-.carbs { display: flex; gap: 40px; align-items: flex-end; }
-.cb { position: relative; }
-.cb i { position: absolute; right: -6px; top: -10px; width: 86px; height: 86px; border-radius: 50%; background: var(--red); color: #fff; font: 900 48px/86px Unb; text-align: center; font-style: normal; box-shadow: 0 10px 24px rgba(200,16,46,.35); }
-.notes .ni .clay { margin-left: auto; }
-.td span { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.td .dv { font: 900 30px/1 Unb; color: var(--green); }
-.split3 { width: 960px; padding: 40px 40px 34px; }
-.sbar { display: flex; height: 150px; border-radius: 30px; overflow: hidden; background: #f1ece6; }
-.sw1 { width: 0; background: linear-gradient(180deg,#9fdcff,#2f97dc); color: #fff; font: 900 40px/150px Unb; text-align: center; white-space: nowrap; overflow: hidden; }
-.sw2 { flex: 1; background: linear-gradient(180deg,#ffd98f,#d98f2e); color: #fff; font: 900 34px/150px Unb; text-align: center; }
-.sl { margin-top: 18px; font: 700 32px/1.2 Man; color: var(--muted); text-align: center; }
-.fatchart { width: 940px; padding: 30px 40px; }
-.dwin { display: flex; gap: 26px; }
-.dw { width: 440px; height: 200px; display: flex; align-items: center; gap: 20px; padding: 0 26px; }
-.dw b { font: 800 36px/1.15 Unb; }
-.notes .ni b.g { margin-left: auto; font: 900 40px/1 Unb; color: var(--red); }
-.kscale { white-space: nowrap; position: absolute; left: 50%; bottom: -70px; translate: -50% 0; background: #121212; color: #7dff9a; font: 900 52px/1 Unb; padding: 18px 34px; border-radius: 22px; box-shadow: 0 14px 30px rgba(0,0,0,.25); }
-.eqrow { display: flex; align-items: center; gap: 30px; }
-.eqs { font: 900 130px/1 Unb; color: var(--red); }
-.phone { width: 280px; height: 380px; border-radius: 48px; border: 10px solid #121212; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
-.phone b { font: 800 34px/1 Unb; color: var(--muted); } .phone span { font: 900 64px/1 Unb; }
-.give2 { width: 900px; margin: 0 auto 30px; padding: 30px 40px; display: flex; align-items: center; gap: 30px; }
-.give2 .clay { flex: none; }
-.give2 i { font-style: normal; font-size: 90px; line-height: 1; width: 120px; text-align: center; }
-.give2 b { font: 800 50px/1.1 Unb; }
-.m4 .em { font-size: 110px; line-height: 1; width: 150px; text-align: center; }
-.notes .ni .clay { margin-left: auto; }
-.said { width: 100%; padding: 40px 20px; border-radius: 36px; background: #fff; font: 900 50px/1.15 Unb; text-align: center; box-shadow: 0 16px 40px rgba(60,40,20,.12); }
-.said.r { background: var(--red); color: #fff; }
-.nogap { position: absolute; left: 50%; top: 0; margin-left: -60px; width: 120px; height: 120px; border-radius: 50%; background: var(--red); color: #fff; font: 900 70px/120px Unb; text-align: center; box-shadow: 0 12px 30px rgba(200,16,46,.35); }
-.notes .ni b { font-weight: 800; color: var(--green); }
-.said.g { background: var(--green); color: #fff; font-size: 40px; padding: 30px 18px; }
-.notes .ni { font-size: 40px; }
-.car { width: 760px; height: 380px; display: flex; align-items: center; justify-content: center; gap: 30px; background: #1f2230; border-radius: 48px; }
-.car span { font-size: 200px; line-height: 1; }
-.slide { position: absolute; left: 340px; top: 0; }
-.m4.col { flex-direction: column; height: 300px; justify-content: center; gap: 14px; }
-.pass { width: 820px; height: 380px; border-radius: 44px; background: linear-gradient(135deg,#121212,#3a3a44); color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 0 50px; position: relative; overflow: hidden; }
-.pass b { font: 900 70px/1 Unb; letter-spacing: 2px; } .pass span { font: 700 40px/1 Man; color: #ff4a5e; margin-top: 16px; }
-.pass .clay { position: absolute; right: 30px; bottom: 30px; opacity: .9; }
-.bigemoji { font-size: 330px; line-height: 1; filter: drop-shadow(0 24px 30px rgba(60,40,20,.2)); }
-.table2 { width: 960px; padding: 34px; display: flex; gap: 20px; }
-.tcol { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.tcol b { font: 900 44px/1 Unb; } .tcol span { font: 800 30px/1 Unb; color: var(--red); }
-.daybar { width: 900px; height: 120px; display: flex; align-items: center; gap: 24px; padding: 0 40px; font: 800 34px/1 Unb; color: var(--muted); }
-.daybar i { flex: 1; height: 26px; border-radius: 13px; background: linear-gradient(90deg,#ffd98f,#ff8fa3,#9fb2ff); }
-.meal3 { width: 920px; margin: 0 auto 24px; padding: 20px 36px; display: flex; align-items: center; gap: 26px; }
-.meal3 em { font: 800 30px/1 Unb; font-style: normal; color: var(--muted); width: 110px; }
-.meal3 b { font: 800 40px/1.15 Unb; }
-.meal3.hi { background: #fff3dc; box-shadow: 0 0 0 6px #e7a24e, 0 20px 60px rgba(60,40,20,.1); }
-.vid.full { position: absolute; inset: 0; background: #1a1a1a; }
-.vid.full img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* геймплей на весь кадр */
+.vid.full { position: absolute; inset: 0; background: #000; overflow: hidden; }
+.vid.full img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: 50% 50%; }
 .vid.full::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(rgba(244,241,236,.9), rgba(244,241,236,0) 11%), linear-gradient(0deg, rgba(0,0,0,.28), rgba(0,0,0,0) 30%); }
+  background: radial-gradient(ellipse 78% 72% at 50% 45%, transparent 55%, rgba(0,0,0,.6)), linear-gradient(0deg, rgba(0,0,0,.65), transparent 24%), linear-gradient(180deg, rgba(0,0,0,.45), transparent 18%); }
+.vid.dim img { filter: brightness(.4) saturate(.7) blur(4px); }
+.vid.red img { filter: brightness(.5) sepia(.7) hue-rotate(-35deg) saturate(2.4) contrast(1.1); }
 
-/* ═══════════ ИИ БЛОГ: тема «Остров ИИ» (лагуна, солнце, пальмы, золото) ═══════════ */
-:root { --bg: #0a5d74; --ink: #0b1f2a; --muted: #9fd3d6; --red: #ffc93c; --red2: #ffd75e; --gold: #ffc93c; --coral: #ff6b5b; --sea: #12b5b0; --card: #ffffff; --green: #2fd17a; }
-body { color: #fff; }
-#bg { background:
-  radial-gradient(38% 22% at 82% 9%, rgba(255,214,110,.75) 0, rgba(255,170,60,.25) 45%, transparent 75%),
-  radial-gradient(70% 30% at 50% 100%, rgba(40,230,210,.45) 0, transparent 70%),
-  linear-gradient(180deg, #073d55 0%, #0a5d74 38%, #0d8794 72%, #13aea8 100%); }
-.blob { opacity: .22; }
-#isle { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-#isle svg { position: absolute; }
-#isle .waves path { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 5; stroke-linecap: round; }
-#grain { opacity: .035; mix-blend-mode: overlay; }
-#bars i { background: rgba(255,255,255,.22); } #bars b { background: #fff; }
-#prof .n { color: #fff; } #prof .s { color: #bfe9ea; }
-#prof img { border-color: var(--gold); }
-.h1 { color: #fff; text-shadow: 0 6px 24px rgba(0,30,45,.35); }
-.h1 em { color: var(--gold); }
-.kicker { color: var(--gold); }
-.card, .bubble, .notes, .chat { color: var(--ink); }
-.card .h1, .bubble .h1, .notes .h1 { color: var(--ink); text-shadow: none; }
-.card .h1 em, .bubble .h1 em { color: #e09400; }
-.tag { background: linear-gradient(180deg, #ffd75e, #ffb31a); color: var(--ink); box-shadow: 0 12px 30px rgba(255,170,30,.35); }
-.tag.dark { background: #06283a; color: #fff; box-shadow: 0 12px 30px rgba(0,0,0,.3); }
-.redbg { background: linear-gradient(165deg, #ffe27a 0%, #ffbf2e 55%, #ff9d1a 100%); }
-.redbg .h1, .redbg .h1 em, .wt { color: var(--ink) !important; text-shadow: none !important; }
-.redbg .kw.hot { color: #fff !important; }
-.redbg .kicker { color: var(--ink) !important; }
-.ghost { color: rgba(11,31,42,.08); }
-.hand { color: var(--gold); }
-#subs .w { color: var(--ink); background: #fff; box-shadow: 0 10px 24px rgba(0,20,30,.35); }
-#subs .w.on { color: var(--ink); background: linear-gradient(180deg, #ffe066, #ffb31a); box-shadow: 0 10px 26px rgba(255,170,30,.5); }
-.guide { background: linear-gradient(170deg, #06283a, #0a4a60); }
-.guide::before { background: var(--gold); }
-.guide .k, .guide .t em { color: var(--gold); }
-.sign { color: var(--gold); }
-/* экраны-скриншоты */
-.scr { border-radius: 34px; overflow: hidden; background: #1e1e1e; box-shadow: 0 30px 80px rgba(0,15,25,.5), 0 0 0 6px rgba(255,255,255,.9); }
-.scr img { display: block; width: 100%; }
-.scr.glow { box-shadow: 0 30px 80px rgba(0,15,25,.5), 0 0 0 6px #ffc93c, 0 0 60px rgba(255,201,60,.6); }
-.money { font: 900 170px/1 Unb; letter-spacing: -6px; color: var(--gold); text-shadow: 0 10px 40px rgba(255,170,30,.45); white-space: nowrap; }
-.money small { display: block; font: 800 44px/1.1 Unb; letter-spacing: 0; color: #fff; text-align: center; margin-top: 14px; }
-.flow { display: flex; align-items: center; gap: 14px; }
-.flow .st { background: #fff; color: var(--ink); border-radius: 28px; padding: 22px 24px; font: 900 36px/1 Unb; box-shadow: 0 16px 40px rgba(0,20,30,.3); }
-.flow .st.g { background: linear-gradient(180deg, #ffe066, #ffb31a); }
-.flow .ar { font: 900 50px/1 Unb; color: var(--gold); }
-.aibadge { display: inline-flex; align-items: center; gap: 18px; padding: 22px 34px; border-radius: 999px; background: #06283a; color: #fff; font: 900 38px/1.1 Unb; box-shadow: 0 0 0 5px #7ff3ff, 0 0 50px rgba(127,243,255,.55); }
-.tst img { filter: drop-shadow(0 18px 30px rgba(0,25,40,.35)); }
-.msg.ai { align-self: flex-start; background: #e8fbff; border-bottom-left-radius: 10px; transform-origin: 10% 50%; }
-.cmt { display: flex; gap: 18px; align-items: flex-start; background: #fff; color: var(--ink); border-radius: 30px; padding: 22px 28px; width: 860px; box-shadow: 0 16px 40px rgba(0,20,30,.28); }
-.cmt i { flex: none; width: 70px; height: 70px; border-radius: 50%; font-style: normal; font: 900 34px/70px Unb; text-align: center; color: #fff; }
-.cmt b { display: block; font: 800 26px/1 Man; color: #6b7b84; margin-bottom: 8px; }
-.cmt span { font: 700 40px/1.2 Man; }
+/* шапка: рамка игрока (Аня) и логотип */
+#hud { position: absolute; inset: 0; pointer-events: none; z-index: 7; }
+#uf { position: absolute; left: 22px; top: 18px; display: flex; align-items: center; }
+#uf .pt { position: relative; z-index: 2; width: 132px; height: 132px; border-radius: 50%; overflow: hidden;
+  border: 6px solid #d9b25a; box-shadow: 0 0 0 3px #2a1404, 0 0 0 7px #8a6a2e, 0 10px 26px rgba(0,0,0,.7); }
+#uf .pt img { width: 100%; height: 100%; object-fit: cover; }
+#uf .ufr { margin-left: -24px; padding: 12px 22px 14px 40px; width: 330px; border-radius: 0 14px 14px 0;
+  background: linear-gradient(180deg, rgba(30,20,10,.92), rgba(10,7,4,.92)); border: 3px solid #c9a14a; border-left: 0; box-shadow: 0 10px 26px rgba(0,0,0,.6); }
+#uf .nm { font: 900 34px/1 Aleg; color: var(--gold); -webkit-text-stroke: 2px #1a0c02; paint-order: stroke fill; }
+#uf .nm span { font: 700 20px/1 Man; color: #d8c8a8; -webkit-text-stroke: 0; margin-left: 8px; }
+#uf .bar { height: 16px; margin-top: 8px; border-radius: 3px; background: #1a1208; border: 2px solid #000; overflow: hidden; }
+#uf .bar i { display: block; height: 100%; }
+#uf .hp i { width: 100%; background: linear-gradient(180deg, #5cff5c, #0f9e19); }
+#uf .mp i { width: 100%; background: linear-gradient(180deg, #6fb2ff, #1b4fd6); }
+#logo { position: absolute; right: 26px; top: 14px; width: 250px; filter: drop-shadow(0 8px 18px rgba(0,0,0,.8)); }
 
-/* ── ИИ-блог v2: телефон, пуши, монеты, счётчик, металл, неон ── */
-.iph { position: relative; padding: 18px; border-radius: 76px; background: linear-gradient(160deg, #2a2f3a, #0b0d12); box-shadow: 0 0 0 4px #4b5160, 0 40px 90px rgba(0,15,25,.55), inset 0 0 0 2px rgba(255,255,255,.08); }
-.iph .scrn { position: relative; border-radius: 58px; overflow: hidden; background: #1e1e1e; }
-.iph .scrn img { display: block; width: 100%; transform-origin: var(--ox, 50%) var(--oy, 50%); }
-.iph::before { content: ''; position: absolute; left: 50%; top: 34px; width: 150px; height: 40px; margin-left: -75px; border-radius: 20px; background: #000; z-index: 3; }
-.iph::after { content: ''; position: absolute; inset: 18px; border-radius: 58px; pointer-events: none; z-index: 2;
-  background: linear-gradient(115deg, transparent 0 40%, rgba(255,255,255,.22) 47%, rgba(255,255,255,.05) 52%, transparent 60%) no-repeat;
-  background-size: 300% 100%; background-position: calc(100% - mod(var(--t) * 40, 260) * 1%) 0; }
-.push { position: absolute; left: 50px; right: 50px; top: 170px; z-index: 4; display: flex; align-items: center; gap: 22px; padding: 22px 28px; border-radius: 40px;
-  background: rgba(245,248,250,.92); color: #0b1f2a; box-shadow: 0 24px 60px rgba(0,20,30,.4); backdrop-filter: blur(10px); opacity: 0; }
-.push .ic { flex: none; width: 92px; height: 92px; border-radius: 24px; display: flex; align-items: center; justify-content: center; font: 900 52px/1 Unb; color: #fff; background: linear-gradient(160deg, #ff8a3d, #f15a22); }
-.push .tx b { display: block; font: 800 30px/1.1 Man; color: #6b7b84; margin-bottom: 6px; }
-.push .tx span { font: 800 40px/1.15 Man; }
-.push .tx em { font-style: normal; color: #14a35a; }
+/* заголовки — жёлтый Warcraft с объёмом */
+.h1, .h2 { font: 900 120px/1.02 Aleg; color: var(--gold); text-align: center; letter-spacing: 1px;
+  -webkit-text-stroke: 4px #1f0f02; paint-order: stroke fill;
+  text-shadow: 0 4px 0 #9a6400, 0 8px 0 #5a3a00, 0 12px 0 #3a2400, 0 20px 34px rgba(0,0,0,.9); white-space: nowrap; }
+.h2 { font-size: 76px; line-height: 1.08; -webkit-text-stroke: 3px #1f0f02; }
+.h1 em, .h2 em { font-style: normal; color: #fff; text-shadow: 0 4px 0 #8a8a8a, 0 8px 0 #4a4a4a, 0 12px 0 #2a2a2a, 0 20px 34px rgba(0,0,0,.9); }
+.kw { display: inline-block; }
+.kw.hot { color: #fff; }
+em .kw.hot { color: var(--gold); }
+.kicker { font: 800 40px/1 AlegX; letter-spacing: 6px; color: #f3e3bd; text-transform: uppercase; text-shadow: 0 3px 12px #000, 0 0 2px #000; }
+.qy { color: var(--gold); } .q0 { color: var(--q0); } .q1 { color: #fff; } .q2 { color: var(--q2); } .q3 { color: var(--q3); }
+.logo { filter: drop-shadow(0 18px 40px rgba(0,0,0,.85)); }
+
+/* панель Warcraft: тёмное дерево/кожа, золотая рамка, ромбы по углам */
+.wp { position: relative; background: linear-gradient(180deg, rgba(36,25,14,.95), rgba(13,9,5,.95)); border: 4px solid var(--bronze); border-radius: 16px;
+  box-shadow: 0 0 0 3px #241404, inset 0 0 0 2px rgba(255,214,120,.22), inset 0 0 50px rgba(0,0,0,.6), 0 24px 60px rgba(0,0,0,.75); padding: 26px 40px; }
+.wp::before, .wp::after { content: ''; position: absolute; width: 24px; height: 24px; background: linear-gradient(135deg, #fff1a6, #c47a00); transform: rotate(45deg); border: 3px solid #241404; }
+.wp::before { left: -16px; top: -16px; } .wp::after { right: -16px; bottom: -16px; }
+.ph { font: 900 46px/1 Aleg; color: var(--gold); text-align: center; margin-bottom: 20px; -webkit-text-stroke: 2px #1a0c02; paint-order: stroke fill; letter-spacing: 2px; }
+.chip.wp { display: inline-flex; align-items: center; gap: 22px; padding: 14px 34px 14px 14px; font: 900 52px/1 Aleg; color: #fff; white-space: nowrap; border-radius: 14px; }
+.chip.wp.sm { font-size: 38px; padding: 14px 28px; }
+.chip small { display: block; font: 800 26px/1.1 Man; color: #d8c8a8; letter-spacing: 1px; margin-bottom: 6px; }
+.ico { width: 96px; height: 96px; border-radius: 12px; flex: none; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: radial-gradient(circle at 40% 35%, #4a3a26, #120c06); border: 4px solid var(--bronze); box-shadow: 0 0 0 2px #000, inset 0 0 18px rgba(0,0,0,.7); }
+.ico svg { width: 84%; height: 84%; }
+.ico.arc { background: radial-gradient(circle at 42% 38%, #fff 0, #ecc4ff 14%, #9b3cf0 52%, #2a0b4a 100%); }
+.ico.gr { border-color: var(--q2); box-shadow: 0 0 0 2px #000, 0 0 18px rgba(30,255,0,.45); }
+.stamp { font: 900 110px/1 Aleg; color: #ff3b30; border: 10px solid #ff3b30; border-radius: 20px; padding: 10px 40px 18px; transform: rotate(-6deg);
+  background: rgba(30,0,0,.45); text-shadow: 0 4px 18px rgba(0,0,0,.8); box-shadow: 0 0 50px rgba(255,40,40,.35), inset 0 0 30px rgba(255,40,40,.25); white-space: nowrap; }
+.tst img { width: 100%; height: 100%; filter: drop-shadow(0 18px 28px rgba(0,0,0,.65)); }
+
+/* подсказка предмета как в игре */
+.tip { background: rgba(6,8,30,.94); border: 3px solid #b9b9c8; border-radius: 12px; padding: 20px 30px; box-shadow: 0 0 0 2px #000, 0 20px 50px rgba(0,0,0,.65); font: 700 32px/1.35 Man; color: #fff; white-space: nowrap; }
+
+/* таймер респавна */
+.timer { position: relative; width: 300px; height: 300px; }
+.timer svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 10px 24px rgba(0,0,0,.8)); }
+.timer .bgc { fill: rgba(12,8,4,.9); stroke: #2a1a08; stroke-width: 22; }
+.timer .ring { fill: none; stroke: var(--gold); stroke-width: 16; stroke-dasharray: 1 1; stroke-linecap: round; }
+.timer.done .ring { stroke: #ff3b30; }
+.timer b { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font: 900 130px/1 Aleg; color: #fff; -webkit-text-stroke: 3px #000; paint-order: stroke fill; }
+.timer span { position: absolute; left: -40px; right: -40px; top: 200px; text-align: center; font: 800 28px/1 Man; color: #d8c8a8; }
+.timer.done b { color: #ff3b30; }
+
+/* квест (журнал заданий) */
+.quest { width: 980px; padding: 36px 50px 40px; border-radius: 10px; color: #2a1608;
+  background: radial-gradient(120% 90% at 50% 40%, #fbecc6, #d9b77a); border: 6px solid #6e4418; box-shadow: 0 0 0 3px #c9a14a, 0 0 0 7px #2a1404, 0 30px 70px rgba(0,0,0,.8); }
+.quest .qh { font: 900 34px/1 Aleg; color: #b8460e; letter-spacing: 3px; margin-bottom: 12px; }
+.quest .qt { font: 900 76px/1 Aleg; color: #3a1c06; margin-bottom: 26px; }
+.quest .qo { display: flex; align-items: center; gap: 22px; font: 800 52px/1.15 Man; margin: 10px 0; }
+.quest .qo i { font-style: normal; color: #b8460e; font-size: 40px; width: 50px; }
+.quest .qo b { margin-left: auto; font: 900 52px/1 Aleg; color: #7a4a1a; }
+.quest .qr2 { margin-top: 24px; font: 700 34px/1 Man; color: #5a3a1a; }
+.quest .qr2 span { font-weight: 800; -webkit-text-stroke: 1px #3a2008; }
+.quest.done .qo i { color: #1a8a1a; } .quest.done .qo b { color: #1a8a1a; }
+.banner { font: 900 110px/1 Aleg; color: var(--gold); padding: 20px 80px 30px; -webkit-text-stroke: 4px #1f0f02; paint-order: stroke fill; white-space: nowrap;
+  text-shadow: 0 6px 0 #9a6400, 0 12px 0 #5a3a00, 0 0 60px rgba(255,209,0,.6); background: radial-gradient(60% 70% at 50% 50%, rgba(0,0,0,.65), transparent 75%); }
+
+/* Boosty */
+.bcard { display: flex; align-items: center; gap: 50px; padding: 40px 54px; }
+.qrbox { width: 400px; height: 400px; padding: 26px; border-radius: 16px; background: radial-gradient(120% 90% at 50% 40%, #fff6dc, #e6cc94); border: 6px solid #6e4418; box-shadow: 0 0 0 3px #c9a14a; flex: none; }
+.qrsvg { width: 100%; height: 100%; display: block; }
+.bt { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.bname { font: 900 150px/.95 Aleg; color: var(--boosty); -webkit-text-stroke: 4px #2a0c02; paint-order: stroke fill; text-shadow: 0 6px 0 #8a2a08, 0 12px 0 #4a1404, 0 20px 40px rgba(0,0,0,.8); letter-spacing: 3px; }
+.blink { font: 800 58px/1 Man; color: #fff; text-shadow: 0 3px 10px #000; }
+.blink b { color: var(--gold); }
+.bsub { font: 900 46px/1 Aleg; color: #f3e3bd; }
+.bcard.big .qrbox { width: 440px; height: 440px; }
+.subbtn { font: 900 64px/1 Aleg; color: #fff; padding: 22px 50px 28px; border-radius: 16px; background: linear-gradient(180deg, #ff4a3d, #b3120c); border: 4px solid #ffb3a0; box-shadow: 0 0 0 3px #3a0602, 0 18px 40px rgba(0,0,0,.7); letter-spacing: 2px; }
+
+/* мобы: группы, тактика, сравнение */
+.mobi { width: 110px; height: 110px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.6)); }
+.grp { display: flex; align-items: center; gap: 30px; padding: 36px 50px; }
+.gc { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.gc .gi { display: flex; gap: 0; }
+.gc b { font: 900 54px/1 Aleg; color: #fff; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+.gc span { font: 700 24px/1 Man; color: #b9a98a; }
+.gp { font: 900 90px/1 Aleg; color: var(--gold); }
+.tact { width: 1180px; padding: 34px 50px; }
+.ti { display: flex; align-items: center; gap: 16px; padding: 14px 20px; margin: 10px 0; border-radius: 12px; background: rgba(255,255,255,.04); font: 800 46px/1 Man; }
+.ti .mobi { width: 84px; height: 84px; }
+.ti span { margin-left: 10px; } .ti b { color: var(--gold); }
+.ti em { margin-left: auto; font: 900 70px/1 Aleg; font-style: normal; }
+.ti.no { opacity: .9; } .ti.no em { color: #ff3b30; } .ti.no .mobi { filter: grayscale(1) brightness(.6); }
+.ti.ok em { color: var(--q2); }
+.ti .arw { font: 900 70px/1 Aleg; font-style: normal; color: var(--gold); width: 90px; text-align: center; }
+.cmp { display: flex; align-items: center; gap: 40px; }
+.cmp .wp { width: 600px; padding: 34px 40px; }
+.cmp .old { filter: saturate(.4); }
+.cr { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 12px 0; }
+.cr .mobi { width: 100px; height: 100px; }
+.cr em { font: 900 90px/1 Aleg; font-style: normal; margin-left: 24px; width: 90px; }
+.vs { font: 900 110px/1 Aleg; color: var(--gold); -webkit-text-stroke: 3px #000; paint-order: stroke fill; }
+
+/* окно добычи */
+.loot { width: 1000px; padding: 30px 40px 26px; }
+.li { display: flex; align-items: center; gap: 28px; padding: 10px 14px; margin: 8px 0; border-radius: 10px; background: linear-gradient(90deg, rgba(255,255,255,.06), transparent); font: 900 54px/1 Aleg; }
+.li .ico { width: 92px; height: 92px; }
+
+/* полоски маны/здоровья и уровня */
+.bars { width: 1000px; padding: 34px 44px; }
+.br { display: flex; align-items: center; gap: 26px; margin: 16px 0; }
+.br span { width: 250px; font: 900 44px/1 Aleg; color: #f3e3bd; }
+.br em { width: 230px; font: 800 36px/1 Man; font-style: normal; }
+.tr { flex: 1; height: 50px; border-radius: 6px; background: #120c06; border: 3px solid #000; box-shadow: 0 0 0 2px #8a6a2e; overflow: hidden; }
+.tr i { display: block; height: 100%; width: 100%; }
+.tr .mp { background: linear-gradient(180deg, #8cc4ff, #1b4fd6); }
+.tr .hp { background: linear-gradient(180deg, #7dff6a, #0f9e19); }
+.lvl { display: flex; align-items: center; gap: 30px; width: 900px; padding: 24px 36px; }
+.lvl span { font: 900 56px/1 Aleg; color: #fff; white-space: nowrap; } .lvl span b { color: var(--gold); }
+.lvl .tr i { width: 8%; background: linear-gradient(180deg, #e3a6ff, #7a1fd1); }
+
+/* метка на карте */
+.pin { position: absolute; width: 0; height: 0; }
+.pin i { position: absolute; left: -110px; top: -110px; width: 220px; height: 220px; border-radius: 50%; border: 10px solid var(--gold); box-shadow: 0 0 40px rgba(255,209,0,.8), inset 0 0 30px rgba(255,209,0,.5); }
+.pin i + i { left: -150px; top: -150px; width: 300px; height: 300px; border-width: 4px; opacity: .6; }
+
+/* дождь монет/льна */
 .rain { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: visible; }
-.coin3d { position: absolute; left: 0; top: 0; opacity: 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.35)); }
-#bank { position: absolute; right: 36px; top: 136px; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 12px 22px 12px 14px; border-radius: 999px;
-  background: rgba(4,32,46,.78); box-shadow: 0 0 0 3px #ffc93c, 0 10px 30px rgba(0,0,0,.3); font: 900 36px/1 Unb; color: #ffd75e; opacity: 0; transform-origin: 100% 50%; }
-#bank i { width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6c2, #ffcf3a 45%, #c47d00); font: 900 26px/46px Unb; color: #a86400; text-align: center; font-style: normal; }
-.money { background: linear-gradient(100deg, #fff1b0 0%, #ffd23f 22%, #c98a08 38%, #ffe680 50%, #fffbe6 54%, #ffd23f 62%, #b87400 80%, #ffe27a 100%);
-  background-size: 260% 100%; background-position: calc(mod(var(--t) * 55, 260) * 1%) 0; -webkit-background-clip: text; background-clip: text; color: transparent;
-  -webkit-text-stroke: 2px rgba(120,70,0,.35); filter: drop-shadow(0 8px 0 #8a5300) drop-shadow(0 18px 30px rgba(255,170,30,.45)); text-shadow: none; }
-.money small { -webkit-text-fill-color: #fff; -webkit-text-stroke: 0; filter: none; }
-.neon { box-shadow: 0 0 0 4px #7ff3ff, 0 0 40px rgba(127,243,255,.55), 0 20px 60px rgba(0,20,30,.4) !important; }
-.chat .msg.ai { font-family: 'JB', monospace; }
-@font-face { font-family: JB; src: url(assets/fonts/JetBrainsMono-VF.ttf); font-weight: 100 800; }
-#isle .spark { position: absolute; width: 46px; height: 46px; opacity: 0;
-  background: radial-gradient(circle, #fff 0 12%, transparent 13%), linear-gradient(90deg, transparent 46%, #fff 50%, transparent 54%), linear-gradient(0deg, transparent 46%, #fff 50%, transparent 54%); filter: drop-shadow(0 0 8px #fff); }
-#isle .shade { position: absolute; left: 380px; top: -160px; width: 900px; height: 900px; opacity: .10; filter: blur(14px); }
-.chat .msg.me { background: linear-gradient(180deg, #0f7d93, #0a5d74); color: #fff; }
+.coin3d { position: absolute; left: 0; top: 0; opacity: 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.55)); }
+
+/* субтитры: Alegreya SC, белые с тёмной обводкой, текущее слово — золото */
+#subs { position: absolute; left: 160px; width: 1600px; top: 902px; height: 140px; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 9; }
+#subs .ln { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 24px; transform-origin: 50% 60%; }
+#subs .w { font: 900 1em/1.25 Aleg; color: #fff; -webkit-text-stroke: 12px #120a04; paint-order: stroke fill; letter-spacing: 1px; text-shadow: 0 8px 20px rgba(0,0,0,.85); }
+#subs .w.on { color: var(--gold); }
+.chip.wp.sm .ico { width: 72px; height: 72px; }
+
 </style>
 </head>
 <body>
 <div id="view">
   <div id="bg"></div>
-  <div id="blobs"><i class="blob" style="left:-120px;top:120px;width:520px;height:520px;background:#3ff0e0"></i><i class="blob" style="left:620px;top:520px;width:600px;height:600px;background:#ffc93c"></i><i class="blob" style="left:80px;top:1200px;width:560px;height:560px;background:#29d3ff"></i></div>
-  <div id="isle">
-    <svg class="shade" viewBox="0 0 560 560"><g fill="#00151d"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg><i class="spark" style="left:371px;top:1557px;scale:0.74"></i><i class="spark" style="left:89px;top:1517px;scale:0.99"></i><i class="spark" style="left:136px;top:1667px;scale:0.85"></i><i class="spark" style="left:971px;top:1739px;scale:0.63"></i><i class="spark" style="left:128px;top:1702px;scale:0.75"></i><i class="spark" style="left:286px;top:1526px;scale:0.83"></i><i class="spark" style="left:100px;top:1769px;scale:0.57"></i><i class="spark" style="left:268px;top:1802px;scale:0.88"></i><i class="spark" style="left:103px;top:1775px;scale:0.85"></i><i class="spark" style="left:90px;top:1593px;scale:0.53"></i><i class="spark" style="left:919px;top:1548px;scale:0.67"></i><i class="spark" style="left:187px;top:1756px;scale:0.57"></i><i class="spark" style="left:355px;top:1766px;scale:0.99"></i><i class="spark" style="left:225px;top:1532px;scale:0.85"></i><i class="spark" style="left:816px;top:250px;scale:0.44"></i><i class="spark" style="left:752px;top:90px;scale:0.65"></i><i class="spark" style="left:974px;top:278px;scale:0.71"></i><i class="spark" style="left:958px;top:292px;scale:0.54"></i>
-    <svg class="waves" width="1080" height="1920" viewBox="0 0 1080 1920"><path d="M-20 1700 q60 -22 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0"/><path d="M-80 1790 q60 -22 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0"/><path d="M-20 1870 q60 -22 120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0 t120 0"/></svg>
-    <svg class="palm" style="left:-150px;top:-60px;opacity:.28;transform-origin:0 0" width="560" height="560" viewBox="0 0 560 560"><g fill="#022f3d"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg>
-    <svg class="palm" style="right:-170px;top:1130px;opacity:.22;transform-origin:100% 100%" width="560" height="560" viewBox="0 0 560 560"><g fill="#022f3d" transform="translate(560 560) rotate(180)"><path d="M40 60 Q260 40 520 200 Q300 120 60 150Z"/><path d="M40 60 Q200 160 330 430 Q190 230 30 180Z"/><path d="M40 60 Q330 -40 540 40 Q290 40 70 110Z"/><path d="M40 60 Q120 260 110 520 Q70 270 20 150Z"/></g></svg>
-  </div>
   <div class="bgi" id="bgA"></div><div class="bgi" id="bgB"></div>
-  <canvas id="embers" width="1080" height="1920"></canvas>
-  <canvas id="speed" width="1080" height="1920"></canvas>
+  <canvas id="speed" width="1920" height="1080"></canvas>
   <svg id="star" viewBox="-100 -100 200 200"><path id="starp"/></svg>
   <div id="arc"></div><div id="grid"></div><div id="floor"></div>
 
-  <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/draw), data-mark, data-at, data-count, data-shatter -->
+  <!-- Разметка монтажа: .layer = кадр; data-fx (pop/left/right/up/zoom/slam/punch/kin/peek/plop/grow/timer/rain), data-mark, data-at, data-count; у видео data-roi — наезд в область кадра -->
   <div id="world">
-    <!-- 1. Хук: 10 сек на продающий текст → сохраняй -->
+    <!-- 1. Хук: 7 мобов, респавн 10 сек → ни одного фармера → почему? -->
     <section class="sec" id="s1">
       <div class="layer A">
-        <div class="row" style="top:215px"><div class="kicker hk" style="font-size:36px">ПРОДАЮЩИЙ ТЕКСТ ЗА</div></div>
-        <div class="row" style="top:290px"><div class="money hk hkx" data-fx="punch" style="font-size:230px">10 сек<small>один промт</small></div></div>
-        <div class="tst hk" style="position:absolute;left:170px;top:640px;width:740px;height:740px"><img src="assets/ai/toon/05_ai_do.png" alt=""></div>
+        <div class="shotz vid full game " data-video="wowfarm" data-from="79.5" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_2386.jpg" alt=""></div>
+        <div class="abs" style="left:120px;top:250px"><div class="h1 hk hkx" data-fx="punch" style="font-size:190px;text-align:left">7 МОБОВ</div></div>
+        <div class="abs hk" style="left:130px;top:470px"><div class="chip wp"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-hg"/></svg></i>РЕСПАВН — <b class="qy">10 СЕК</b></div></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:240px"><div class="h1" data-fx="kin" style="font-size:84px;line-height:1.15">СОХРАНЯЙ,<br><em>ПОКА НЕ ПОТЕРЯЛ</em></div></div>
-        <div class="row" style="top:500px"><div class="tag" data-fx="slam" data-at=".4" style="font-size:60px">📌 сохранить</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".3" style="position:absolute;left:250px;top:680px;width:600px;height:600px"><img src="assets/ai/toon/12_secret.png" alt=""></div>
+        <div class="shotz vid full game " data-video="wowfarm" data-from="2" data-rate="1.4" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_0061.jpg" alt=""></div>
+        <div class="row" style="top:300px"><div class="stamp" data-fx="slam" data-at=".15">0 ФАРМЕРОВ</div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-6" data-at="0.4" style="position:absolute;left:1440px;top:440px;width:440px;height:440px"><img src="assets/wow/toon/07_nobody.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="88" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_2641.jpg" alt=""></div>
+        <div class="row" style="top:150px"><div class="h1" data-fx="kin" style="font-size:96px;line-height:1.1">ПОЧЕМУ ЕЁ<br><em>ВСЕ ПРОПУСКАЮТ?</em></div></div>
+        <div class="tst" data-fx="peek" data-from="left" data-rot="6" data-at="0.3" style="position:absolute;left:60px;top:470px;width:420px;height:420px"><img src="assets/wow/toon/04_secret.png" alt=""></div>
       </div>
     </section>
-
-    <!-- 2. Клип: фейспалм «час на пост» → ИИ пишет плохо, когда плохо объяснили -->
+    <!-- 2. Я Аня · голдфарм-точка в Форевер → квест «досмотри до конца» -->
     <section class="sec" id="s2">
       <div class="layer A">
-        <div class="shotz vid full" data-video="facepalm_laptop" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/facepalm_laptop/f_0001.jpg" alt=""></div>
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="6" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_0181.jpg" alt=""></div>
+        <div class="row" style="top:150px"><img class="logo" data-fx="zoom" data-at=".05" src="assets/wow/logo.png" alt="" style="width:560px"></div>
+        <div class="row" style="top:640px"><div class="h2" data-fx="kin" style="font-size:66px">ГОЛДФАРМ-ТОЧКА,<br>КОТОРУЮ <em>НИКТО НЕ ТРОГАЕТ</em></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-at="0.6" style="position:absolute;left:1460px;top:300px;width:400px;height:400px"><img src="assets/wow/toon/20_gg.png" alt=""></div>
       </div>
-      <div class="layer B redbg" style="opacity:0">
-        <div class="row" style="top:270px"><div class="h1 wt" data-fx="kin" style="font-size:64px;line-height:1.4">ИИ ПИШЕТ ПЛОХО,<br>КОГДА ЕМУ<br>ПЛОХО ОБЪЯСНИЛИ</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".4" style="position:absolute;left:250px;top:740px;width:580px;height:580px"><img src="assets/ai/toon/26_redo.png" alt=""></div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="30" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_0901.jpg" alt=""></div>
+        <div class="abs" style="left:300px;top:190px"><div class="quest" data-fx="up" data-at=".05"><div class="qh">❗ НОВОЕ ЗАДАНИЕ</div><div class="qt">Досмотри до конца</div><div class="qo" data-fx="left" data-mark="a"><i>◆</i>Точка на карте <b>0/1</b></div><div class="qo" data-fx="left" data-mark="b"><i>◆</i>Фарм с 12 уровня <b>0/1</b></div><div class="qr2">Награда: <span class="qy">● голда</span> и <span class="q2">[зелёнка]</span></div></div></div>
+        <div class="tst" data-fx="plop" data-mark="b" data-at="0.1" style="position:absolute;left:1300px;top:240px;width:460px;height:460px"><img src="assets/wow/toon/11_lvlup.png" alt=""></div>
       </div>
     </section>
-
-    <!-- 3. Вот промт: печатается → разбор на 4 части (мазок) -->
-    <section class="sec" id="s3" data-trans="smear">
+    <!-- 3. Вставка Boosty: запретные методы голдфарма + QR -->
+    <section class="sec" id="s3">
       <div class="layer A">
-        <div class="row" style="top:180px"><div class="kicker" data-fx="pop" style="font-size:38px">📋 ПРОМТ — СОХРАНИ</div></div>
-        <div class="row" style="top:240px"><div class="card neon" data-fx="up" data-at=".05" style="width:960px;padding:36px 40px">
-          <div data-fx="type" data-at=".2" data-d="2.0" style="font:600 37px/1.36 JB,monospace;color:#0b1f2a;min-height:410px">Ты — копирайтер с 10 годами опыта. Напиши продающий текст для [продукт] для [кому продаём]. Структура: цепляющий заголовок, боль клиента, решение, 3 выгоды, призыв к действию. Пиши просто, без воды, до 600 знаков.</div></div></div>
-        <div class="row" style="top:760px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;width:960px">
-          <div class="cmt" data-fx="pop" data-mark="r" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#ff6b5b;width:56px;height:56px;line-height:56px;font-size:28px">1</i><div><b>роль</b><span style="font-size:32px">копирайтер с опытом</span></div></div>
-          <div class="cmt" data-fx="pop" data-mark="a" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#3f8cff;width:56px;height:56px;line-height:56px;font-size:28px">2</i><div><b>что и кому</b><span style="font-size:32px">продукт + аудитория</span></div></div>
-          <div class="cmt" data-fx="pop" data-mark="b" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#2fd17a;width:56px;height:56px;line-height:56px;font-size:28px">3</i><div><b>структура</b><span style="font-size:32px">боль → выгоды → призыв</span></div></div>
-          <div class="cmt" data-fx="pop" data-mark="c" data-at="-.05" style="width:auto;padding:16px 20px"><i style="background:#ffb31a;width:56px;height:56px;line-height:56px;font-size:28px">4</i><div><b>ограничение</b><span style="font-size:32px">без воды, до 600 знаков</span></div></div></div></div>
+        <div class="shotz vid full game red" data-video="wowfarm" data-from="117.3" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_3520.jpg" alt=""></div>
+        <div class="row" style="top:200px"><div class="h1" data-fx="kin" style="font-size:118px;line-height:1.05">ЗАПРЕТНЫЕ МЕТОДЫ<br><em>ГОЛДФАРМА</em></div></div>
+        <div class="row" style="top:560px"><div class="stamp" data-fx="slam" data-at=".7" style="font-size:72px">НЕ ДЛЯ ЮТУБА</div></div>
+        <div class="tst" data-fx="plop" data-at="0.5" style="position:absolute;left:1470px;top:380px;width:420px;height:420px"><img src="assets/wow/toon/12_forbidden.png" alt=""></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="44" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_1321.jpg" alt=""></div>
+        <div class="abs" style="left:250px;top:150px"><div class="bcard wp" data-fx="up" data-at=".05"><div class="qrbox" data-fx="zoom" data-at=".35" data-react="b"><svg class="qrsvg"></svg></div><div class="bt"><div class="kicker">только у меня на</div><div class="bname" data-fx="pop" data-at=".2" data-react="a">BOOSTY</div><div class="blink">boosty.to/<b>anna_rich</b></div><div class="bsub">запретные методы голдфарма</div><div class="chip wp sm" data-fx="pop" data-mark="b" data-at=".2">⬇ ссылка в описании</div></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-4" data-mark="a" data-at="0.1" style="position:absolute;left:1480px;top:380px;width:400px;height:400px"><img src="assets/wow/toon/01_rich.png" alt=""></div>
       </div>
     </section>
-
-    <!-- 4. Отправляю → 10 секунд → ответ нейросети печатается (зум) -->
-    <section class="sec" id="s4" data-trans="zoom">
-      <div class="layer A" data-zoomfrom>
-        <div class="row" style="top:200px"><div class="chat card neon" data-fx="up" data-at=".05" style="width:960px">
-          <div class="ch"><div style="width:76px;height:76px;border-radius:50%;background:#06283a;display:flex;align-items:center;justify-content:center;font-size:44px">🤖</div><div><b>Нейросеть</b><span>печатает…</span></div></div>
-          <div class="msg me" data-fx="pop" data-at=".1" style="font-size:32px;max-width:760px">Напиши продающий текст для кофейни у моря для туристов…</div>
-          <div class="msg ai" style="font-size:31px;max-width:860px;line-height:1.4;white-space:pre-line" data-fx="type" data-mark="a" data-at="0" data-d="2.6">☕ Устал от кофе на бегу?
-В «Бризе» варят так, что хочется остаться.
-— свежая обжарка каждую неделю
-— вид на океан с каждого столика
-— вторая чашка за полцены до 10:00
-Загляни утром — первый круассан за наш счёт 🥐</div></div></div>
-        <div class="row" style="top:1110px"><div class="tag dark" data-fx="pop" data-mark="a" data-at="0" style="font-size:44px">⏱ <span data-count="0,10">0</span> сек</div></div>
+    <!-- 4. Гиперспавн: 3 бродят + Докмастер зовёт 3 охраны = 7 в пачке -->
+    <section class="sec" id="s4">
+      <div class="layer A">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="20" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_0601.jpg" alt=""></div>
+        <div class="abs" style="left:110px;top:220px"><div class="kicker" data-fx="pop">итак, точка</div></div>
+        <div class="abs" style="left:100px;top:270px"><div class="h1" data-fx="slam" data-at=".25" style="font-size:150px">ГИПЕРСПАВН</div></div>
+        <div class="abs" style="left:120px;top:470px"><div class="chip wp" data-fx="left" data-at=".8"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-mob"/></svg></i><b class="qy" data-count="0,7">0</b> ГУМАНОИДОВ</div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="50" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_1501.jpg" alt=""></div>
+        <div class="row" style="top:200px"><div class="grp wp" data-fx="up" data-at=".05"><div class="gc" data-fx="pop" data-at=".25"><div class="gi"><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg></div><b>3 бродят</b></div><div class="gp" data-fx="pop" data-mark="a">+</div><div class="gc" data-fx="zoom" data-mark="a" data-at=".1"><div class="gi"><svg class="mobi" viewBox="0 0 100 100"><use href="#boss"/></svg></div><b class="qy">Докмастер</b><span>Defias Dockmaster</span></div><div class="gp" data-fx="pop" data-mark="b">→</div><div class="gc" data-fx="pop" data-mark="b" data-at=".1"><div class="gi"><svg class="mobi" viewBox="0 0 100 100"><use href="#mobg"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mobg"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mobg"/></svg></div><b>+3 охраны</b></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-6" data-mark="b" data-at="0.2" style="position:absolute;left:1480px;top:470px;width:400px;height:400px"><img src="assets/wow/toon/16_come.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="196.3" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_5890.jpg" alt=""></div>
+        <div class="abs" style="left:110px;top:230px"><div class="h1" data-fx="slam" data-at=".2" style="font-size:300px;line-height:.9">7</div></div>
+        <div class="abs" style="left:330px;top:300px"><div class="h2" data-fx="left" data-at=".45" style="text-align:left">МОБОВ<br><em>В ОДНОЙ ПАЧКЕ</em></div></div>
       </div>
     </section>
-
-    <!-- 5. Разбор ответа: заголовок, боль, выгоды, призыв → клип: ноутбук в джунглях «вставь свой продукт» -->
+    <!-- 5. Маг 20 ур. — изи → еле успеваю облутаться → запись ускорена -->
     <section class="sec" id="s5">
       <div class="layer A">
-        <div class="row" style="top:210px"><div class="notes neon" data-fx="up" data-at=".05" style="width:900px">
-          <div class="nh">ЧТО ПОЛУЧИЛИ</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-at=".2"><span style="color:#14a35a">✓</span>цепляющий заголовок</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-mark="a" data-at="-.1"><span style="color:#14a35a">✓</span>боль клиента</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-mark="b" data-at="-.1"><span style="color:#14a35a">✓</span>3 выгоды</div>
-          <div class="ni" style="font-size:50px" data-fx="left" data-mark="c" data-at="-.1"><span style="color:#14a35a">✓</span>призыв к действию</div></div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-mark="c" data-at=".2" style="position:absolute;left:280px;top:880px;width:520px;height:520px"><img src="assets/ai/toon/19_checked.png" alt=""></div>
+        <div class="shotz vid full game " data-video="wowfarm" data-from="64" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_1921.jpg" alt=""></div>
+        <div class="abs" style="left:120px;top:240px"><div class="chip wp" data-fx="left" data-at=".1"><i class="ico arc"><svg viewBox="0 0 100 100"><use href="#i-arc"/></svg></i>МАГ <b class="qy">20</b> УР.</div></div>
+        <div class="abs" style="left:120px;top:400px"><div class="h1" data-fx="slam" data-at=".6" style="font-size:110px">НЕ СОПЕРНИКИ</div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-at="0.5" style="position:absolute;left:1460px;top:420px;width:420px;height:420px"><img src="assets/wow/toon/15_easy.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="shotz vid full" data-video="jungle_laptop" data-from="0" data-rate="1.34" data-frames="121" data-audio="0"><img src="assets/video/jungle_laptop/f_0001.jpg" alt=""></div>
+        <div class="shotz vid full game " data-video="wowfarm" data-from="100.5" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_3016.jpg" alt=""></div>
+        <div class="abs" style="left:160px;top:230px"><div class="timer" data-fx="timer" data-n="12" data-d="2.4" data-mark="a"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="84" class="bgc"/><circle cx="100" cy="100" r="84" class="ring" pathLength="1"/></svg><b>12</b><span>до респавна</span></div></div>
+        <div class="abs" style="left:520px;top:290px"><div class="h2" data-fx="left" data-mark="a" data-at=".3" style="text-align:left">ЕЛЕ УСПЕВАЮ<br><em>ОБЛУТАТЬСЯ</em></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-4" data-mark="a" data-at="0.9" style="position:absolute;left:1440px;top:430px;width:440px;height:440px"><img src="assets/wow/toon/03_respawn.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="108" data-rate="1" data-frames="7878" data-audio="0" data-roi="0,0,1 .355,0,.35"><img src="assets/video/wowfarm/f_3241.jpg" alt=""></div>
+        <div class="row" style="top:560px"><div class="stamp" data-fx="slam" data-at=".9" style="font-size:70px">ЗАПИСЬ УСКОРЕНА</div></div>
       </div>
     </section>
-
-    <!-- 6. 1 из 20 промтов → тексты, посты, ответы, идеи (мазок) -->
-    <section class="sec" id="s6" data-trans="smear">
-      <div class="layer A redbg">
-        <div class="row" style="top:250px"><div class="kicker" data-fx="pop" style="font-size:40px">ЭТО ОДИН ИЗ</div></div>
-        <div class="row" style="top:320px"><div class="h1 wt" data-fx="slam" data-at=".2" style="font-size:300px;letter-spacing:-10px"><span data-count="1,20">1</span></div></div>
-        <div class="row" style="top:640px"><div class="tag dark" data-fx="pop" data-at=".6" style="font-size:46px">промтов на каждый день</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".6" style="position:absolute;left:260px;top:780px;width:560px;height:560px"><img src="assets/ai/toon/17_auto.png" alt=""></div>
+    <!-- 6. Лут гуманоидов: ткань, серое, зелёнка, свитки, ящики -->
+    <section class="sec" id="s6">
+      <div class="layer A">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="136" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_4081.jpg" alt=""></div>
+        <div class="abs" style="left:110px;top:240px"><div class="h1" data-fx="kin" style="font-size:112px;text-align:left;line-height:1.05">ГУМАНОИДЫ<br><em>= ЛУТ</em></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-at="0.4" style="position:absolute;left:1440px;top:400px;width:440px;height:440px"><img src="assets/wow/toon/02_loot.png" alt=""></div>
       </div>
       <div class="layer B" style="opacity:0">
-        <div class="row" style="top:220px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;width:960px">
-          <div class="tag" data-fx="pop" data-at=".05" style="font-size:38px;text-align:center;white-space:normal">✍️ тексты</div>
-          <div class="tag dark" data-fx="pop" data-mark="a" data-at="-.05" style="font-size:38px;text-align:center;white-space:normal">📱 посты</div>
-          <div class="tag dark" data-fx="pop" data-mark="b" data-at="-.05" style="font-size:38px;text-align:center;white-space:normal">💬 ответы клиентам</div>
-          <div class="tag" data-fx="pop" data-mark="c" data-at="-.05" style="font-size:38px;text-align:center;white-space:normal">🎬 идеи роликов</div></div></div>
-        <div class="row" style="top:560px"><div class="tst" data-fx="plop" data-at=".3" style="width:700px;height:700px"><img src="assets/ai/toon/30_office.png" alt=""></div></div>
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="140" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_4201.jpg" alt=""></div>
+        <div class="abs" style="left:420px;top:150px"><div class="loot wp" data-fx="up" data-at="0"><div class="ph">ДОБЫЧА</div><div class="li" data-fx="left" data-at=".15"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-linen"/></svg></i><span class="q1">Льняная ткань</span></div><div class="li" data-fx="left" data-mark="b"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-grey"/></svg></i><span class="q0">Серые вещи</span></div><div class="li" data-fx="left" data-mark="c"><i class="ico gr"><svg viewBox="0 0 100 100"><use href="#i-green"/></svg></i><span class="q2">Зелёнка</span></div><div class="li" data-fx="left" data-mark="d"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-scroll"/></svg></i><span class="q1">Свитки</span></div><div class="li" data-fx="left" data-mark="e"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-crate"/></svg></i><span class="q1">Ящики</span></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-mark="d" data-at="0.2" style="position:absolute;left:1460px;top:440px;width:420px;height:420px"><img src="assets/wow/toon/14_crate.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="150" data-rate="1" data-frames="7878" data-audio="0" data-roi="0,0,1 .53,.45,.4"><img src="assets/video/wowfarm/f_4501.jpg" alt=""></div>
+        <div class="abs" style="left:100px;top:240px"><div class="h1" data-fx="kin" style="font-size:104px;text-align:left;line-height:1.05">ТКАНЬ<br><em>СЫПЛЕТСЯ</em><br>ДОЖДЁМ</div></div>
+        <div class="rain" data-fx="rain" data-img="linen" data-n="22" data-at=".3"></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at="0.6" style="position:absolute;left:600px;top:430px;width:420px;height:420px"><img src="assets/wow/toon/10_linen.png" alt=""></div>
       </div>
     </section>
-
-    <!-- 7. Напиши «ПРОМТ» → пришлю все 20 в TG + «сгенерировано ИИ» -->
+    <!-- 7. Нюансы: здоровье тает → сумки за 5–10 мин → аддон Dejunk -->
     <section class="sec" id="s7">
       <div class="layer A">
-        <div class="row" style="top:220px"><div class="h1" data-fx="kin" style="font-size:96px;line-height:1.1">НАПИШИ<br><em>«ПРОМТ»</em></div></div>
-        <div class="row" style="top:470px"><div class="tag" id="cta" data-fx="slam" data-at=".3" style="font-size:46px;line-height:1.2;padding:26px 50px;border-radius:44px;white-space:normal;text-align:center">в комментариях 👇<br>пришлю все 20 в TG</div></div>
-        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at=".5" style="position:absolute;left:220px;top:620px;width:640px;height:640px"><img src="assets/ai/toon/14_go.png" alt=""></div>
-        <div class="row" style="top:1210px"><div class="aibadge" data-fx="slam" data-mark="b" data-at="-.05">🤖 это видео полностью сделано ИИ</div></div>
+        <div class="shotz vid full game " data-video="wowfarm" data-from="36" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_1081.jpg" alt=""></div>
+        <div class="abs" style="left:110px;top:220px"><div class="kicker" data-fx="pop">нюанс №1</div></div>
+        <div class="abs" style="left:110px;top:280px"><div class="bars wp" data-fx="up" data-at=".2"><div class="br" data-fx="left" data-mark="a"><span>МАНА</span><div class="tr"><i class="mp"></i></div><em class="q3">не проблема</em></div><div class="br" data-fx="left" data-mark="b" data-at="-.2"><span>ЗДОРОВЬЕ</span><div class="tr"><i class="hp" data-fx="grow" data-w="96,34" data-mark="b" data-at=".3"></i></div><em style="color:#ff6b5b">тает</em></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-4" data-mark="b" data-at="0.6" style="position:absolute;left:1450px;top:420px;width:420px;height:420px"><img src="assets/wow/toon/08_eat.png" alt=""></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="152" data-rate="1" data-frames="7878" data-audio="0" data-roi="0,0,1 .55,.25,.45"><img src="assets/video/wowfarm/f_4561.jpg" alt=""></div>
+        <div class="abs" style="left:110px;top:220px"><div class="kicker" data-fx="pop">нюанс №2</div></div>
+        <div class="abs" style="left:100px;top:270px"><div class="h1" data-fx="kin" style="font-size:112px;text-align:left;line-height:1.05">СУМКИ<br><em>ЗА 5–10 МИН</em></div></div>
+        <div class="tst" data-fx="peek" data-from="bottom" data-rot="0" data-at="0.6" style="position:absolute;left:160px;top:500px;width:400px;height:400px"><img src="assets/wow/toon/05_bags.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="128.2" data-rate="0.8" data-frames="7878" data-audio="0" data-roi="0,0,1 .19,.12,.62"><img src="assets/video/wowfarm/f_3846.jpg" alt=""></div>
+        <div class="abs" style="left:1120px;top:190px"><div class="chip wp sm" data-fx="right" data-at=".5"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-bag"/></svg></i>аддон <b class="qy">Dejunk</b></div></div>
+        <div class="abs" style="left:1120px;top:330px"><div class="chip wp sm" data-fx="right" data-mark="c"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-key"/></svg></i>1 кнопка → <b class="q0">серое</b> в мусор</div></div>
+        <div class="tst" data-fx="plop" data-mark="c" data-at="0.4" style="position:absolute;left:1480px;top:470px;width:400px;height:400px"><img src="assets/wow/toon/09_trash.png" alt=""></div>
+      </div>
+    </section>
+    <!-- 8. Фарм с 12 уровня: Чародейский взрыв → тактика без патруля -->
+    <section class="sec" id="s8">
+      <div class="layer A">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="164" data-rate="1.3" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_4921.jpg" alt=""></div>
+        <div class="row" style="top:250px"><div class="h1" data-fx="kin" style="font-size:130px;line-height:1.05">А ТЕПЕРЬ —<br><em>НИЗКИЙ УРОВЕНЬ</em></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="196" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_5881.jpg" alt=""></div>
+        <div class="abs" style="left:110px;top:220px"><div class="chip wp" data-fx="left" data-at=".1"><i class="ico arc"><svg viewBox="0 0 100 100"><use href="#i-arc"/></svg></i><span><small>маг 12 ур.</small>Чародейский взрыв</span></div></div>
+        <div class="abs" style="left:110px;top:400px"><div class="lvl wp" data-fx="left" data-mark="a"><span>УР. <b data-count="12,15">12</b></span><div class="tr"><i data-fx="grow" data-w="8,92" data-mark="a" data-at=".2"></i></div></div></div>
+        <div class="rain" data-fx="rain" data-n="20" data-mark="b"></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-at="0.5" style="position:absolute;left:1450px;top:400px;width:440px;height:440px"><img src="assets/wow/toon/06_boom.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="188" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_5641.jpg" alt=""></div>
+        <div class="abs" style="left:250px;top:170px"><div class="tact wp" data-fx="up" data-at=".05"><div class="ph">ТАКТИКА НА 12 УРОВНЕ</div><div class="ti no" data-fx="left" data-at=".25"><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><span>бродячую группу — <b>пропускай</b></span><em>✕</em></div><div class="ti ok" data-fx="left" data-mark="c"><svg class="mobi" viewBox="0 0 100 100"><use href="#boss"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mobg"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mobg"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mobg"/></svg><span>Докмастер + охрана</span><em>✓</em></div><div class="ti" data-fx="left" data-mark="d"><i class="arw">↩</i><span>идёт патруль — <b>отойди назад</b></span></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-4" data-mark="c" data-at="0.3" style="position:absolute;left:1480px;top:470px;width:400px;height:400px"><img src="assets/wow/toon/13_green.png" alt=""></div>
+      </div>
+    </section>
+    <!-- 9. Таланты → шмот: обычная зелёнка, жду кап 30 -->
+    <section class="sec" id="s9">
+      <div class="layer A">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="171.3" data-rate="0.35" data-frames="7878" data-audio="0" data-roi="0,0,1 .14,0,.72"><img src="assets/video/wowfarm/f_5140.jpg" alt=""></div>
+        <div class="abs" style="left:1180px;top:560px"><div class="tip" data-fx="right" data-at=".4"><div class="qy" style="font:900 44px/1.1 Aleg">Чародейская<br>сосредоточенность</div><div>держит ману на пуллах</div></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="175.8" data-rate="0.45" data-frames="7878" data-audio="0" data-roi="0,0,1 0,.03,.55"><img src="assets/video/wowfarm/f_5275.jpg" alt=""></div>
+        <div class="abs" style="left:1130px;top:220px"><div class="tip" data-fx="right" data-at=".2"><div class="q2" style="font:900 52px/1.1 Aleg">[Рандомная зелёнка]</div><div class="q0">ничего не собирала под фарм</div></div></div>
+        <div class="abs" style="left:1130px;top:420px"><div class="chip wp" data-fx="right" data-mark="c"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-hg"/></svg></i>жду кап <b class="qy">30</b></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-4" data-mark="c" data-at="0.3" style="position:absolute;left:1500px;top:520px;width:360px;height:360px"><img src="assets/wow/toon/19_timer.png" alt=""></div>
+      </div>
+    </section>
+    <!-- 10. Карта: южнее Голдшира, на границе с Сумеречным лесом -->
+    <section class="sec" id="s10">
+      <div class="layer A">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="166" data-rate="1.2" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_4981.jpg" alt=""></div>
+        <div class="row" style="top:260px"><div class="h1" data-fx="kin" style="font-size:150px">ГДЕ ЭТА ТОЧКА?</div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="180" data-rate="0.7" data-frames="7878" data-audio="0" data-roi="0,0,1 .315,.66,.34" data-zd="1.6"><img src="assets/video/wowfarm/f_5401.jpg" alt=""></div>
+        <div class="pin" data-fx="zoom" data-at="1.5" style="left:960px;top:730px"><i></i><i></i></div>
+        <div class="abs" style="left:1200px;top:240px"><div class="chip wp" data-fx="right" data-at="1.2"><i class="ico "><svg viewBox="0 0 100 100"><use href="#i-map"/></svg></i>южнее <b class="qy">Голдшира</b></div></div>
+        <div class="abs" style="left:1200px;top:400px"><div class="chip wp" data-fx="right" data-mark="a"><span><small>граница с</small>Сумеречным лесом</span></div></div>
+        <div class="tst" data-fx="peek" data-from="left" data-rot="5" data-at="1.6" style="position:absolute;left:60px;top:440px;width:420px;height:420px"><img src="assets/wow/toon/17_map.png" alt=""></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="204" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_6121.jpg" alt=""></div>
+        <div class="row" style="top:300px"><div class="h1" data-fx="slam" data-at=".1" style="font-size:150px">СОХРАНИ ВИДЕО</div></div>
+        <div class="row" style="top:520px"><div class="chip wp" data-fx="pop" data-at=".5">📌 чтобы не потерять</div></div>
+      </div>
+    </section>
+    <!-- 11. Раньше гиперспавн у одной группы — сейчас у обеих, 10–12 сек -->
+    <section class="sec" id="s11">
+      <div class="layer A">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="208" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_6241.jpg" alt=""></div>
+        <div class="row" style="top:260px"><div class="h1" data-fx="kin" style="font-size:130px;line-height:1.05">И ВОТ ЧТО<br><em>МЕНЯ УДИВИЛО</em></div></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="216" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_6481.jpg" alt=""></div>
+        <div class="abs" style="left:230px;top:200px"><div class="cmp"><div class="wp old" data-fx="left" data-at=".05"><div class="ph">РАНЬШЕ · КЛАССИКА</div><div class="cr"><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><em class="q2">⟳</em></div><div class="cr"><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><em style="color:#ff6b5b">✕</em></div></div><div class="vs">VS</div><div class="wp new" data-fx="right" data-mark="a"><div class="ph">СЕЙЧАС · FOREVER</div><div class="cr"><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><em class="q2">⟳</em></div><div class="cr"><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><svg class="mobi" viewBox="0 0 100 100"><use href="#mob"/></svg><em class="q2">⟳</em></div></div></div></div>
+      </div>
+      <div class="layer C" style="opacity:0">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="230" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_6901.jpg" alt=""></div>
+        <div class="abs" style="left:160px;top:220px"><div class="timer" data-fx="timer" data-n="12" data-d="2.2" data-at=".1"><svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="84" class="bgc"/><circle cx="100" cy="100" r="84" class="ring" pathLength="1"/></svg><b>12</b><span>и снова тут</span></div></div>
+        <div class="abs" style="left:520px;top:280px"><div class="h1" data-fx="slam" data-at=".5" style="font-size:150px">10–12 СЕК</div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-at="0.8" style="position:absolute;left:1460px;top:430px;width:420px;height:420px"><img src="assets/wow/toon/16_come.png" alt=""></div>
+      </div>
+    </section>
+    <!-- 12. Финал: квест выполнен → Boosty (QR) + подписка -->
+    <section class="sec" id="s12">
+      <div class="layer A">
+        <div class="shotz vid full game " data-video="wowfarm" data-from="240" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_7201.jpg" alt=""></div>
+        <div class="row" style="top:190px"><div class="banner" data-fx="zoom" data-at=".05">ЗАДАНИЕ ВЫПОЛНЕНО</div></div>
+        <div class="abs" style="left:520px;top:400px"><div class="quest done" data-fx="up" data-at=".4"><div class="qo"><i>✓</i>Точка на карте <b>1/1</b></div><div class="qo"><i>✓</i>Фарм с 12 уровня <b>1/1</b></div></div></div>
+        <div class="tst" data-fx="peek" data-from="right" data-rot="-5" data-at="0.6" style="position:absolute;left:1460px;top:420px;width:420px;height:420px"><img src="assets/wow/toon/20_gg.png" alt=""></div>
+      </div>
+      <div class="layer B" style="opacity:0">
+        <div class="shotz vid full game dim" data-video="wowfarm" data-from="250" data-rate="1" data-frames="7878" data-audio="0"><img src="assets/video/wowfarm/f_7501.jpg" alt=""></div>
+        <div class="abs" style="left:150px;top:130px" id="guide"><div class="bcard wp big" data-fx="up" data-at=".05"><div class="qrbox" data-fx="zoom" data-at=".3"><svg class="qrsvg"></svg></div><div class="bt"><div class="kicker">запретные методы голдфарма</div><div class="bname" data-fx="pop" data-mark="a">BOOSTY</div><div class="blink">boosty.to/<b>anna_rich</b></div><div class="chip wp sm" id="cta" data-fx="pop" data-mark="b">⬇ ссылка в описании</div></div></div></div>
+        <div class="abs" style="left:150px;top:690px"><div class="subbtn" data-fx="pop" data-mark="c">▶ ПОДПИСАТЬСЯ</div></div>
+        <div class="tst" data-fx="plop" data-mark="c" data-at="0.1" style="position:absolute;left:1450px;top:400px;width:440px;height:440px"><img src="assets/wow/toon/18_sub.png" alt=""></div>
       </div>
     </section>
   </div>
 
-  <div id="vig"></div>
-  <canvas id="fx" width="1080" height="1920"></canvas>
-  <svg id="smear" viewBox="0 0 1080 1920" width="1080" height="1920"><path id="smearp" pathLength="1" d="M-300 120 L1380 420 L-300 760 L1380 1060 L-300 1400 L1380 1700 L-300 2040" stroke="#ffc93c" stroke-width="520" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity:0"/></svg>
-  <div id="story"><div id="bars"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
-    <div id="prof"><img src="assets/ai/avatar.jpg" alt=""><div><div class="n">ИИ на острове 🌴</div><div class="s">нейросети · свобода · остров</div></div></div></div>
-  <div id="bank"><i>₽</i><span id="bankv">0 ₽</span></div>
-  <canvas id="grain" width="360" height="640"></canvas>
+  <canvas id="embers" width="1920" height="1080"></canvas>
+  <canvas id="fx" width="1920" height="1080"></canvas>
+  <div id="hud">
+    <div id="uf"><div class="pt"><img src="assets/wow/avatar.jpg" alt=""></div>
+      <div class="ufr"><div class="nm">Аня <span>anna_rich</span></div><div class="bar hp"><i></i></div><div class="bar mp"><i></i></div></div></div>
+    <img id="logo" src="assets/wow/logo.png" alt="">
+  </div>
+  <canvas id="grain" width="480" height="270"></canvas>
   <div id="flash"></div>
   <div id="subs"></div>
   <div id="fade"></div>
 </div>
 <svg width="0" height="0" style="position:absolute"><defs>
-<linearGradient id="cPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc2cf"/><stop offset="1" stop-color="#ef6a8a"/></linearGradient>
-<linearGradient id="cCream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6e2"/><stop offset="1" stop-color="#eec58c"/></linearGradient>
-<linearGradient id="cRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b7d"/><stop offset="1" stop-color="#b20a26"/></linearGradient>
-<linearGradient id="cGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd98f"/><stop offset="1" stop-color="#d98f2e"/></linearGradient>
-<linearGradient id="cSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8d8d99"/><stop offset="1" stop-color="#2b2b33"/></linearGradient>
-<linearGradient id="cBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f2f5"/><stop offset="1" stop-color="#9b9ba6"/></linearGradient>
-<linearGradient id="cWhite" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e6ded2"/></linearGradient>
-<linearGradient id="cGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6e89a"/><stop offset="1" stop-color="#2f9a52"/></linearGradient>
-<linearGradient id="cOat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8e3bd"/><stop offset="1" stop-color="#d9a866"/></linearGradient>
-<linearGradient id="cBlue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fb2ff"/><stop offset="1" stop-color="#3f52c9"/></linearGradient>
-<linearGradient id="cYellow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff09a"/><stop offset="1" stop-color="#f2b705"/></linearGradient>
-<linearGradient id="cAqua" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9efff"/><stop offset="1" stop-color="#2f97dc"/></linearGradient>
-<linearGradient id="cBread" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4c27a"/><stop offset="1" stop-color="#b8692a"/></linearGradient>
-<linearGradient id="cSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe2cf"/><stop offset="1" stop-color="#e6a585"/></linearGradient>
-<linearGradient id="cChoc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5f3c"/><stop offset="1" stop-color="#4a2615"/></linearGradient>
-<linearGradient id="cDenim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb3e8"/><stop offset="1" stop-color="#2d5aa8"/></linearGradient>
-<radialGradient id="cShade" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
-<filter id="hl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+<linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1a6"/><stop offset=".45" stop-color="#ffcc33"/><stop offset="1" stop-color="#c47a00"/></linearGradient>
+<linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b5b"/><stop offset="1" stop-color="#a3121e"/></linearGradient>
+<linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c9a6"/><stop offset="1" stop-color="#d48f6a"/></linearGradient>
+<linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e4ea"/><stop offset="1" stop-color="#7c7c86"/></linearGradient>
+<linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c98a4a"/><stop offset="1" stop-color="#6e3f18"/></linearGradient>
+<linearGradient id="gLinen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf3df"/><stop offset="1" stop-color="#c9b48a"/></linearGradient>
+<linearGradient id="gGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c6ff9a"/><stop offset="1" stop-color="#1e9e2e"/></linearGradient>
+<linearGradient id="gParch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbeac4"/><stop offset="1" stop-color="#d9b77a"/></linearGradient>
+<linearGradient id="gSack" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d8b07a"/><stop offset="1" stop-color="#8a5f30"/></linearGradient>
+<!-- разбойник Братства: красная маска-бандана -->
+<symbol id="mob" viewBox="0 0 100 100"><circle cx="50" cy="54" r="38" fill="url(#gSkin)"/><path d="M11 50 Q50 34 89 50 L86 74 Q50 88 14 74Z" fill="url(#gRed)"/><path d="M12 46 Q50 2 88 46 Q50 28 12 46Z" fill="#7a1018"/>
+  <circle cx="37" cy="52" r="5" fill="#1a0a06"/><circle cx="63" cy="52" r="5" fill="#1a0a06"/><path d="M28 42 L44 48 M72 42 L56 48" stroke="#1a0a06" stroke-width="5" stroke-linecap="round"/><ellipse cx="34" cy="30" rx="10" ry="5" fill="#fff" opacity=".35"/></symbol>
+<symbol id="i-mob" viewBox="0 0 100 100"><use href="#mob"/></symbol>
+<!-- телохранитель: шлем -->
+<symbol id="mobg" viewBox="0 0 100 100"><use href="#mob"/><path d="M14 44 Q50 -4 86 44 L82 48 Q50 30 18 48Z" fill="url(#gSteel)"/><path d="M50 8 L50 40" stroke="#5a5a66" stroke-width="5"/></symbol>
+<!-- Докмастер: корона -->
+<symbol id="boss" viewBox="0 0 100 100"><g transform="translate(5 14) scale(.9)"><use href="#mob"/></g><path d="M22 26 L28 4 L40 18 L50 0 L60 18 L72 4 L78 26Z" fill="url(#gGold)" stroke="#6a3c00" stroke-width="2.5"/><circle cx="50" cy="16" r="4" fill="#ff3b30"/></symbol>
+<symbol id="i-hg" viewBox="0 0 100 100"><rect x="18" y="8" width="64" height="12" rx="5" fill="url(#gWood)"/><rect x="18" y="80" width="64" height="12" rx="5" fill="url(#gWood)"/>
+  <path d="M26 20 L74 20 Q74 42 54 50 Q74 58 74 80 L26 80 Q26 58 46 50 Q26 42 26 20Z" fill="#dff3ff" fill-opacity=".55" stroke="#c9a14a" stroke-width="3"/><path d="M34 30 L66 30 Q60 44 50 48 Q40 44 34 30Z M32 78 Q50 56 68 78Z" fill="url(#gGold)"/></symbol>
+<symbol id="i-arc" viewBox="0 0 100 100"><path d="M50 4 L58 40 L96 50 L58 60 L50 96 L42 60 L4 50 L42 40Z" fill="#fff" opacity=".95"/><path d="M50 22 L55 45 L78 50 L55 55 L50 78 L45 55 L22 50 L45 45Z" fill="#e3b6ff"/></symbol>
+<symbol id="i-linen" viewBox="0 0 100 100"><g transform="rotate(-20 50 50)"><rect x="12" y="32" width="66" height="36" rx="12" fill="url(#gLinen)"/><ellipse cx="78" cy="50" rx="11" ry="18" fill="#efe2c2"/><ellipse cx="78" cy="50" rx="4" ry="7" fill="#b8a273"/><path d="M32 32v36M58 32v36" stroke="#b8a273" stroke-width="3"/></g></symbol>
+<symbol id="i-grey" viewBox="0 0 100 100"><g transform="rotate(40 50 50)"><path d="M50 4 L58 16 L57 62 L43 62 L42 16Z" fill="#8a8a92"/><rect x="30" y="60" width="40" height="8" rx="3" fill="#5a5a62"/><rect x="46" y="68" width="8" height="20" rx="2" fill="#6e4a2a"/><circle cx="50" cy="92" r="5" fill="#7a7a82"/></g></symbol>
+<symbol id="i-green" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#1eff00" opacity=".18"/><path d="M50 12 L76 38 L64 86 L36 86 L24 38Z" fill="url(#gGreen)"/><path d="M50 12 L50 86 M24 38 L76 38" stroke="#eaffd8" stroke-width="2.5" opacity=".7"/><ellipse cx="42" cy="34" rx="5" ry="10" fill="#fff" opacity=".8"/></symbol>
+<symbol id="i-scroll" viewBox="0 0 100 100"><rect x="22" y="20" width="56" height="62" rx="4" fill="url(#gParch)"/><rect x="14" y="12" width="72" height="14" rx="7" fill="url(#gWood)"/><rect x="14" y="76" width="72" height="14" rx="7" fill="url(#gWood)"/><path d="M32 38h36M32 50h30M32 62h34" stroke="#8a5a1c" stroke-width="4" stroke-linecap="round"/></symbol>
+<symbol id="i-crate" viewBox="0 0 100 100"><rect x="12" y="16" width="76" height="68" rx="6" fill="url(#gWood)"/><path d="M12 16 L88 84 M88 16 L12 84" stroke="#5a3210" stroke-width="6"/><rect x="12" y="16" width="76" height="68" rx="6" fill="none" stroke="#5a3210" stroke-width="6"/><rect x="40" y="40" width="20" height="18" rx="3" fill="url(#gGold)"/></symbol>
+<symbol id="i-bag" viewBox="0 0 100 100"><path d="M18 40 Q8 86 34 92 L66 92 Q92 86 82 40 Q66 30 50 32 Q34 30 18 40Z" fill="url(#gSack)"/><path d="M34 36 Q26 14 42 10 L58 10 Q74 14 66 36" fill="url(#gSack)"/><path d="M30 36 Q50 46 70 36" stroke="#6a4420" stroke-width="5" fill="none"/><circle cx="50" cy="66" r="12" fill="url(#gGold)"/></symbol>
+<symbol id="i-key" viewBox="0 0 100 100"><rect x="10" y="20" width="80" height="62" rx="12" fill="#2a2a32"/><rect x="14" y="20" width="72" height="54" rx="10" fill="url(#gSteel)"/><text x="50" y="58" text-anchor="middle" font-family="Aleg" font-size="30" font-weight="900" fill="#2a2a32">1</text></symbol>
+<symbol id="i-map" viewBox="0 0 100 100"><path d="M10 22 L36 12 L64 22 L90 12 L90 78 L64 88 L36 78 L10 88Z" fill="url(#gParch)" stroke="#8a5a1c" stroke-width="3"/><path d="M36 12 L36 78 M64 22 L64 88" stroke="#b8925a" stroke-width="2"/><path d="M22 66 Q40 44 58 52 T80 34" stroke="#8a5a1c" stroke-width="3" fill="none" stroke-dasharray="6 5"/><path d="M72 30 l10 10 M82 30 l-10 10" stroke="#c8102e" stroke-width="5" stroke-linecap="round"/></symbol>
 </defs></svg>
+
 <svg width="0" height="0" style="position:absolute"><filter id="mb" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="mbg" stdDeviation="0 0"/></filter></svg>
 
 <script src="node_modules/gsap/dist/gsap.min.js"></script>
 <script src="node_modules/lottie-web/build/player/lottie_svg.min.js"></script>
-<script src="assets/qr.js"></script>
+<script src="assets/wow/qr.js"></script>
 <script src="assets/timeline.js"></script>
 <script src="scene.js"></script>
 </body>

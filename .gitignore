@@ -63,3 +63,8 @@ assets/video/pool_jump/
 assets/video/pool_jump.wav
 assets/video/laptop_sea/
 assets/video/laptop_sea.wav
+
+# WoW (ветка wow-anna): исходник геймплея кладётся владельцем, кадры нарезает build.ps1
+assets/video/src/wowfarm.mp4
+assets/video/wowfarm/
+assets/video/wowfarm.wav

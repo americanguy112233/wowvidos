@@ -2,7 +2,7 @@
 #   powershell -ExecutionPolicy Bypass -File .\build.ps1
 #   параметры: -Engine silero|edge|piper|rec|elevenlabs   -Out имя.mp4   -Music 0|1
 #   -Resume — не пересобирать голос, дорисовать только недостающие кадры и продолжить
-param([string]$Engine = 'silero', [string]$Out = 'ai-reel.mp4', [string]$Music = '0', [switch]$Resume)
+param([string]$Engine = 'silero', [string]$Out = 'wow-anna.mp4', [string]$Music = '0', [switch]$Resume)
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 $PY = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
@@ -20,6 +20,8 @@ if (-not $env:CHROME) {
 Write-Host "Браузер: $env:CHROME"
 New-Item -ItemType Directory -Force build | Out-Null
 
+# WoW (ветка wow-anna): ролик 16:9, 30 к/с. Геймплей владельца — assets\video\src\wowfarm.mp4
+if (-not (Test-Path assets\video\src\wowfarm.mp4) -and -not (Test-Path assets\video\wowfarm\f_0001.jpg)) { throw 'Положи своё видео с фармом в assets\video\src\wowfarm.mp4' }
 # 0. клипы владельца: assets\video\src\<имя>.mp4 -> кадры assets\video\<имя>\f_0001.jpg (30 к/с) + <имя>.wav
 Get-ChildItem assets\video\src\*.mp4 -ErrorAction SilentlyContinue | ForEach-Object {
   $n = ($_.BaseName -replace '\s+', '_').ToLower()
@@ -28,7 +30,7 @@ Get-ChildItem assets\video\src\*.mp4 -ErrorAction SilentlyContinue | ForEach-Obj
     Write-Host "клип: $($_.Name) -> $dir"
     New-Item -ItemType Directory -Force $dir | Out-Null
     Remove-Item "$dir\f_*.jpg" -ErrorAction SilentlyContinue
-    ffmpeg -v error -y -i $_.FullName -vf "fps=30,scale='min(iw,900)':-2" -q:v 3 -start_number 1 "$dir\f_%04d.jpg"
+    ffmpeg -v error -y -i $_.FullName -vf "fps=30,scale='min(iw,1280)':-2" -q:v 3 -start_number 1 "$dir\f_%04d.jpg"
     ffmpeg -v error -y -i $_.FullName -vn -ac 1 -ar 48000 "assets\video\$n.wav"
     if ($LASTEXITCODE) { throw "Не нарезался клип $($_.Name)" }
   }
@@ -38,7 +40,7 @@ $voiceFresh = (Test-Path build\voice.wav) -and ((Get-Item build\voice.wav).LastW
 if ($Resume -and $voiceFresh -and (Test-Path build\frames\timeline.json)) {
   Write-Host '1/4 голос уже готов — пропускаю (-Resume)'
   Write-Host '2/4 кадры: дорисовываю недостающие...'
-  node render.mjs --out build\frames --fps 60 --workers 4 --resume
+  node render.mjs --out build\frames --fps 30 --workers 4 --resume
   if ($LASTEXITCODE) { throw 'Рендер кадров упал' }
 } else {
 Write-Host '1/4 голос...'
@@ -47,7 +49,7 @@ if ($LASTEXITCODE) { throw 'Озвучка не собралась — смот�
 
 Write-Host '2/4 кадры...'
 if (Test-Path build\frames) { Remove-Item build\frames -Recurse -Force }
-node render.mjs --out build\frames --fps 60 --workers 4
+node render.mjs --out build\frames --fps 30 --workers 4
 if ($LASTEXITCODE) { throw 'Рендер кадров упал' }
 }
 # все ли кадры на месте: иначе ffmpeg молча обрежет видео
@@ -62,13 +64,13 @@ if ($LASTEXITCODE) { throw 'Сведение звука упало' }
 
 Write-Host '4/4 видео...'
 $DUR = node -p "require('./build/frames/timeline.json').dur"
-ffmpeg -v error -y -framerate 60 -start_number 0 -i build\frames\f_%05d.jpg -i build\mix.wav -t $DUR `
+ffmpeg -v error -y -framerate 30 -start_number 0 -i build\frames\f_%05d.jpg -i build\mix.wav -t $DUR `
   -af loudnorm=I=-14:TP=-1.5:LRA=11 -c:v libx264 -preset slow -crf 17 -pix_fmt yuv420p -profile:v high `
   -c:a aac -b:a 256k -ar 48000 -movflags +faststart $Out
 if ($LASTEXITCODE) { throw 'ffmpeg упал' }
 # проверка длины готового ролика
 # считаем именно кадры видео (длина файла считается по звуку и не замечает, что картинка кончилась раньше)
 $vf = [int](ffprobe -v error -select_streams v:0 -count_packets -show_entries stream=nb_read_packets -of csv=p=0 $Out)
-$want = [int]([math]::Floor([double]$DUR * 60))
-if ($vf + 6 -lt $want) { throw "В видео $vf кадров вместо $want — картинка обрывается на $([math]::Round($vf / 60, 2)) с. Пришли этот текст." }
+$want = [int]([math]::Floor([double]$DUR * 30))
+if ($vf + 6 -lt $want) { throw "В видео $vf кадров вместо $want — картинка обрывается на $([math]::Round($vf / 30, 2)) с. Пришли этот текст." }
 Write-Host "Готово: $Out ($DUR с)"

@@ -1,0 +1,174 @@
+/* ═══════════ WoW Forever · 16:9 для YouTube · стиль Warcraft: тёмные панели, золотые рамки, Alegreya SC ═══════════ */
+@font-face { font-family: Aleg; src: url(assets/fonts/AlegreyaSC-Black.ttf); font-weight: 900; }
+@font-face { font-family: AlegX; src: url(assets/fonts/AlegreyaSC-ExtraBold.ttf); font-weight: 800; }
+@font-face { font-family: Man; src: url(assets/fonts/Manrope-VF.ttf); font-weight: 200 800; }
+:root { --gold: #ffd100; --bronze: #c9a14a; --q0: #9d9d9d; --q2: #1eff00; --q3: #3a9bff; --boosty: #f15f2c; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+body { font-family: Man, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+#view { position: absolute; inset: 0; overflow: hidden; }
+#bg { position: absolute; inset: 0; background: #0b0806; }
+.bgi, #star, #arc, #grid, #floor, .conn { display: none !important; }
+#speed, #fx { position: absolute; inset: 0; pointer-events: none; }
+#embers { position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: screen; }
+#flash { position: absolute; inset: 0; background: #fff3c8; opacity: 0; pointer-events: none; }
+#fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 20; }
+#grain { position: absolute; inset: 0; width: 1920px; height: 1080px; opacity: .03; mix-blend-mode: overlay; pointer-events: none; }
+
+#world { position: absolute; left: 0; top: 0; width: 1920px; }
+.sec { position: absolute; left: 0; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+.layer { position: absolute; inset: 0; }
+.row { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; }
+.abs { position: absolute; }
+
+/* геймплей на весь кадр */
+.vid.full { position: absolute; inset: 0; background: #000; overflow: hidden; }
+.vid.full img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: 50% 50%; }
+.vid.full::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 78% 72% at 50% 45%, transparent 55%, rgba(0,0,0,.6)), linear-gradient(0deg, rgba(0,0,0,.65), transparent 24%), linear-gradient(180deg, rgba(0,0,0,.45), transparent 18%); }
+.vid.dim img { filter: brightness(.4) saturate(.7) blur(4px); }
+.vid.red img { filter: brightness(.5) sepia(.7) hue-rotate(-35deg) saturate(2.4) contrast(1.1); }
+
+/* шапка: рамка игрока (Аня) и логотип */
+#hud { position: absolute; inset: 0; pointer-events: none; z-index: 7; }
+#uf { position: absolute; left: 22px; top: 18px; display: flex; align-items: center; }
+#uf .pt { position: relative; z-index: 2; width: 132px; height: 132px; border-radius: 50%; overflow: hidden;
+  border: 6px solid #d9b25a; box-shadow: 0 0 0 3px #2a1404, 0 0 0 7px #8a6a2e, 0 10px 26px rgba(0,0,0,.7); }
+#uf .pt img { width: 100%; height: 100%; object-fit: cover; }
+#uf .ufr { margin-left: -24px; padding: 12px 22px 14px 40px; width: 330px; border-radius: 0 14px 14px 0;
+  background: linear-gradient(180deg, rgba(30,20,10,.92), rgba(10,7,4,.92)); border: 3px solid #c9a14a; border-left: 0; box-shadow: 0 10px 26px rgba(0,0,0,.6); }
+#uf .nm { font: 900 34px/1 Aleg; color: var(--gold); -webkit-text-stroke: 2px #1a0c02; paint-order: stroke fill; }
+#uf .nm span { font: 700 20px/1 Man; color: #d8c8a8; -webkit-text-stroke: 0; margin-left: 8px; }
+#uf .bar { height: 16px; margin-top: 8px; border-radius: 3px; background: #1a1208; border: 2px solid #000; overflow: hidden; }
+#uf .bar i { display: block; height: 100%; }
+#uf .hp i { width: 100%; background: linear-gradient(180deg, #5cff5c, #0f9e19); }
+#uf .mp i { width: 100%; background: linear-gradient(180deg, #6fb2ff, #1b4fd6); }
+#logo { position: absolute; right: 26px; top: 14px; width: 250px; filter: drop-shadow(0 8px 18px rgba(0,0,0,.8)); }
+
+/* заголовки — жёлтый Warcraft с объёмом */
+.h1, .h2 { font: 900 120px/1.02 Aleg; color: var(--gold); text-align: center; letter-spacing: 1px;
+  -webkit-text-stroke: 4px #1f0f02; paint-order: stroke fill;
+  text-shadow: 0 4px 0 #9a6400, 0 8px 0 #5a3a00, 0 12px 0 #3a2400, 0 20px 34px rgba(0,0,0,.9); white-space: nowrap; }
+.h2 { font-size: 76px; line-height: 1.08; -webkit-text-stroke: 3px #1f0f02; }
+.h1 em, .h2 em { font-style: normal; color: #fff; text-shadow: 0 4px 0 #8a8a8a, 0 8px 0 #4a4a4a, 0 12px 0 #2a2a2a, 0 20px 34px rgba(0,0,0,.9); }
+.kw { display: inline-block; }
+.kw.hot { color: #fff; }
+em .kw.hot { color: var(--gold); }
+.kicker { font: 800 40px/1 AlegX; letter-spacing: 6px; color: #f3e3bd; text-transform: uppercase; text-shadow: 0 3px 12px #000, 0 0 2px #000; }
+.qy { color: var(--gold); } .q0 { color: var(--q0); } .q1 { color: #fff; } .q2 { color: var(--q2); } .q3 { color: var(--q3); }
+.logo { filter: drop-shadow(0 18px 40px rgba(0,0,0,.85)); }
+
+/* панель Warcraft: тёмное дерево/кожа, золотая рамка, ромбы по углам */
+.wp { position: relative; background: linear-gradient(180deg, rgba(36,25,14,.95), rgba(13,9,5,.95)); border: 4px solid var(--bronze); border-radius: 16px;
+  box-shadow: 0 0 0 3px #241404, inset 0 0 0 2px rgba(255,214,120,.22), inset 0 0 50px rgba(0,0,0,.6), 0 24px 60px rgba(0,0,0,.75); padding: 26px 40px; }
+.wp::before, .wp::after { content: ''; position: absolute; width: 24px; height: 24px; background: linear-gradient(135deg, #fff1a6, #c47a00); transform: rotate(45deg); border: 3px solid #241404; }
+.wp::before { left: -16px; top: -16px; } .wp::after { right: -16px; bottom: -16px; }
+.ph { font: 900 46px/1 Aleg; color: var(--gold); text-align: center; margin-bottom: 20px; -webkit-text-stroke: 2px #1a0c02; paint-order: stroke fill; letter-spacing: 2px; }
+.chip.wp { display: inline-flex; align-items: center; gap: 22px; padding: 14px 34px 14px 14px; font: 900 52px/1 Aleg; color: #fff; white-space: nowrap; border-radius: 14px; }
+.chip.wp.sm { font-size: 38px; padding: 14px 28px; }
+.chip small { display: block; font: 800 26px/1.1 Man; color: #d8c8a8; letter-spacing: 1px; margin-bottom: 6px; }
+.ico { width: 96px; height: 96px; border-radius: 12px; flex: none; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  background: radial-gradient(circle at 40% 35%, #4a3a26, #120c06); border: 4px solid var(--bronze); box-shadow: 0 0 0 2px #000, inset 0 0 18px rgba(0,0,0,.7); }
+.ico svg { width: 84%; height: 84%; }
+.ico.arc { background: radial-gradient(circle at 42% 38%, #fff 0, #ecc4ff 14%, #9b3cf0 52%, #2a0b4a 100%); }
+.ico.gr { border-color: var(--q2); box-shadow: 0 0 0 2px #000, 0 0 18px rgba(30,255,0,.45); }
+.stamp { font: 900 110px/1 Aleg; color: #ff3b30; border: 10px solid #ff3b30; border-radius: 20px; padding: 10px 40px 18px; transform: rotate(-6deg);
+  background: rgba(30,0,0,.45); text-shadow: 0 4px 18px rgba(0,0,0,.8); box-shadow: 0 0 50px rgba(255,40,40,.35), inset 0 0 30px rgba(255,40,40,.25); white-space: nowrap; }
+.tst img { width: 100%; height: 100%; filter: drop-shadow(0 18px 28px rgba(0,0,0,.65)); }
+
+/* подсказка предмета как в игре */
+.tip { background: rgba(6,8,30,.94); border: 3px solid #b9b9c8; border-radius: 12px; padding: 20px 30px; box-shadow: 0 0 0 2px #000, 0 20px 50px rgba(0,0,0,.65); font: 700 32px/1.35 Man; color: #fff; white-space: nowrap; }
+
+/* таймер респавна */
+.timer { position: relative; width: 300px; height: 300px; }
+.timer svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); filter: drop-shadow(0 10px 24px rgba(0,0,0,.8)); }
+.timer .bgc { fill: rgba(12,8,4,.9); stroke: #2a1a08; stroke-width: 22; }
+.timer .ring { fill: none; stroke: var(--gold); stroke-width: 16; stroke-dasharray: 1 1; stroke-linecap: round; }
+.timer.done .ring { stroke: #ff3b30; }
+.timer b { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font: 900 130px/1 Aleg; color: #fff; -webkit-text-stroke: 3px #000; paint-order: stroke fill; }
+.timer span { position: absolute; left: -40px; right: -40px; top: 200px; text-align: center; font: 800 28px/1 Man; color: #d8c8a8; }
+.timer.done b { color: #ff3b30; }
+
+/* квест (журнал заданий) */
+.quest { width: 980px; padding: 36px 50px 40px; border-radius: 10px; color: #2a1608;
+  background: radial-gradient(120% 90% at 50% 40%, #fbecc6, #d9b77a); border: 6px solid #6e4418; box-shadow: 0 0 0 3px #c9a14a, 0 0 0 7px #2a1404, 0 30px 70px rgba(0,0,0,.8); }
+.quest .qh { font: 900 34px/1 Aleg; color: #b8460e; letter-spacing: 3px; margin-bottom: 12px; }
+.quest .qt { font: 900 76px/1 Aleg; color: #3a1c06; margin-bottom: 26px; }
+.quest .qo { display: flex; align-items: center; gap: 22px; font: 800 52px/1.15 Man; margin: 10px 0; }
+.quest .qo i { font-style: normal; color: #b8460e; font-size: 40px; width: 50px; }
+.quest .qo b { margin-left: auto; font: 900 52px/1 Aleg; color: #7a4a1a; }
+.quest .qr2 { margin-top: 24px; font: 700 34px/1 Man; color: #5a3a1a; }
+.quest .qr2 span { font-weight: 800; -webkit-text-stroke: 1px #3a2008; }
+.quest.done .qo i { color: #1a8a1a; } .quest.done .qo b { color: #1a8a1a; }
+.banner { font: 900 110px/1 Aleg; color: var(--gold); padding: 20px 80px 30px; -webkit-text-stroke: 4px #1f0f02; paint-order: stroke fill; white-space: nowrap;
+  text-shadow: 0 6px 0 #9a6400, 0 12px 0 #5a3a00, 0 0 60px rgba(255,209,0,.6); background: radial-gradient(60% 70% at 50% 50%, rgba(0,0,0,.65), transparent 75%); }
+
+/* Boosty */
+.bcard { display: flex; align-items: center; gap: 50px; padding: 40px 54px; }
+.qrbox { width: 400px; height: 400px; padding: 26px; border-radius: 16px; background: radial-gradient(120% 90% at 50% 40%, #fff6dc, #e6cc94); border: 6px solid #6e4418; box-shadow: 0 0 0 3px #c9a14a; flex: none; }
+.qrsvg { width: 100%; height: 100%; display: block; }
+.bt { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+.bname { font: 900 150px/.95 Aleg; color: var(--boosty); -webkit-text-stroke: 4px #2a0c02; paint-order: stroke fill; text-shadow: 0 6px 0 #8a2a08, 0 12px 0 #4a1404, 0 20px 40px rgba(0,0,0,.8); letter-spacing: 3px; }
+.blink { font: 800 58px/1 Man; color: #fff; text-shadow: 0 3px 10px #000; }
+.blink b { color: var(--gold); }
+.bsub { font: 900 46px/1 Aleg; color: #f3e3bd; }
+.bcard.big .qrbox { width: 440px; height: 440px; }
+.subbtn { font: 900 64px/1 Aleg; color: #fff; padding: 22px 50px 28px; border-radius: 16px; background: linear-gradient(180deg, #ff4a3d, #b3120c); border: 4px solid #ffb3a0; box-shadow: 0 0 0 3px #3a0602, 0 18px 40px rgba(0,0,0,.7); letter-spacing: 2px; }
+
+/* мобы: группы, тактика, сравнение */
+.mobi { width: 110px; height: 110px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.6)); }
+.grp { display: flex; align-items: center; gap: 30px; padding: 36px 50px; }
+.gc { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.gc .gi { display: flex; gap: 0; }
+.gc b { font: 900 54px/1 Aleg; color: #fff; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+.gc span { font: 700 24px/1 Man; color: #b9a98a; }
+.gp { font: 900 90px/1 Aleg; color: var(--gold); }
+.tact { width: 1180px; padding: 34px 50px; }
+.ti { display: flex; align-items: center; gap: 16px; padding: 14px 20px; margin: 10px 0; border-radius: 12px; background: rgba(255,255,255,.04); font: 800 46px/1 Man; }
+.ti .mobi { width: 84px; height: 84px; }
+.ti span { margin-left: 10px; } .ti b { color: var(--gold); }
+.ti em { margin-left: auto; font: 900 70px/1 Aleg; font-style: normal; }
+.ti.no { opacity: .9; } .ti.no em { color: #ff3b30; } .ti.no .mobi { filter: grayscale(1) brightness(.6); }
+.ti.ok em { color: var(--q2); }
+.ti .arw { font: 900 70px/1 Aleg; font-style: normal; color: var(--gold); width: 90px; text-align: center; }
+.cmp { display: flex; align-items: center; gap: 40px; }
+.cmp .wp { width: 600px; padding: 34px 40px; }
+.cmp .old { filter: saturate(.4); }
+.cr { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 12px 0; }
+.cr .mobi { width: 100px; height: 100px; }
+.cr em { font: 900 90px/1 Aleg; font-style: normal; margin-left: 24px; width: 90px; }
+.vs { font: 900 110px/1 Aleg; color: var(--gold); -webkit-text-stroke: 3px #000; paint-order: stroke fill; }
+
+/* окно добычи */
+.loot { width: 1000px; padding: 30px 40px 26px; }
+.li { display: flex; align-items: center; gap: 28px; padding: 10px 14px; margin: 8px 0; border-radius: 10px; background: linear-gradient(90deg, rgba(255,255,255,.06), transparent); font: 900 54px/1 Aleg; }
+.li .ico { width: 92px; height: 92px; }
+
+/* полоски маны/здоровья и уровня */
+.bars { width: 1000px; padding: 34px 44px; }
+.br { display: flex; align-items: center; gap: 26px; margin: 16px 0; }
+.br span { width: 250px; font: 900 44px/1 Aleg; color: #f3e3bd; }
+.br em { width: 230px; font: 800 36px/1 Man; font-style: normal; }
+.tr { flex: 1; height: 50px; border-radius: 6px; background: #120c06; border: 3px solid #000; box-shadow: 0 0 0 2px #8a6a2e; overflow: hidden; }
+.tr i { display: block; height: 100%; width: 100%; }
+.tr .mp { background: linear-gradient(180deg, #8cc4ff, #1b4fd6); }
+.tr .hp { background: linear-gradient(180deg, #7dff6a, #0f9e19); }
+.lvl { display: flex; align-items: center; gap: 30px; width: 900px; padding: 24px 36px; }
+.lvl span { font: 900 56px/1 Aleg; color: #fff; white-space: nowrap; } .lvl span b { color: var(--gold); }
+.lvl .tr i { width: 8%; background: linear-gradient(180deg, #e3a6ff, #7a1fd1); }
+
+/* метка на карте */
+.pin { position: absolute; width: 0; height: 0; }
+.pin i { position: absolute; left: -110px; top: -110px; width: 220px; height: 220px; border-radius: 50%; border: 10px solid var(--gold); box-shadow: 0 0 40px rgba(255,209,0,.8), inset 0 0 30px rgba(255,209,0,.5); }
+.pin i + i { left: -150px; top: -150px; width: 300px; height: 300px; border-width: 4px; opacity: .6; }
+
+/* дождь монет/льна */
+.rain { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: visible; }
+.coin3d { position: absolute; left: 0; top: 0; opacity: 0; filter: drop-shadow(0 10px 14px rgba(0,0,0,.55)); }
+
+/* субтитры: Alegreya SC, белые с тёмной обводкой, текущее слово — золото */
+#subs { position: absolute; left: 160px; width: 1600px; top: 902px; height: 140px; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 9; }
+#subs .ln { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 24px; transform-origin: 50% 60%; }
+#subs .w { font: 900 1em/1.25 Aleg; color: #fff; -webkit-text-stroke: 12px #120a04; paint-order: stroke fill; letter-spacing: 1px; text-shadow: 0 8px 20px rgba(0,0,0,.85); }
+#subs .w.on { color: var(--gold); }
+.chip.wp.sm .ico { width: 72px; height: 72px; }

@@ -22,6 +22,7 @@ const JOBS = [
   ['thumb.html?v=h', 1920, 1080, 'Превью — YouTube 16x9 1920x1080'],
   ['thumb.html?v=v', 1080, 1920, 'Превью — вертикальное 1080x1920'],
   ['thumb-yt.html', 1920, 1080, 'Превью — Opus 5.5 делает видео 1920x1080'],
+  ['thumb-wow.html', 1920, 1080, 'Превью — WoW голдфарм 1920x1080'],
 ].filter(j => !process.argv[3] || j[3].includes(process.argv[3]));
 for (const [url, w, h, name] of JOBS) {
   const page = await browser.newPage();
